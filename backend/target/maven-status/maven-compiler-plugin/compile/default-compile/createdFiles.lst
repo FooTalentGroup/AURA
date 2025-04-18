@@ -32,5 +32,7 @@ com\clinica\aura\entities\person\model\PersonModel.class
 com\clinica\aura\entities\patient\repository\PatientRepository.class
 com\clinica\aura\entities\user_account\Enum\EnumRole.class
 com\clinica\aura\entities\user_account\dtoResponse\AuthResponseRegisterDto.class
+com\clinica\aura\entities\professional\controller\ProfessionalController.class
 com\clinica\aura\entities\professional\service\ProfessionalService.class
 com\clinica\aura\entities\user_account\service\UserService.class
+com\clinica\aura\entities\professional\dtoResponse\ProfessionalResponseDto.class
