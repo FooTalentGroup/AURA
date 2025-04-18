@@ -1,4 +1,4 @@
-package com.clinica.aura.entities.patient.model;
+package com.clinica.aura.entities.professional.model;
 
 import com.clinica.aura.entities.person.model.PersonModel;
 import jakarta.persistence.*;
@@ -14,11 +14,10 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "patients")
-public class PatientModel {
+@Table(name = "professional")
+public class ProfessionalModel {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @OneToOne
@@ -26,21 +25,14 @@ public class PatientModel {
     @JoinColumn(name = "id")
     private PersonModel person;
 
-    private boolean hasInsurance = false;
+    @Column(nullable = false)
+    private String licenseNumber;
 
-    private String insuranceName;
-
-    private String school;
-
-    private String paymentType;
-
-    @UpdateTimestamp
-    private LocalDateTime createdAt;
+    private String specialty;
 
     @CreationTimestamp
-    private LocalDateTime updatedAt;
+    private LocalDateTime createdAt;
 
-    public boolean getHasInsurance() {//nadia
-        return hasInsurance;
-    }
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
 }

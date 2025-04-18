@@ -39,8 +39,4 @@ public class PatientModel {
 
     @CreationTimestamp
     private LocalDateTime updatedAt;
-
-    public boolean getHasInsurance() {//nadia
-        return hasInsurance;
-    }
 }

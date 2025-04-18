@@ -1,0 +1,63 @@
+package com.clinica.aura.config.filters;
+
+import com.clinica.aura.config.jwt.JwtUtils;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpHeaders;
+import org.springframework.lang.NonNull;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+import java.io.IOException;
+
+public class JwtTokenValidator extends OncePerRequestFilter {
+    private final JwtUtils jwtUtils;
+    private final TokenBlacklist tokenBlacklist;
+
+    public JwtTokenValidator(JwtUtils jwtUtils, TokenBlacklist tokenBlacklist) {
+        this.jwtUtils = jwtUtils;
+        this.tokenBlacklist = tokenBlacklist;
+    }
+    @Override
+    protected void doFilterInternal(@NonNull HttpServletRequest request,
+                                    @NonNull HttpServletResponse response,
+                                    @NonNull FilterChain filterChain) throws ServletException, IOException {
+        String jwtToken = request.getHeader(HttpHeaders.AUTHORIZATION);
+
+
+        if (jwtToken != null && jwtToken.startsWith("Bearer ")) {
+            jwtToken = jwtToken.substring(7);
+
+            if (tokenBlacklist.isTokenBlacklisted(jwtToken)) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                return;
+            }
+
+            try {
+                DecodedJWT decodedJWT = jwtUtils.validateToken(jwtToken);
+
+
+                String username = jwtUtils.extractUsername(decodedJWT);
+
+                String stringAuthorities = jwtUtils.getSpecificClaim(decodedJWT, "authorities").asString();
+
+
+                Collection<? extends GrantedAuthority> authorities = AuthorityUtils.commaSeparatedStringToAuthorityList(stringAuthorities);
+
+
+                SecurityContext securityContext = SecurityContextHolder.getContext();
+                Authentication authentication = new UsernamePasswordAuthenticationToken(username, null, authorities);
+                securityContext.setAuthentication(authentication);
+                SecurityContextHolder.setContext(securityContext);
+
+            } catch (Exception e) {
+
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                return;
+            }
+        }
+
+        filterChain.doFilter(request, response);
+    }
+}
