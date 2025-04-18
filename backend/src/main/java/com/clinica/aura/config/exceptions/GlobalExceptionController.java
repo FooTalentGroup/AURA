@@ -99,6 +99,16 @@ public class GlobalExceptionController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }
 
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleException(Exception ex) {
+        ErrorResponse errorResponse = new ErrorResponse(
+                "INTERNAL_SERVER_ERROR",
+                "Error interno del servidor",
+                List.of(ex.getMessage())
+        );
+        log.error("Error interno del servidor: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+    }
 
 
 }

@@ -63,21 +63,4 @@ public class PatientRequestDto {
 
     @Schema(description = "Tipo de pago preferido", example = "Efectivo")
     private String paymentType;
-
-    @Getter
-    @Setter
-    @Builder
-    public static class PatientResponseDto {
-        private String name;
-        private String lastName;
-        private String phoneNumber;
-        private String country;
-        private String photoUrl;
-        private LocalDate birthDate;
-        private String dni;
-        private boolean hasInsurance;
-        private String insuranceName;
-        private String school;
-        private String paymentType;
-    }
 }

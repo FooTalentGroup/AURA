@@ -1,6 +1,8 @@
 package com.clinica.aura.entities.user_account.controller;
 
 import com.clinica.aura.entities.patient.dtoRequest.PatientRequestDto;
+import com.clinica.aura.entities.patient.dtoRequest.PatientResponseDto;
+import com.clinica.aura.entities.patient.model.PatientModel;
 import com.clinica.aura.entities.patient.service.PatientService;
 import com.clinica.aura.entities.professional.dtoRequest.ProfessionalRequestDto;
 import com.clinica.aura.entities.professional.service.ProfessionalService;
@@ -53,15 +55,6 @@ public class AuthController {
     @PostMapping(value = "/professional/register")
     public ResponseEntity<AuthResponseRegisterDto> registerProfessional(@RequestBody @Valid ProfessionalRequestDto authCreateUserDto) {
         AuthResponseRegisterDto response = professionalService.createUser(authCreateUserDto);
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
-    }
-
-    @Operation(summary = "Registrar nuevo paciente", description = """
-            Registra un nuevo paciente y obtiene un token de autenticación.
-            """)
-    @PostMapping(value = "/patient/register")
-    public ResponseEntity<AuthResponseRegisterDto> registerPatient(@RequestBody @Valid PatientRequestDto authCreateUserDto) {
-        AuthResponseRegisterDto response = patientService.createUser(authCreateUserDto);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 }
