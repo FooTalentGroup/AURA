@@ -3,6 +3,7 @@ package com.clinica.aura.entities.professional.service;
 import com.clinica.aura.config.jwt.JwtUtils;
 import com.clinica.aura.entities.person.model.PersonModel;
 import com.clinica.aura.entities.professional.dtoRequest.ProfessionalRequestDto;
+import com.clinica.aura.entities.professional.dtoResponse.ProfessionalResponseDto;
 import com.clinica.aura.entities.professional.model.ProfessionalModel;
 import com.clinica.aura.entities.professional.repository.ProfessionalRepository;
 import com.clinica.aura.entities.user_account.Enum.EnumRole;
@@ -109,4 +110,35 @@ public class ProfessionalService {
                 true
         );
     }
+    //listar todos los profesionales
+    public List<ProfessionalResponseDto> getAllProfessionals() {
+        return professionalRepository.findAll()
+                .stream()
+                .map(this::mapToDto)
+                .toList();
+    }
+    //buscar profesional por id
+    public ProfessionalResponseDto getProfessionalById(Long id) {
+        ProfessionalModel professional = professionalRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Profesional no encontrado con ID: " + id));
+        return mapToDto(professional);
+    }
+
+    private ProfessionalResponseDto mapToDto(ProfessionalModel professional) {
+        return new ProfessionalResponseDto(
+                professional.getId(),
+
+                professional.getPerson().getDni(),
+                professional.getPerson().getName(),
+                professional.getPerson().getLastName(),
+                professional.getPerson().getPhoneNumber(),
+                professional.getPerson().getCountry(),
+                professional.getPerson().getPhotoUrl(),
+                professional.getPerson().getBirthDate(),
+                professional.getLicenseNumber(),
+                professional.getSpecialty()
+        );
+    }
+
+
 }
