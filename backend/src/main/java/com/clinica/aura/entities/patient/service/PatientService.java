@@ -2,10 +2,12 @@ package com.clinica.aura.entities.patient.service;
 
 import com.clinica.aura.config.jwt.JwtUtils;
 import com.clinica.aura.entities.patient.dtoRequest.PatientRequestDto;
-import com.clinica.aura.entities.patient.dtoRequest.PatientResponseDto;
 import com.clinica.aura.entities.patient.model.PatientModel;
 import com.clinica.aura.entities.patient.repository.PatientRepository;
 import com.clinica.aura.entities.person.model.PersonModel;
+import com.clinica.aura.entities.professional.dtoRequest.ProfessionalRequestDto;
+import com.clinica.aura.entities.professional.model.ProfessionalModel;
+import com.clinica.aura.entities.professional.repository.ProfessionalRepository;
 import com.clinica.aura.entities.user_account.Enum.EnumRole;
 import com.clinica.aura.entities.user_account.dtoResponse.AuthResponseRegisterDto;
 import com.clinica.aura.entities.user_account.models.RoleModel;
@@ -105,44 +107,4 @@ public class PatientService {
                 true
         );
     }
-    //agregado nadia
-    public List<PatientResponseDto> getAllPatients() {
-        return patientRepository.findAll().stream().map(patient -> {
-            var person = patient.getPerson();
-            return PatientResponseDto.builder()
-                    .name(person.getName())
-                    .lastName(person.getLastName())
-                    .phoneNumber(person.getPhoneNumber())
-                    .country(person.getCountry())
-                    .photoUrl(person.getPhotoUrl())
-                    .birthDate(person.getBirthDate())
-                    .dni(person.getDni())
-                    .insuranceName(patient.getInsuranceName())
-                    .school(patient.getSchool())
-                    .paymentType(patient.getPaymentType())
-                    .build();
-        }).toList();
-    }
-
-
-    public PatientResponseDto getPatientById(Long id) {
-        var patient = patientRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Paciente no encontrado con ID: " + id));
-
-        var person = patient.getPerson();
-
-        return PatientResponseDto.builder()
-                .name(person.getName())
-                .lastName(person.getLastName())
-                .phoneNumber(person.getPhoneNumber())
-                .country(person.getCountry())
-                .photoUrl(person.getPhotoUrl())
-                .birthDate(person.getBirthDate())
-                .dni(person.getDni())
-                .insuranceName(patient.getInsuranceName())
-                .school(patient.getSchool())
-                .paymentType(patient.getPaymentType())
-                .build();
-    }
-
 }

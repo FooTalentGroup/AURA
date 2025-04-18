@@ -5,7 +5,10 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Size;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDate;
 
@@ -63,21 +66,4 @@ public class PatientRequestDto {
 
     @Schema(description = "Tipo de pago preferido", example = "Efectivo")
     private String paymentType;
-
-    @Getter
-    @Setter
-    @Builder
-    public static class PatientResponseDto {
-        private String name;
-        private String lastName;
-        private String phoneNumber;
-        private String country;
-        private String photoUrl;
-        private LocalDate birthDate;
-        private String dni;
-        private boolean hasInsurance;
-        private String insuranceName;
-        private String school;
-        private String paymentType;
-    }
 }

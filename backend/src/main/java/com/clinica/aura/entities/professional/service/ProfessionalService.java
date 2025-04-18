@@ -1,22 +1,29 @@
-package com.clinica.aura.entities.patient.service;
+package com.clinica.aura.entities.professional.service;
 
 import com.clinica.aura.config.jwt.JwtUtils;
-import com.clinica.aura.entities.patient.dtoRequest.PatientRequestDto;
-import com.clinica.aura.entities.patient.dtoRequest.PatientResponseDto;
-import com.clinica.aura.entities.patient.model.PatientModel;
-import com.clinica.aura.entities.patient.repository.PatientRepository;
 import com.clinica.aura.entities.person.model.PersonModel;
+import com.clinica.aura.entities.professional.dtoRequest.ProfessionalRequestDto;
+import com.clinica.aura.entities.professional.dtoResponse.ProfessionalResponseDto;
+import com.clinica.aura.entities.professional.model.ProfessionalModel;
+import com.clinica.aura.entities.professional.repository.ProfessionalRepository;
 import com.clinica.aura.entities.user_account.Enum.EnumRole;
+import com.clinica.aura.entities.user_account.dtoRequest.AuthLoginRequestDto;
+import com.clinica.aura.entities.user_account.dtoResponse.AuthResponseDto;
 import com.clinica.aura.entities.user_account.dtoResponse.AuthResponseRegisterDto;
 import com.clinica.aura.entities.user_account.models.RoleModel;
 import com.clinica.aura.entities.user_account.models.UserModel;
 import com.clinica.aura.entities.user_account.repository.RoleRepository;
 import com.clinica.aura.entities.user_account.repository.UserRepository;
+import com.clinica.aura.entities.user_account.service.impl.UserDetailsServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -28,14 +35,14 @@ import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
-public class PatientService {
+public class ProfessionalService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final JwtUtils jwtUtils;
     private final RoleRepository roleRepository;
-    private final PatientRepository patientRepository;
+    private final ProfessionalRepository professionalRepository;
 
-    public AuthResponseRegisterDto createUser(@Valid PatientRequestDto authCreateUserDto) {
+    public AuthResponseRegisterDto createUser(@Valid ProfessionalRequestDto authCreateUserDto) {
 
         String email = authCreateUserDto.getEmail();
         String password = authCreateUserDto.getPassword();
@@ -47,7 +54,7 @@ public class PatientService {
         String photoUrl = authCreateUserDto.getPhotoUrl();
         LocalDate birthDate = authCreateUserDto.getBirthDate();
 
-        Optional<RoleModel> professionalRole = roleRepository.findByEnumRole(EnumRole.PATIENT);
+        Optional<RoleModel> professionalRole = roleRepository.findByEnumRole(EnumRole.PROFESSIONAL);
         if (professionalRole.isEmpty()) {
             throw new IllegalArgumentException("El rol especificado no está configurado en la base de datos.");
         }
@@ -65,15 +72,13 @@ public class PatientService {
                 .photoUrl(photoUrl)
                 .build();
 
-        PatientModel patientModel = PatientModel.builder()
+        ProfessionalModel professionalEntity = ProfessionalModel.builder()
                 .person(personEntity)
-                .hasInsurance(authCreateUserDto.isHasInsurance())
-                .insuranceName(authCreateUserDto.getInsuranceName())
-                .school(authCreateUserDto.getSchool())
-                .paymentType(authCreateUserDto.getPaymentType())
+                .licenseNumber(authCreateUserDto.getLicenseNumber())
+                .specialty(authCreateUserDto.getSpecialty())
                 .build();
 
-        patientRepository.save(patientModel);
+        professionalRepository.save(professionalEntity);
 
         UserModel userEntity = UserModel.builder()
                 .email(email)
@@ -105,44 +110,35 @@ public class PatientService {
                 true
         );
     }
-    //agregado nadia
-    public List<PatientResponseDto> getAllPatients() {
-        return patientRepository.findAll().stream().map(patient -> {
-            var person = patient.getPerson();
-            return PatientResponseDto.builder()
-                    .name(person.getName())
-                    .lastName(person.getLastName())
-                    .phoneNumber(person.getPhoneNumber())
-                    .country(person.getCountry())
-                    .photoUrl(person.getPhotoUrl())
-                    .birthDate(person.getBirthDate())
-                    .dni(person.getDni())
-                    .insuranceName(patient.getInsuranceName())
-                    .school(patient.getSchool())
-                    .paymentType(patient.getPaymentType())
-                    .build();
-        }).toList();
+    //listar todos los profesionales
+    public List<ProfessionalResponseDto> getAllProfessionals() {
+        return professionalRepository.findAll()
+                .stream()
+                .map(this::mapToDto)
+                .toList();
+    }
+    //buscar profesional por id
+    public ProfessionalResponseDto getProfessionalById(Long id) {
+        ProfessionalModel professional = professionalRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Profesional no encontrado con ID: " + id));
+        return mapToDto(professional);
     }
 
+    private ProfessionalResponseDto mapToDto(ProfessionalModel professional) {
+        return new ProfessionalResponseDto(
+                professional.getId(),
 
-    public PatientResponseDto getPatientById(Long id) {
-        var patient = patientRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Paciente no encontrado con ID: " + id));
-
-        var person = patient.getPerson();
-
-        return PatientResponseDto.builder()
-                .name(person.getName())
-                .lastName(person.getLastName())
-                .phoneNumber(person.getPhoneNumber())
-                .country(person.getCountry())
-                .photoUrl(person.getPhotoUrl())
-                .birthDate(person.getBirthDate())
-                .dni(person.getDni())
-                .insuranceName(patient.getInsuranceName())
-                .school(patient.getSchool())
-                .paymentType(patient.getPaymentType())
-                .build();
+                professional.getPerson().getDni(),
+                professional.getPerson().getName(),
+                professional.getPerson().getLastName(),
+                professional.getPerson().getPhoneNumber(),
+                professional.getPerson().getCountry(),
+                professional.getPerson().getPhotoUrl(),
+                professional.getPerson().getBirthDate(),
+                professional.getLicenseNumber(),
+                professional.getSpecialty()
+        );
     }
+
 
 }
