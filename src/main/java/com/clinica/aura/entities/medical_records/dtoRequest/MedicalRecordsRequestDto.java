@@ -25,7 +25,7 @@ public class MedicalRecordsRequestDto {
     @Schema(description = "Notas médicas del paciente", example = "Paciente con antecedentes de hipertensión.")
     private String notes;
 
-    @Size(max = 500, message = "Las alergias no pueden tener más de 500 caracteres")
+    @Size(max = 500, message = "Las alergias no pueden tener más de 500 caracter")
     @Schema(description = "Alergias del paciente", example = "Alergia a la penicilina")
     private String allergies;
 
