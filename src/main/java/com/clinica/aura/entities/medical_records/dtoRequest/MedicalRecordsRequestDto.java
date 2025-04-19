@@ -14,56 +14,23 @@ import java.time.LocalDate;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "medical_records")
 public class MedicalRecordsRequestDto {
 
-    // Datos del usuario
-    @NotBlank
-    @Email
-    @Schema(description = "Correo electrónico del paciente", example = "juan.perez@example.com", requiredMode = Schema.RequiredMode.REQUIRED)
-    private String email;
+    @NotNull(message = "El ID del paciente es obligatorio")
+    @Schema(description = "ID del paciente al que pertenece el historial médico", example = "1", requiredMode = Schema.RequiredMode.REQUIRED)
+    private Long patientId;
 
-    @NotBlank
-    @Size(min = 6, message = "La contraseña debe tener al menos 6 caracteres")
-    @Schema(description = "Contraseña del paciente", example = "securePassword123", requiredMode = Schema.RequiredMode.REQUIRED)
-    private String password;
+    @NotBlank(message = "Las notas médicas no pueden estar vacías")
+    @Size(max = 1000, message = "Las notas no pueden tener más de 1000 caracteres")
+    @Schema(description = "Notas médicas del paciente", example = "Paciente con antecedentes de hipertensión.")
+    private String notes;
 
-    // Datos de la persona
-    @NotBlank(message = "El DNI es obligatorio")
-    @Schema(description = "DNI del profesional", requiredMode = Schema.RequiredMode.REQUIRED, example = "12345678A")
-    private String dni;
+    @Size(max = 500, message = "Las alergias no pueden tener más de 500 caracteres")
+    @Schema(description = "Alergias del paciente", example = "Alergia a la penicilina")
+    private String allergies;
 
-    @NotBlank
-    @Schema(description = "Nombre del paciente", example = "Juan", requiredMode = Schema.RequiredMode.REQUIRED)
-    private String name;
+    @Size(max = 500, message = "Las condiciones previas no pueden tener más de 500 caracteres")
+    @Schema(description = "Condiciones médicas previas del paciente", example = "Asma diagnosticada en 2015")
+    private String previousConditions;
 
-    @NotBlank
-    @Schema(description = "Apellido del paciente", example = "Pérez", requiredMode = Schema.RequiredMode.REQUIRED)
-    private String lastName;
-
-    @Schema(description = "Número de teléfono del paciente", example = "+573001112233")
-    private String phoneNumber;
-
-    @Schema(description = "País de residencia del paciente", example = "Colombia")
-    private String country;
-
-    @Schema(description = "URL de la foto del paciente", example = "https://example.com/foto.jpg")
-    private String photoUrl;
-
-    @Past
-    @Schema(description = "Fecha de nacimiento del paciente", example = "1990-05-20")
-    private LocalDate birthDate;
-
-    // Datos específicos del paciente
-    @Schema(description = "Indica si el paciente tiene seguro médico", example = "true")
-    private boolean hasInsurance;
-
-    @Schema(description = "Nombre del seguro médico (si aplica)", example = "Sanitas EPS")
-    private String insuranceName;
-
-    @Schema(description = "Nombre del colegio o institución educativa", example = "Colegio San Juan")
-    private String school;
-
-    @Schema(description = "Tipo de pago preferido", example = "Efectivo")
-    private String paymentType;
     }
