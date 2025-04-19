@@ -19,7 +19,7 @@ import java.time.LocalDate;
 @Builder
 @Table(name = "medical_records")
 public class MedicalRecordsModel {
-    //historia clinicas
+    //historia clinica
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
