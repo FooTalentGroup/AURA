@@ -35,9 +35,9 @@ public class MedicalRecordsModel {
 
     private String previousConditions;
 
-    @UpdateTimestamp
+    @CreationTimestamp
     private LocalDate createdAt;
 
-    @CreationTimestamp
+    @UpdateTimestamp
     private LocalDate updatedAt;
 }
