@@ -30,3 +30,4 @@ C:\Users\diego\Documents\aura\src\main\java\com\clinica\aura\entities\user_accou
 C:\Users\diego\Documents\aura\src\main\java\com\clinica\aura\entities\user_account\repository\UserRepository.java
 C:\Users\diego\Documents\aura\src\main\java\com\clinica\aura\entities\user_account\service\impl\UserDetailsServiceImpl.java
 C:\Users\diego\Documents\aura\src\main\java\com\clinica\aura\entities\user_account\service\UserService.java
+C:\Users\diego\Documents\aura\src\main\java\com\clinica\aura\exceptions\ResourceNotFoundException.java

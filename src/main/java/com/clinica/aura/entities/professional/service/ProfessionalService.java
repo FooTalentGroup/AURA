@@ -1,5 +1,6 @@
 package com.clinica.aura.entities.professional.service;
 
+import com.clinica.aura.exceptions.ResourceNotFoundException;
 import com.clinica.aura.config.jwt.JwtUtils;
 import com.clinica.aura.entities.person.model.PersonModel;
 import com.clinica.aura.entities.professional.dtoRequest.ProfessionalRequestDto;
@@ -32,6 +33,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
 
 @Service
 @RequiredArgsConstructor
@@ -112,11 +116,12 @@ public class ProfessionalService {
     }
     //listar todos los profesionales
     public List<ProfessionalResponseDto> getAllProfessionals() {
-        return professionalRepository.findAll()
+        return professionalRepository.findByDeletedFalse()
                 .stream()
                 .map(this::mapToDto)
                 .toList();
     }
+
     //buscar profesional por id
     public ProfessionalResponseDto getProfessionalById(Long id) {
         ProfessionalModel professional = professionalRepository.findById(id)
@@ -124,6 +129,23 @@ public class ProfessionalService {
         return mapToDto(professional);
     }
 
+    //paginacion
+    public Page<ProfessionalResponseDto> getProfessionalsPaginated(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return professionalRepository.findAll(pageable)
+                .map(this::mapToDto);
+    }
+
+    //metodo q filtra por especialidad o apellido
+    public List<ProfessionalResponseDto> searchProfessionals(String keyword) {
+        return professionalRepository.searchByLastNameOrSpecialty(keyword)
+                .stream()
+                .map(this::mapToDto)
+                .toList();
+    }
+
+
+    //mapeo a Dto
     private ProfessionalResponseDto mapToDto(ProfessionalModel professional) {
         return new ProfessionalResponseDto(
                 professional.getId(),
@@ -140,5 +162,42 @@ public class ProfessionalService {
         );
     }
 
+
+    public ProfessionalResponseDto updateProfessional(Long id, ProfessionalModel professionalModel) {
+        ProfessionalModel existing = professionalRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Profesional no encontrado"));
+
+        existing.getPerson().setName(professionalModel.getPerson().getName());
+        existing.getPerson().setLastName(professionalModel.getPerson().getLastName());
+        existing.getPerson().setDni(professionalModel.getPerson().getDni());
+        existing.getPerson().setPhoneNumber(professionalModel.getPerson().getPhoneNumber());
+        existing.getPerson().setCountry(professionalModel.getPerson().getCountry());
+        existing.getPerson().setBirthDate(professionalModel.getPerson().getBirthDate());
+        existing.getPerson().setPhotoUrl(professionalModel.getPerson().getPhotoUrl());
+
+        existing.setLicenseNumber(professionalModel.getLicenseNumber());
+        existing.setSpecialty(professionalModel.getSpecialty());
+
+        ProfessionalModel updated = professionalRepository.save(existing);
+        return mapToDto(updated);
+    }
+
+    //método de eliminacion tradicional
+    /*
+    public void deleteProfessional(Long id) {
+        if (!professionalRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Profesional no encontrado");
+        }
+        professionalRepository.deleteById(id);
+    }*/
+
+    //método de eliminación logica
+    public void deleteProfessional(Long id) {
+        ProfessionalModel professional = professionalRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Profesional no encontrado"));
+
+        professional.setDeleted(true); // Marcamos como eliminado
+        professionalRepository.save(professional); // Guardamos el cambio
+    }
 
 }

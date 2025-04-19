@@ -28,6 +28,7 @@ com\clinica\aura\entities\professional\model\ProfessionalModel$ProfessionalModel
 com\clinica\aura\entities\user_account\service\impl\UserDetailsServiceImpl.class
 com\clinica\aura\entities\patient\model\PatientModel.class
 com\clinica\aura\entities\professional\dtoRequest\ProfessionalRequestDto.class
+com\clinica\aura\exceptions\ResourceNotFoundException.class
 com\clinica\aura\entities\person\model\PersonModel.class
 com\clinica\aura\entities\patient\repository\PatientRepository.class
 com\clinica\aura\entities\user_account\Enum\EnumRole.class
