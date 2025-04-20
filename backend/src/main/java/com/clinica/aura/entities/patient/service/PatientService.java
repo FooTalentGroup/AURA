@@ -45,7 +45,7 @@ public class PatientService {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public AuthResponseRegisterDto createUser(@Valid PatientRequestDto authCreateUserDto) {
+    public PatientResponseDto createUser(@Valid PatientRequestDto authCreateUserDto) {
 
         String email = authCreateUserDto.getEmail();
         String password = authCreateUserDto.getPassword();
@@ -83,8 +83,6 @@ public class PatientService {
                 .paymentType(authCreateUserDto.getPaymentType())
                 .build();
 
-        // Persistimos la entidad Person primero para asegurarnos de que tenga un ID antes de asociarla al paciente
-        personRepository.save(personEntity);
         patientRepository.save(patientModel);
 
         UserModel userEntity = UserModel.builder()
@@ -94,28 +92,20 @@ public class PatientService {
                 .person(personEntity)
                 .build();
 
-        UserModel userCreated = userRepository.save(userEntity);
+        userRepository.save(userEntity);
 
-        List<SimpleGrantedAuthority> authoritiesList = new ArrayList<>();
-
-        userCreated.getRoles().forEach(role ->
-                authoritiesList.add(new SimpleGrantedAuthority("ROLE_".concat(role.getEnumRole().name())))
-        );
-
-        userCreated.getRoles().stream()
-                .flatMap(role -> role.getPermissions().stream())
-                .forEach(permission -> authoritiesList.add(new SimpleGrantedAuthority(permission.getName())));
-
-        Authentication authentication = new UsernamePasswordAuthenticationToken(userCreated.getEmail(), userCreated.getPassword(), authoritiesList);
-        String accessToken = jwtUtils.generateJwtToken(authentication);
-
-        return new AuthResponseRegisterDto(
-                userCreated.getId(),
-                username,
-                "Usuario registrado exitosamente",
-                accessToken,
-                true
-        );
+        return PatientResponseDto.builder()
+                .name(personEntity.getName())
+                .lastName(personEntity.getLastName())
+                .phoneNumber(personEntity.getPhoneNumber())
+                .country(personEntity.getCountry())
+                .photoUrl(personEntity.getPhotoUrl())
+                .birthDate(personEntity.getBirthDate())
+                .dni(personEntity.getDni())
+                .insuranceName(patientModel.getInsuranceName())
+                .school(patientModel.getSchool())
+                .paymentType(patientModel.getPaymentType())
+                .build();
     }
     //listar todos los pacientes
     public List<PatientResponseDto> getAllPatients() {
