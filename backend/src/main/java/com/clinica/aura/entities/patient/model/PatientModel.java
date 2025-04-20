@@ -20,7 +20,7 @@ public class PatientModel {
     @Id
     private Long id;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)//cascade elimina paciente y persona
     @MapsId
     @JoinColumn(name = "id")
     private PersonModel person;
@@ -39,7 +39,4 @@ public class PatientModel {
     @CreationTimestamp
     private LocalDateTime updatedAt;
 
-    public boolean getHasInsurance() {//nadia
-        return hasInsurance;
-    }
 }

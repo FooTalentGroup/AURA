@@ -17,6 +17,7 @@ public class PatientResponseDto {
     private String photoUrl;
     private LocalDate birthDate;
     private String dni;
+    private String email;
     private boolean hasInsurance;
     private String insuranceName;
     private String school;
