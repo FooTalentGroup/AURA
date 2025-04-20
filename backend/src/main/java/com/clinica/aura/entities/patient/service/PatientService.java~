@@ -48,6 +48,7 @@ public class PatientService {
     public PatientResponseDto createUser(@Valid PatientRequestDto authCreateUserDto) {
 
         String email = authCreateUserDto.getEmail();
+        String password = authCreateUserDto.getPassword();
         String username = authCreateUserDto.getName();
         String lastName = authCreateUserDto.getLastName();
         String dni = authCreateUserDto.getDni();
@@ -86,6 +87,7 @@ public class PatientService {
 
         UserModel userEntity = UserModel.builder()
                 .email(email)
+                .password(passwordEncoder.encode(password))
                 .roles(roleEntities)
                 .person(personEntity)
                 .build();

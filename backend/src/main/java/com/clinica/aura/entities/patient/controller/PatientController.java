@@ -17,8 +17,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/auth/patients")
+@RequestMapping("/patients")
 @RequiredArgsConstructor
+@Tag(name = "Patient", description = "Endpoints para manejar pacientes")
 public class PatientController {
 
     private final PatientService patientService;

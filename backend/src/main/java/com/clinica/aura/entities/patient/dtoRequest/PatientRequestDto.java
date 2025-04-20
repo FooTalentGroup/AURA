@@ -20,11 +20,6 @@ public class PatientRequestDto {
     @Schema(description = "Correo electrónico del paciente", example = "juan.perez@example.com", requiredMode = Schema.RequiredMode.REQUIRED)
     private String email;
 
-    @NotBlank
-    @Size(min = 6, message = "La contraseña debe tener al menos 6 caracteres")
-    @Schema(description = "Contraseña del paciente", example = "securePassword123", requiredMode = Schema.RequiredMode.REQUIRED)
-    private String password;
-
     // Datos de la persona
     @NotBlank(message = "El DNI es obligatorio")
     @Schema(description = "DNI del profesional", requiredMode = Schema.RequiredMode.REQUIRED, example = "12345678A")
