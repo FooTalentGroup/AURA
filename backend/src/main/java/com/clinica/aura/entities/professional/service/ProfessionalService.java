@@ -29,6 +29,7 @@ import java.util.Set;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -39,6 +40,7 @@ public class ProfessionalService {
     private final RoleRepository roleRepository;
     private final ProfessionalRepository professionalRepository;
 
+    @Transactional
     public AuthResponseRegisterDto createUser(@Valid ProfessionalRequestDto authCreateUserDto) {
 
         String email = authCreateUserDto.getEmail();
