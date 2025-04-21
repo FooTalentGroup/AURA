@@ -32,7 +32,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
     private final ProfessionalService professionalService;
     private final UserDetailsServiceImpl userDetailsService;
-    private final PatientService patientService;
 
     @Operation(summary = "Iniciar sesión", description = "Inicia sesión y obtiene un token de autenticación." +
             " Por defecto ya se encuentra registrado un ADMIN con credenciales de login: " +
