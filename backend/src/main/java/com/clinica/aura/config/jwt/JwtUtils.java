@@ -12,6 +12,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -39,6 +40,11 @@ public class JwtUtils {
                 .stream().map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
 
+        // Extraer los roles (authorities que empiezan con ROLE_)
+        List<String> roles = authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .map(role -> role.replace("ROLE_", ""))
+                .toList();
 
 
         try {
@@ -46,6 +52,7 @@ public class JwtUtils {
                     .withIssuer(this.SECRET_USER_KEY)
                     .withSubject(username)
                     .withClaim("authorities", authorities)
+                    .withClaim("roles", roles)
                     .withIssuedAt(new Date())
                     .withExpiresAt(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                     .withJWTId(UUID.randomUUID().toString())
@@ -88,5 +95,9 @@ public class JwtUtils {
     // Obtener el tiempo de expiración del token
     public Date extractExpiration(DecodedJWT token) {
         return token.getExpiresAt();
+    }
+
+    public int getExpirationTime() {
+        return (int) (EXPIRATION_TIME / 1000);
     }
 }
