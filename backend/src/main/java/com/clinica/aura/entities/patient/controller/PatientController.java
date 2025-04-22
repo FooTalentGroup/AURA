@@ -35,9 +35,12 @@ public class PatientController {
     }
 
     @GetMapping
-    @Operation(summary = "Obtener todos los pacientes", description = "Devuelve una lista de todos los pacientes registrados en el sistema.")
-    public ResponseEntity<List<PatientResponseDto>> getAllPatients() {
-        return ResponseEntity.ok(patientService.getAllPatients());
+    @Operation(summary = "Filtrar pacientes por rango", description = "Devuelve los pacientes desde el índice 'from' hasta 'to' (Recordar que empieza desde 0)")
+    public ResponseEntity<List<PatientResponseDto>> getPatientsByRange(
+            @RequestParam(defaultValue = "0") int from,
+            @RequestParam(defaultValue = "9") int to
+    ) {
+        return ResponseEntity.ok(patientService.getPatientsByRange(from, to));
     }
 
     @GetMapping("/{id}")
@@ -48,9 +51,9 @@ public class PatientController {
 
     @PutMapping("/{id}")
     @Operation(summary = "Actualizar paciente", description = "Actualiza los datos de un paciente específico. No olvidar de cambiar los campos de example sino quedaran asi en la bd al ejecutar la prueba")
-    public ResponseEntity<Void> updatePatient(@PathVariable Long id, @RequestBody PatientRequestDto request) {
-        patientService.updatePatient(id, request);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<PatientResponseDto> updatePatient(@PathVariable Long id, @RequestBody PatientRequestDto request) {
+        PatientResponseDto patientResponseDto =  patientService.updatePatient(id, request);
+        return new ResponseEntity<>(patientResponseDto, HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{id}")
@@ -62,9 +65,17 @@ public class PatientController {
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(404).body(e.getMessage());
         } catch (Exception e) {
-            e.printStackTrace(); // 👈 Esto nos muestra el error en consola
+            e.printStackTrace();
             return ResponseEntity.status(500).body("Error al eliminar el paciente.");
         }
     }
+
+    @GetMapping("/buscar/dni")
+    @Operation(summary = "Buscar paciente por dni", description = "Se busca un paciente por dni.")
+    public ResponseEntity<PatientResponseDto> getPatientByDni(
+            @RequestParam String dni) {
+        return ResponseEntity.ok(patientService.getPatientByDni(dni));
+    }
+
 
 }
