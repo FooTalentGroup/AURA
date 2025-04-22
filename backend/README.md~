@@ -98,9 +98,51 @@ spring.datasource.password=contraseña
 
 3. **Ejecutar aplicación**:
 ```bash
-mvn spring-boot:run
+
 ```
 ---
+
+
+### 🔄 Endpoint de paginación
+
+**GET** `/professionals/page?page=0&size=10`
+
+**Parámetros:**
+- `page`: número de página (empieza en 0)
+- `size`: cantidad de resultados por página
+
+**Ejemplo:** `/professionals/page?page=1&size=5` devuelve la segunda página con 5 profesionales.
+
+### 🔍 Buscar profesionales
+
+**Endpoint**: `GET /professionals/search`
+
+Permite buscar profesionales por apellido o especialidad. 
+La búsqueda no distingue entre mayúsculas y minúsculas.
+
+**Parámetros:**
+
+| Parámetro | Tipo   | Descripción                              |
+|-----------|--------|------------------------------------------|
+| keyword   | String | Texto a buscar (apellido o especialidad) |
+
+**Ejemplo de uso:**
+
+GET /professionals/search?keyword=pediatria
+
+**Respuesta exitosa:**
+```json
+[
+  {
+    "id": 3,
+    "dni": "12345678",
+    "name": "Ana",
+    "lastName": "Gómez",
+    "specialty": "Pediatria",
+    ...
+  }
+]
+
 
 ## 📄 Licencia
 
