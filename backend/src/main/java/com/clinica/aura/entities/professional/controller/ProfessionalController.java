@@ -7,11 +7,15 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
+import com.clinica.aura.entities.professional.dtoRequest.ProfessionalRequestDto;
+import jakarta.validation.Valid;
+
 import java.util.List;
 
 @RestController
@@ -22,13 +26,13 @@ public class ProfessionalController {
 
     private final ProfessionalService professionalService;
 
-//    //método para obtener todos los professionals
-//    @Operation(summary = "Obtener todos los profesionales")
-//    @ApiResponse(responseCode = "200", description = "Listado de profesionales obtenido exitosamente")
-//    @GetMapping
-//    public ResponseEntity<List<ProfessionalResponseDto>> getAllProfessionals() {
-//        return ResponseEntity.ok(professionalService.getAllProfessionals());
-//    }
+        //método para obtener todos los professionals
+        @Operation(summary = "Obtener todos los profesionales")
+        @ApiResponse(responseCode = "200", description = "Listado de profesionales obtenido exitosamente")
+        @GetMapping
+        public ResponseEntity<List<ProfessionalResponseDto>> getAllProfessionals() {
+            return ResponseEntity.ok(professionalService.getAllProfessionals());
+        }
 
     // metodo para obtener professional por Id
     @Operation(summary = "Buscar profesional por ID")
@@ -36,7 +40,8 @@ public class ProfessionalController {
     @ApiResponse(responseCode = "404", description = "Profesional no encontrado")
     @GetMapping("/{id}")
     public ResponseEntity<ProfessionalResponseDto> getProfessionalById(@PathVariable Long id) {
-        return ResponseEntity.ok(professionalService.getProfessionalById(id));
+        ProfessionalResponseDto professionalResponse = professionalService.getProfessionalById(id);
+        return ResponseEntity.ok(professionalResponse);
     }
 
     //metodo para paginar
@@ -65,32 +70,27 @@ public class ProfessionalController {
 
 
 
-//    //actualizar un professional
-//    @Operation(summary = "Actualizar un profesional por ID")
-//    @ApiResponse(responseCode = "200", description = "Profesional actualizado")
-//    @ApiResponse(responseCode = "404", description = "Profesional no encontrado")
-//    @PutMapping("/{id}")
-//    public ResponseEntity<ProfessionalResponseDto> updateProfessional(
-//            @PathVariable Long id,
-//            @RequestBody ProfessionalModel professionalModel) {
-//        return ResponseEntity.ok(professionalService.updateProfessional(id, professionalModel));
-//    }
-//
-//
-//
-//
-//
-//    //eliminar un profesional
-//    @Operation(summary = "Eliminar un profesional por ID",
-//    description = "Realiza una eliminación lógica del profesional (no se borra físicamente de la base de datos)"
-//    )
-//    @ApiResponse(responseCode = "204", description = "Profesional eliminado correctamente")
-//    @ApiResponse(responseCode = "404", description = "Profesional no encontrado")
-//    @DeleteMapping("/{id}")
-//    public ResponseEntity<Void> deleteProfessional(@PathVariable Long id) {
-//        professionalService.deleteProfessional(id);
-//        return ResponseEntity.noContent().build();
-//    }
+
+// Actualizar un profesional por ID
+@Operation(summary = "Actualizar un profesional por ID")
+@ApiResponse(responseCode = "200", description = "Profesional actualizado")
+@ApiResponse(responseCode = "404", description = "Profesional no encontrado")
+@PutMapping("/{id}")
+public ResponseEntity<ProfessionalResponseDto> updateProfessional(
+        @PathVariable Long id,
+        @Valid @RequestBody ProfessionalRequestDto requestDto) {
+    return ResponseEntity.ok(professionalService.updateProfessional(id, requestDto));
+}
+    // Eliminar un profesional (eliminación lógica)
+    @Operation(summary = "Eliminar un profesional por ID",
+            description = "Elimina lógicamente al profesional (no se borra de la base de datos)")
+    @ApiResponse(responseCode = "204", description = "Profesional eliminado")
+    @ApiResponse(responseCode = "404", description = "Profesional no encontrado")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteProfessional(@PathVariable Long id) {
+        professionalService.deleteProfessional(id);
+        return ResponseEntity.noContent().build();
+    }
 
 
 }

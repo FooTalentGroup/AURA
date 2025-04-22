@@ -5,10 +5,12 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.Where;
 
 import java.time.LocalDateTime;
 
 @Entity
+@Where(clause = "deleted = false")
 @Setter
 @Getter
 @NoArgsConstructor
@@ -20,7 +22,7 @@ public class ProfessionalModel {
     @Id
     private Long id;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.PERSIST)
     @MapsId
     @JoinColumn(name = "id")
     private PersonModel person;
