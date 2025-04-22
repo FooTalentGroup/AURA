@@ -16,7 +16,7 @@ import java.time.LocalDate;
 public class PatientRequestDto {
     // Datos del usuario
     @NotBlank
-    @Email
+    @Email(message = "El correo electrónica no es válido")
     @Schema(description = "Correo electrónico del paciente", example = "juan.perez@example.com", requiredMode = Schema.RequiredMode.REQUIRED)
     private String email;
 

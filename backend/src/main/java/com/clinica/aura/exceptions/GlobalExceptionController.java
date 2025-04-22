@@ -2,8 +2,10 @@ package com.clinica.aura.exceptions;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.constraints.Pattern;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -19,7 +21,10 @@ import org.springframework.web.context.request.WebRequest;
 import java.time.Instant;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -275,6 +280,38 @@ public class GlobalExceptionController {
                 .body(errorResponse);
     }
 
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ErrorResponse> handleDataIntegrityViolation(
+            DataIntegrityViolationException ex,
+            WebRequest request) {
+
+        // 1. Analizar la excepción para determinar el tipo de violación
+        String violationDetail = extractViolationDetail(ex);
+        String sanitizedDetail = sanitizeConstraintViolation(violationDetail);
+
+        // 2. Construir respuesta estándar
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .errorCode("CONFLICT-001")
+                .message("Conflicto con los datos proporcionados")
+                .details(List.of(!sanitizedDetail.isEmpty() ?
+                        sanitizedDetail : "El recurso ya existe o viola restricciones de unicidad"))
+                .timestamp(Instant.now())
+                .path(getSanitizedPath(request))
+                .build();
+
+        // 3. Logging estructurado seguro (sin exponer datos sensibles)
+        log.warn("Data Integrity Violation - Path: {} | IP: {} | Violation: {}",
+                errorResponse.getPath(),
+                request.getHeader("X-Forwarded-For"),
+                sanitizedDetail.replaceAll("(\r\n|\n|\r)", ""));
+
+        // 4. Respuesta con headers de seguridad
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .header("X-Content-Type-Options", "nosniff")
+                .header("X-Conflict-Error", "true")
+                .body(errorResponse);
+    }
+
 
 
     @ExceptionHandler(Exception.class)
@@ -301,6 +338,59 @@ public class GlobalExceptionController {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .header("X-Content-Type-Options", "nosniff")
                 .body(errorResponse);
+    }
+
+    // --- Métodos auxiliares ---
+
+    private String extractViolationDetail(DataIntegrityViolationException ex) {
+        // 1. Obtener la causa raíz de forma segura
+        Throwable rootCause = ex.getRootCause();
+        if (rootCause == null) {
+            return "Error de integridad de datos no especificado";
+        }
+
+        // 2. Manejar los casos más comunes de violación de unicidad
+        String errorMessage = rootCause.getMessage();
+        if (errorMessage == null) {
+            return "Violación de restricción de base de datos";
+        }
+
+        // 3. Extraer información relevante según el motor de base de datos
+        try {
+            // Caso MySQL/MariaDB
+            if (errorMessage.contains("Duplicate entry") && errorMessage.contains("for key")) {
+                int start = errorMessage.indexOf("for key '") + 9;
+                int end = errorMessage.indexOf("'", start);
+                return end > start ? "El valor ya existe para: " + errorMessage.substring(start, end) : errorMessage;
+            }
+
+            // Caso PostgreSQL
+            if (errorMessage.contains("violates unique constraint")) {
+                int start = errorMessage.indexOf("\"") + 1;
+                int end = errorMessage.indexOf("\"", start);
+                return end > start ? "Restricción única violada: " + errorMessage.substring(start, end) : errorMessage;
+            }
+
+            // Caso H2
+            if (errorMessage.contains("unique constraint violated")) {
+                int start = errorMessage.indexOf(": ") + 2;
+                int end = errorMessage.indexOf(" ", start);
+                return end > start ? "Restricción única: " + errorMessage.substring(start, end) : errorMessage;
+            }
+
+            // Caso genérico para otros motores
+            return errorMessage.length() > 200 ? errorMessage.substring(0, 200) + "..." : errorMessage;
+
+        } catch (Exception e) {
+            log.warn("Error al parsear mensaje de violación de constraint", e);
+            return "Error de duplicado (no se pudo determinar el campo)";
+        }
+    }
+
+    private String sanitizeConstraintViolation(String detail) {
+        // Sanitizar detalles técnicos para el cliente
+        return detail.replaceAll("(Duplicate entry ')(.*?)(' for key)", "$1[REDACTED]$3")
+                .replaceAll("(constraint \\[)(\\w+)(\\])", "$1[REDACTED]$3");
     }
 
 
