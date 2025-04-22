@@ -1,6 +1,7 @@
 package com.clinica.aura.entities.patient.service;
 
 import com.clinica.aura.config.jwt.JwtUtils;
+import com.clinica.aura.entities.medical_records.repository.MedicalRecordsRepository;
 import com.clinica.aura.entities.patient.dtoRequest.PatientRequestDto;
 import com.clinica.aura.entities.patient.dtoRequest.PatientResponseDto;
 import com.clinica.aura.entities.patient.model.PatientModel;
@@ -41,6 +42,7 @@ public class PatientService {
     private final PatientRepository patientRepository;
 
     private final PersonRepository personRepository;//n
+    private final MedicalRecordsRepository medicalRecordsRepository;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -224,6 +226,9 @@ public class PatientService {
                 .orElseThrow(() -> new EntityNotFoundException("Paciente no encontrado"));
 
         Long personId = patient.getId();
+
+        // 1. Eliminar registros médicos asociados
+        medicalRecordsRepository.deleteByPatientId(personId);
 
         Optional<UserModel> userOpt = userRepository.findByPersonId(personId);
         userOpt.ifPresent(user -> {
