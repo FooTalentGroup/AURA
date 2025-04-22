@@ -1,7 +1,5 @@
 package com.clinica.aura.entities.professional.service;
 import jakarta.persistence.EntityNotFoundException;
-import com.clinica.aura.exceptions.GlobalExceptionController;
-import com.clinica.aura.exceptions.GlobalExceptionHandler;
 import com.clinica.aura.exceptions.*;
 import com.clinica.aura.config.jwt.JwtUtils;
 import com.clinica.aura.entities.person.model.PersonModel;
@@ -54,6 +52,11 @@ public class ProfessionalService {
         String country = authCreateUserDto.getCountry();
         String photoUrl = authCreateUserDto.getPhotoUrl();
         LocalDate birthDate = authCreateUserDto.getBirthDate();
+
+        UserModel emailExists = userRepository.findByEmail(email).orElse(null);
+        if (emailExists != null) {
+            throw new EmailAlreadyExistsException("El correo " + email + " ya existe en la base de datos.");
+        }
 
         Optional<RoleModel> professionalRole = roleRepository.findByEnumRole(EnumRole.PROFESSIONAL);
         if (professionalRole.isEmpty()) {
@@ -130,7 +133,7 @@ public class ProfessionalService {
         Optional<ProfessionalModel> professional = professionalRepository.findById(id);
         if (professional.isEmpty()) {
             // Lanza la excepción ResourceNotFoundException si no se encuentra el profesional
-            throw new ResourceNotFoundException("Profesional con ID " + id + " no encontrado.");
+            throw new ProfessionalNotFoundException("Profesional con ID " + id + " no encontrado.");
         }
 
         // Llamamos a mapToDto para convertir la entidad en DTO
@@ -173,7 +176,7 @@ public class ProfessionalService {
     //metodo para hacer update a profesional
     public ProfessionalResponseDto updateProfessional(Long id, @Valid ProfessionalRequestDto dto) {
         ProfessionalModel existing = professionalRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Profesional no encontrado con ID: " + id));
+                .orElseThrow(() -> new ProfessionalNotFoundException("Profesional no encontrado con ID: " + id));
 
         existing.getPerson().setName(dto.getName());
         existing.getPerson().setLastName(dto.getLastName());
