@@ -25,9 +25,8 @@ public class MedicalRecordsModel {
     private Long id;
 
     @OneToOne
-    @MapsId
-    @JoinColumn(name = "id")
-    private PatientModel person;
+    @JoinColumn(name = "patient_id", referencedColumnName = "id")
+    private PatientModel patients;
 
     private String notes;
 
