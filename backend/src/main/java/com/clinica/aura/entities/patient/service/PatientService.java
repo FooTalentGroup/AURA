@@ -45,6 +45,7 @@ public class PatientService {
     @PersistenceContext
     private EntityManager entityManager;
 
+    @Transactional
     public PatientResponseDto createUser(@Valid PatientRequestDto authCreateUserDto) {
 
         String email = authCreateUserDto.getEmail();
@@ -86,6 +87,7 @@ public class PatientService {
 
         UserModel userEntity = UserModel.builder()
                 .email(email)
+                .password("")
                 .roles(roleEntities)
                 .person(personEntity)
                 .build();
@@ -93,6 +95,7 @@ public class PatientService {
         userRepository.save(userEntity);
 
         return PatientResponseDto.builder()
+                .email(userEntity.getEmail())
                 .name(personEntity.getName())
                 .lastName(personEntity.getLastName())
                 .phoneNumber(personEntity.getPhoneNumber())
@@ -100,6 +103,7 @@ public class PatientService {
                 .photoUrl(personEntity.getPhotoUrl())
                 .birthDate(personEntity.getBirthDate())
                 .dni(personEntity.getDni())
+                .hasInsurance(patientModel.getInsuranceName() != null && !patientModel.getInsuranceName().isBlank())
                 .insuranceName(patientModel.getInsuranceName())
                 .school(patientModel.getSchool())
                 .paymentType(patientModel.getPaymentType())
