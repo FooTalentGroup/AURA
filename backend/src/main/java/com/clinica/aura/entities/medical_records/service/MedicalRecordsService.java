@@ -24,7 +24,7 @@ public class MedicalRecordsService {
                 .orElseThrow(() -> new EntityNotFoundException("Paciente no encontrado"));
 
         MedicalRecordsModel record = MedicalRecordsModel.builder()
-                .person(patient)
+                .patients(patient)
                 .notes(dto.getNotes())
                 .allergies(dto.getAllergies())
                 .previousConditions(dto.getPreviousConditions())
