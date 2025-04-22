@@ -17,7 +17,6 @@ public class ProfessionalResponseDto {
     private Long id;
 
 
-
     @Schema(description = "DNI del profesional", example = "12345678A")
     private String dni;
 

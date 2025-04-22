@@ -1,6 +1,9 @@
 package com.clinica.aura.entities.user_account.controller;
 
+import com.clinica.aura.config.jwt.JwtUtils;
 import com.clinica.aura.entities.patient.dtoRequest.PatientRequestDto;
+import com.clinica.aura.entities.patient.dtoRequest.PatientResponseDto;
+import com.clinica.aura.entities.patient.model.PatientModel;
 import com.clinica.aura.entities.patient.service.PatientService;
 import com.clinica.aura.entities.professional.dtoRequest.ProfessionalRequestDto;
 import com.clinica.aura.entities.professional.service.ProfessionalService;
@@ -11,6 +14,8 @@ import com.clinica.aura.entities.user_account.service.impl.UserDetailsServiceImp
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -30,7 +35,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
     private final ProfessionalService professionalService;
     private final UserDetailsServiceImpl userDetailsService;
-    private final PatientService patientService;
+    private final JwtUtils jwtUtils;
 
     @Operation(summary = "Iniciar sesión", description = "Inicia sesión y obtiene un token de autenticación." +
             " Por defecto ya se encuentra registrado un ADMIN con credenciales de login: " +
@@ -38,11 +43,26 @@ public class AuthController {
     @ApiResponse(responseCode = "200", description = "Autenticación exitosa")
     @ApiResponse(responseCode = "401", description = "Credenciales incorrectas")
     @PostMapping("/login")
-    public ResponseEntity<AuthResponseDto> login(@RequestBody @Valid AuthLoginRequestDto authDto) {
+    public ResponseEntity<AuthResponseDto> login(
+            @RequestBody @Valid AuthLoginRequestDto authDto,
+            HttpServletResponse servletResponse) {
+
         AuthResponseDto response = this.userDetailsService.loginUser(authDto);
 
+        // Configurar cookie
+        Cookie jwtCookie = new Cookie("jwt_token", response.getToken());
+        jwtCookie.setHttpOnly(true);
+        jwtCookie.setSecure(true);
+        jwtCookie.setPath("/");
+        jwtCookie.setMaxAge(jwtUtils.getExpirationTime());
+
+        // Añadir política SameSite
+        String cookieHeader = String.format("jwt_token=%s; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=%d",
+                response.getToken(),
+                jwtUtils.getExpirationTime());
+        servletResponse.addHeader("Set-Cookie", cookieHeader);
+
         return ResponseEntity.ok()
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + response.getToken())
                 .header("user-id", response.getId().toString())
                 .body(response);
     }
@@ -51,17 +71,27 @@ public class AuthController {
             Registra un nuevo profesional y obtiene un token de autenticación.
             """)
     @PostMapping(value = "/professional/register")
-    public ResponseEntity<AuthResponseRegisterDto> registerProfessional(@RequestBody @Valid ProfessionalRequestDto authCreateUserDto) {
-        AuthResponseRegisterDto response = professionalService.createUser(authCreateUserDto);
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
-    }
+    public ResponseEntity<AuthResponseRegisterDto> registerProfessional(
+            @RequestBody @Valid ProfessionalRequestDto authCreateUserDto,
+            HttpServletResponse servletResponse) { // 2. Añadir parámetro de respuesta
 
-    @Operation(summary = "Registrar nuevo paciente", description = """
-            Registra un nuevo paciente y obtiene un token de autenticación.
-            """)
-    @PostMapping(value = "/patient/register")
-    public ResponseEntity<AuthResponseRegisterDto> registerPatient(@RequestBody @Valid PatientRequestDto authCreateUserDto) {
-        AuthResponseRegisterDto response = patientService.createUser(authCreateUserDto);
+        AuthResponseRegisterDto response = professionalService.createUser(authCreateUserDto);
+
+        // 3. Configurar cookie con el token
+        Cookie jwtCookie = new Cookie("jwt_token", response.getToken());
+        jwtCookie.setHttpOnly(true);
+        jwtCookie.setSecure(true);
+        jwtCookie.setPath("/");
+        jwtCookie.setMaxAge(jwtUtils.getExpirationTime());
+
+        // 4. Añadir política SameSite
+        String cookieHeader = String.format(
+                "jwt_token=%s; Path=/; HttpOnly; SameSite=Lax; Max-Age=%d",
+                response.getToken(),
+                jwtUtils.getExpirationTime()
+        );
+        servletResponse.addHeader("Set-Cookie", cookieHeader);
+
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 }

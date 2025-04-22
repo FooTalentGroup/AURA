@@ -1,15 +1,9 @@
 package com.clinica.aura.entities.user_account.service.impl;
 
 import com.clinica.aura.config.jwt.JwtUtils;
-import com.clinica.aura.entities.person.model.PersonModel;
-import com.clinica.aura.entities.professional.dtoRequest.ProfessionalRequestDto;
-import com.clinica.aura.entities.professional.model.ProfessionalModel;
 import com.clinica.aura.entities.professional.repository.ProfessionalRepository;
-import com.clinica.aura.entities.user_account.Enum.EnumRole;
 import com.clinica.aura.entities.user_account.dtoRequest.AuthLoginRequestDto;
 import com.clinica.aura.entities.user_account.dtoResponse.AuthResponseDto;
-import com.clinica.aura.entities.user_account.dtoResponse.AuthResponseRegisterDto;
-import com.clinica.aura.entities.user_account.models.RoleModel;
 import com.clinica.aura.entities.user_account.models.UserModel;
 import com.clinica.aura.entities.user_account.repository.RoleRepository;
 import com.clinica.aura.entities.user_account.repository.UserRepository;
@@ -28,12 +22,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor

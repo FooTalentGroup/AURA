@@ -35,7 +35,7 @@ import org.springframework.http.HttpHeaders;
                 ),
                 @Server(
                         description = "Producción",
-                        url = "https://aura-clinica.onrender.com"
+                        url = "https://clinica-08df.onrender.com"
                 )
         },
         security = @SecurityRequirement(

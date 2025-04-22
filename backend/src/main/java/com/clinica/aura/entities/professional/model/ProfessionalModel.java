@@ -35,4 +35,7 @@ public class ProfessionalModel {
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+
+    @Column(name = "deleted")
+    private Boolean deleted = false;
 }

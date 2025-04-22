@@ -5,10 +5,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 
@@ -22,11 +19,6 @@ public class PatientRequestDto {
     @Email
     @Schema(description = "Correo electrónico del paciente", example = "juan.perez@example.com", requiredMode = Schema.RequiredMode.REQUIRED)
     private String email;
-
-    @NotBlank
-    @Size(min = 6, message = "La contraseña debe tener al menos 6 caracteres")
-    @Schema(description = "Contraseña del paciente", example = "securePassword123", requiredMode = Schema.RequiredMode.REQUIRED)
-    private String password;
 
     // Datos de la persona
     @NotBlank(message = "El DNI es obligatorio")
