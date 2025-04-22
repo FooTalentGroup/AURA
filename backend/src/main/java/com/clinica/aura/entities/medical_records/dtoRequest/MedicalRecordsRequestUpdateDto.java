@@ -9,8 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class MedicalRecordsRequestDto {
-    private Long patientId;
+public class MedicalRecordsRequestUpdateDto {
     private String notes;
     private String allergies;
     private String previousConditions;

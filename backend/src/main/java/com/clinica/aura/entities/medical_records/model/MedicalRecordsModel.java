@@ -24,8 +24,8 @@ public class MedicalRecordsModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
-    @JoinColumn(name = "patient_id", referencedColumnName = "id")
+    @OneToOne(targetEntity = PatientModel.class, fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "patient_id", nullable = false)
     private PatientModel patients;
 
     private String notes;

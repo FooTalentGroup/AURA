@@ -1,15 +1,17 @@
 package com.clinica.aura.entities.medical_records.service;
 
+import com.clinica.aura.entities.medical_records.dtoRequest.MedicalRecordsResponseDto;
 import com.clinica.aura.entities.medical_records.dtoRequest.MedicalRecordsRequestDto;
+import com.clinica.aura.entities.medical_records.dtoRequest.MedicalRecordsRequestUpdateDto;
 import com.clinica.aura.entities.medical_records.model.MedicalRecordsModel;
 import com.clinica.aura.entities.medical_records.repository.MedicalRecordsRepository;
 import com.clinica.aura.entities.patient.model.PatientModel;
 import com.clinica.aura.entities.patient.repository.PatientRepository;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -19,45 +21,72 @@ public class MedicalRecordsService {
     private final MedicalRecordsRepository medicalRecordsRepository;
     private final PatientRepository patientRepository;
 
-    public MedicalRecordsModel create(MedicalRecordsRequestDto dto) {
-        PatientModel patient = patientRepository.findById(dto.getPatientId())
-                .orElseThrow(() -> new EntityNotFoundException("Paciente no encontrado"));
+    public MedicalRecordsResponseDto create(MedicalRecordsRequestDto dto) {
+        PatientModel patient = patientRepository.findById(dto.getPatientId()).orElseThrow(() -> new EntityNotFoundException("Paciente no encontrado"));
 
-        MedicalRecordsModel record = MedicalRecordsModel.builder()
-                .patients(patient)
-                .notes(dto.getNotes())
-                .allergies(dto.getAllergies())
-                .previousConditions(dto.getPreviousConditions())
-                .build();
+        MedicalRecordsModel record = new MedicalRecordsModel();
+        record.setPatients(patient);
+        record.setNotes(dto.getNotes());
+        record.setAllergies(dto.getAllergies());
+        record.setPreviousConditions(dto.getPreviousConditions());
+        medicalRecordsRepository.save(record);
 
-        return medicalRecordsRepository.save(record);
+        MedicalRecordsResponseDto response = new MedicalRecordsResponseDto();
+        response.setId(record.getId());
+        response.setNotes(record.getNotes());
+        response.setAllergies(record.getAllergies());
+        response.setPreviousConditions(record.getPreviousConditions());
+        response.setPatientId(record.getPatients().getId());
+
+        return response;
     }
 
-    public List<MedicalRecordsModel> findAll() {
-        return medicalRecordsRepository.findAll();
+    public MedicalRecordsResponseDto findById(Long id) {
+        MedicalRecordsModel record = medicalRecordsRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Registro no encontrado"));
+        MedicalRecordsResponseDto response = new MedicalRecordsResponseDto();
+        response.setId(record.getId());
+        response.setNotes(record.getNotes());
+        response.setAllergies(record.getAllergies());
+        response.setPreviousConditions(record.getPreviousConditions());
+        response.setPatientId(record.getPatients().getId());
+        return response;
     }
 
-    public MedicalRecordsModel findById(Long id) {
-        return medicalRecordsRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Historial no encontrado"));
+    public List<MedicalRecordsResponseDto> getAllMedicalRecords() {
+        List<MedicalRecordsModel> records = medicalRecordsRepository.findAll();
+        List<MedicalRecordsResponseDto> response = new ArrayList<>();
+        for (MedicalRecordsModel record : records) {
+            MedicalRecordsResponseDto dto = new MedicalRecordsResponseDto();
+            dto.setId(record.getId());
+            dto.setNotes(record.getNotes());
+            dto.setAllergies(record.getAllergies());
+            dto.setPreviousConditions(record.getPreviousConditions());
+            dto.setPatientId(record.getPatients().getId());
+            response.add(dto);
+        }
+        return response;
     }
 
-    @Transactional
-    public MedicalRecordsModel update(Long id, MedicalRecordsRequestDto dto) {
-        MedicalRecordsModel existing = medicalRecordsRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Historial no encontrado"));
+    public MedicalRecordsResponseDto update(Long id, MedicalRecordsRequestUpdateDto dto) {
+        MedicalRecordsModel record = medicalRecordsRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Registro no encontrado"));
 
-        existing.setNotes(dto.getNotes());
-        existing.setAllergies(dto.getAllergies());
-        existing.setPreviousConditions(dto.getPreviousConditions());
+        record.setNotes(dto.getNotes());
+        record.setAllergies(dto.getAllergies());
+        record.setPreviousConditions(dto.getPreviousConditions());
+        medicalRecordsRepository.save(record);
 
-        return existing;
+
+        MedicalRecordsResponseDto response = new MedicalRecordsResponseDto();
+        response.setId(record.getId());
+        response.setNotes(record.getNotes());
+        response.setAllergies(record.getAllergies());
+        response.setPreviousConditions(record.getPreviousConditions());
+        response.setPatientId(record.getPatients().getId());
+        return response;
     }
 
     public void delete(Long id) {
-        if (!medicalRecordsRepository.existsById(id)) {
-            throw new EntityNotFoundException("Historial no encontrado");
-        }
-        medicalRecordsRepository.deleteById(id);
+        MedicalRecordsModel record = medicalRecordsRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Registro no encontrado"));
+        medicalRecordsRepository.delete(record);
     }
 }
