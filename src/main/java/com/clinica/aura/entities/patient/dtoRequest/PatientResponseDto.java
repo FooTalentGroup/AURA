@@ -10,6 +10,7 @@ import java.time.LocalDate;
 @Setter
 @Builder
 public class PatientResponseDto {
+    private Long id;
     private String name;
     private String lastName;
     private String phoneNumber;

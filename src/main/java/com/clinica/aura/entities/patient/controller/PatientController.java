@@ -8,22 +8,28 @@ import com.clinica.aura.entities.patient.service.PatientService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/auth/patients")
+@RequestMapping("/patients")
 @RequiredArgsConstructor
 public class PatientController {
 
     private final PatientService patientService;
 
     @GetMapping
-    @Operation(summary = "Obtener todos los pacientes", description = "Devuelve una lista de todos los pacientes registrados en el sistema.")
-    public ResponseEntity<List<PatientResponseDto>> getAllPatients() {
-        return ResponseEntity.ok(patientService.getAllPatients());
+    @Operation(summary = "Filtrar pacientes por rango", description = "Devuelve los pacientes desde el índice 'from' hasta 'to' (Recordar que empieza desde 0)")
+    public ResponseEntity<List<PatientResponseDto>> getPatientsByRange(
+            @RequestParam(defaultValue = "0") int from,
+            @RequestParam(defaultValue = "9") int to
+    ) {
+        return ResponseEntity.ok(patientService.getPatientsByRange(from, to));
     }
 
     @GetMapping("/{id}")
@@ -48,9 +54,17 @@ public class PatientController {
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(404).body(e.getMessage());
         } catch (Exception e) {
-            e.printStackTrace(); // 👈 Esto nos muestra el error en consola
+            e.printStackTrace();
             return ResponseEntity.status(500).body("Error al eliminar el paciente.");
         }
     }
+
+    @GetMapping("/buscar/dni")
+    @Operation(summary = "Buscar paciente por dni", description = "Se busca un paciente por dni.")
+    public ResponseEntity<PatientResponseDto> getPatientByDni(
+            @RequestParam String dni) {
+        return ResponseEntity.ok(patientService.getPatientByDni(dni));
+    }
+
 
 }

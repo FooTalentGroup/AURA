@@ -18,18 +18,24 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.PersistenceContext;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -117,15 +123,22 @@ public class PatientService {
                 true
         );
     }
-    //listar todos los pacientes
-    public List<PatientResponseDto> getAllPatients() {
-        return patientRepository.findAll().stream().map(patient -> {
-            var person = patient.getPerson();
 
-            // Buscás el usuario a partir de la persona asociada al paciente
+    //listado de pacientes
+    public List<PatientResponseDto> getPatientsByRange(int from, int to) {
+        List<PatientModel> patients = patientRepository.findAll();
+
+        // Validamos el rango
+        if (from < 0) from = 0;
+        if (to >= patients.size()) to = patients.size() - 1;
+        if (from > to) return List.of();
+
+        return patients.subList(from, to + 1).stream().map(patient -> {
+            var person = patient.getPerson();
             Optional<UserModel> userOptional = userRepository.findByPerson(person);
 
             return PatientResponseDto.builder()
+                    .id(patient.getId())
                     .name(person.getName())
                     .lastName(person.getLastName())
                     .phoneNumber(person.getPhoneNumber())
@@ -133,7 +146,7 @@ public class PatientService {
                     .photoUrl(person.getPhotoUrl())
                     .birthDate(person.getBirthDate())
                     .dni(person.getDni())
-                    .email(userOptional.map(UserModel::getEmail).orElse(null)) //recupera el email
+                    .email(userOptional.map(UserModel::getEmail).orElse(null))
                     .insuranceName(patient.getInsuranceName())
                     .hasInsurance(patient.getInsuranceName() != null && !patient.getInsuranceName().isBlank())
                     .school(patient.getSchool())
@@ -142,7 +155,7 @@ public class PatientService {
         }).toList();
     }
 
-   //buscar pacientes por id
+    //buscar pacientes por id
     public PatientResponseDto getPatientById(Long id) {
         var patient = patientRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Paciente no encontrado con ID: " + id));
@@ -175,7 +188,7 @@ public class PatientService {
 
         var person = patient.getPerson();
 
-        // Actualizar datos de la persona
+        // actualizar datos de la persona
         person.setName(requestDto.getName());
         person.setLastName(requestDto.getLastName());
         person.setPhoneNumber(requestDto.getPhoneNumber());
@@ -216,42 +229,47 @@ public class PatientService {
                 .build();
     }
 
-    @Transactional
+    @Transactional //Borrar paciente por id
     public void deletePatientById(Long patientId) {
-        // Verificamos que el paciente exista
         PatientModel patient = patientRepository.findById(patientId)
                 .orElseThrow(() -> new EntityNotFoundException("Paciente no encontrado"));
 
         Long personId = patient.getId();
 
-        // 1. Eliminar relaciones users_roles
-       // Optional<UserModel> userOpt = userRepository.findByPersonId(personId);
-       // userOpt.ifPresent(user -> {
-       //     entityManager.createNativeQuery("DELETE FROM users_roles WHERE user_id = :userId")
-        //            .setParameter("userId", user.getId())
-        //            .executeUpdate();
+        Optional<UserModel> userOpt = userRepository.findByPersonId(personId);
+        userOpt.ifPresent(user -> {
+            patientRepository.deleteUserRolesByUserId(user.getId());
+            patientRepository.deleteUserById(user.getId());
+        });
 
-       //     // 2. Eliminar el usuario
-      //      entityManager.createNativeQuery("DELETE FROM users WHERE id = :userId")
-      //              .setParameter("userId", user.getId())
-       //             .executeUpdate();
-      //  });
-
-        // 3. Eliminar el paciente
-        entityManager.createNativeQuery("DELETE FROM patients WHERE id = :id")
-                .setParameter("id", personId)
-                .executeUpdate();
-
-        // 4. Eliminar la persona
-        //entityManager.createNativeQuery("DELETE FROM person WHERE id = :id")
-         //       .setParameter("id", personId)
-        //        .executeUpdate();
+        patientRepository.deletePatientByIdNative(personId);
+        patientRepository.deletePersonById(personId);
     }
 
+    //buscar paciente por dni
+    public PatientResponseDto getPatientByDni(String dni) {
+        var patient = patientRepository.findByPersonDni(dni)
+                .orElseThrow(() -> new RuntimeException("Paciente no encontrado con DNI: " + dni));
 
+        var person = patient.getPerson();
+        var user = userRepository.findByPerson(person).orElse(null);
 
-
-
+        return PatientResponseDto.builder()
+                .id(patient.getId())
+                .name(person.getName())
+                .lastName(person.getLastName())
+                .phoneNumber(person.getPhoneNumber())
+                .country(person.getCountry())
+                .photoUrl(person.getPhotoUrl())
+                .birthDate(person.getBirthDate())
+                .dni(person.getDni())
+                .email(user != null ? user.getEmail() : null)
+                .insuranceName(patient.getInsuranceName())
+                .hasInsurance(patient.getInsuranceName() != null && !patient.getInsuranceName().isBlank())
+                .school(patient.getSchool())
+                .paymentType(patient.getPaymentType())
+                .build();
+    }
 
 }
 
