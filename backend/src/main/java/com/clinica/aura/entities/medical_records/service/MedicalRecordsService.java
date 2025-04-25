@@ -9,6 +9,9 @@ import com.clinica.aura.entities.patient.model.PatientModel;
 import com.clinica.aura.entities.patient.repository.PatientRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -88,5 +91,21 @@ public class MedicalRecordsService {
     public void delete(Long id) {
         MedicalRecordsModel record = medicalRecordsRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Registro no encontrado"));
         medicalRecordsRepository.delete(record);
+    }
+
+    //paginacion medical records
+    public Page<MedicalRecordsResponseDto> getMedicalRecordsPage(int page, int size) {
+        Pageable pageable = PageRequest.of(page,size);
+        return medicalRecordsRepository.findAll(pageable).map(this::mapToDto);
+    }
+
+    private MedicalRecordsResponseDto mapToDto(MedicalRecordsModel medicalRecordsModel) {
+        return new MedicalRecordsResponseDto(
+                medicalRecordsModel.getId(),
+                medicalRecordsModel.getNotes(),
+                medicalRecordsModel.getAllergies(),
+                medicalRecordsModel.getPreviousConditions(),
+                medicalRecordsModel.getPatients().getId()
+        );
     }
 }
