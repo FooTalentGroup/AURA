@@ -92,18 +92,54 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   // Verificar si hay un token almacenado al cargar la aplicación
   useEffect(() => {
+    // const initAuth = async () => {
+    //   const token = authService.getStoredToken();
+
+    //   if (token) {
+    //     try {
+    //       const isValid = await authService.verifyToken(token);
+
+    //       if (isValid) {
+    //         // Supongamos que podemos extraer el ID y email del token o hacer una llamada a la API
+    //         // para obtener los datos del usuario
+    //         const userData = await authService.getCurrentUser(token);
+
+    //         dispatch({
+    //           type: "LOGIN_SUCCESS",
+    //           payload: {
+    //             id: userData.id,
+    //             email: userData.email,
+    //             token: token,
+    //           },
+    //         });
+    //       } else {
+    //         authService.removeStoredToken();
+    //         dispatch({ type: "LOGOUT" });
+    //       }
+    //     } catch (error) {
+    //       authService.removeStoredToken();
+    //       console.error((error as Error).message);
+
+    //       dispatch({ type: "LOGOUT" });
+    //     }
+    //   } else {
+    //     dispatch({ type: "LOGOUT" });
+    //   }
+
+    //   // Finalmente, marcamos la carga como completada incluso si no hay token
+    //   if (state.isLoading) {
+    //     dispatch({ type: "LOGIN_FAILURE", payload: "" });
+    //   }
+    // };
+
     const initAuth = async () => {
-      const token = authService.getStoredToken();
+      try {
+        const token = authService.getStoredToken();
 
-      if (token) {
-        try {
-          const isValid = await authService.verifyToken(token);
+        if (token) {
+          const userData = await authService.getCurrentUser(token);
 
-          if (isValid) {
-            // Supongamos que podemos extraer el ID y email del token o hacer una llamada a la API
-            // para obtener los datos del usuario
-            const userData = await authService.getCurrentUser(token);
-
+          if (userData) {
             dispatch({
               type: "LOGIN_SUCCESS",
               payload: {
@@ -116,20 +152,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             authService.removeStoredToken();
             dispatch({ type: "LOGOUT" });
           }
-        } catch (error) {
-          authService.removeStoredToken();
-          console.error((error as Error).message);
-
+        } else {
           dispatch({ type: "LOGOUT" });
         }
-      } else {
+      } catch (error) {
+        authService.removeStoredToken();
+        console.error((error as Error).message);
         dispatch({ type: "LOGOUT" });
+      } finally {
+        // Marcar la carga como completada
+        dispatch({ type: "LOGIN_FAILURE", payload: "" });
       }
-
-      // Finalmente, marcamos la carga como completada incluso si no hay token
-      // if (state.isLoading) {
-      //   dispatch({ type: "LOGIN_FAILURE", payload: "" });
-      // }
     };
 
     initAuth();

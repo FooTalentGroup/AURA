@@ -22,7 +22,7 @@ export const api = {
     return response.json();
   },
 
-  post: async <T>(endpoint: string, data: any, token?: string): Promise<T> => {
+  post: async <T, D>(endpoint: string, data: D, token?: string): Promise<T> => {
     const headers: HeadersInit = {
       "Content-Type": "application/json",
     };

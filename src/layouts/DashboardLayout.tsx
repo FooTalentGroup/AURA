@@ -74,7 +74,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
 
       <footer className="bg-white py-4">
         <div className="container mx-auto px-4 text-center text-gray-500 text-sm">
-          &copy; {new Date().getFullYear()} Aura. Todos los derechos reservados.
+          &copy; {new Date().getFullYear()} AURA. Todos los derechos reservados.
         </div>
       </footer>
     </div>
