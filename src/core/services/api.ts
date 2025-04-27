@@ -1,4 +1,4 @@
-const BASE_URL = "https://clinica-08df.onrender.com";
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export const api = {
   get: async <T>(endpoint: string, token?: string): Promise<T> => {
