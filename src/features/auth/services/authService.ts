@@ -13,11 +13,14 @@ interface CurrentUser {
 
 export const authService = {
   login: async (credentials: LoginCredentials): Promise<AuthResponse> => {
-    return api.post<AuthResponse>("/auth/login", credentials);
+    return api.post<AuthResponse, LoginCredentials>("/auth/login", credentials);
   },
 
   register: async (userData: RegisterCredentials): Promise<AuthResponse> => {
-    return api.post<AuthResponse>("/auth/register", userData);
+    return api.post<AuthResponse, RegisterCredentials>(
+      "/auth/register",
+      userData
+    );
   },
 
   getCurrentUser: async (token: string): Promise<CurrentUser> => {
