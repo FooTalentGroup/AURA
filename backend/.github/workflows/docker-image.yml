@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      IMAGE_NAME: tony203/clinica1
+      IMAGE_NAME: tony203/aura
 
     steps:
       - name: Checkout repository
