@@ -1,12 +1,13 @@
 import {
-  createContext,
-  useContext,
+  //createContext,
+  // useContext,
   useReducer,
   ReactNode,
   useEffect,
 } from "react";
 import { AuthState, AuthUser } from "../features/auth/types/auth.types";
 import { authService } from "../features/auth/services/authService";
+import { AuthContext } from "../features/auth/services/authContext";
 
 // Estado inicial
 const initialState: AuthState = {
@@ -73,7 +74,7 @@ function authReducer(state: AuthState, action: AuthAction): AuthState {
 }
 
 // Crear contexto
-type AuthContextType = {
+export type AuthContextType = {
   state: AuthState;
   login: (email: string, password: string) => Promise<void>;
   register: (email: string, password: string) => Promise<void>;
@@ -81,7 +82,9 @@ type AuthContextType = {
   clearError: () => void;
 };
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+// export const AuthContext = createContext<AuthContextType | undefined>(
+//   undefined
+// );
 
 // Proveedor del contexto
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
@@ -115,6 +118,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           }
         } catch (error) {
           authService.removeStoredToken();
+          console.error((error as Error).message);
+
           dispatch({ type: "LOGOUT" });
         }
       } else {
@@ -122,9 +127,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
 
       // Finalmente, marcamos la carga como completada incluso si no hay token
-      if (state.isLoading) {
-        dispatch({ type: "LOGIN_FAILURE", payload: "" });
-      }
+      // if (state.isLoading) {
+      //   dispatch({ type: "LOGIN_FAILURE", payload: "" });
+      // }
     };
 
     initAuth();
@@ -213,10 +218,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 };
 
 // Hook personalizado para usar el contexto
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error("useAuth debe ser usado dentro de un AuthProvider");
-  }
-  return context;
-};
+// export const useAuth = () => {
+//   const context = useContext(AuthContext);
+//   if (context === undefined) {
+//     throw new Error("useAuth debe ser usado dentro de un AuthProvider");
+//   }
+//   return context;
+// };

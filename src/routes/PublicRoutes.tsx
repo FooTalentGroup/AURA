@@ -1,8 +1,8 @@
 import { Navigate, Outlet } from "react-router-dom";
-import { useAuth } from "../store/authStore";
+import { useContextAuth } from "../features/auth/hooks/useContextAuth";
 
 const PublicRoutes = () => {
-  const { state } = useAuth();
+  const { state } = useContextAuth();
 
   // Si el usuario está autenticado, redirigir al dashboard
   return state.isAuthenticated ? (

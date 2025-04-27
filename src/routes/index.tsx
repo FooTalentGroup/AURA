@@ -1,5 +1,3 @@
-// src/routes/index.tsx
-
 import { Routes, Route, Navigate } from "react-router-dom";
 import PublicRoutes from "./PublicRoutes";
 import PrivateRoutes from "./PrivateRoutes";

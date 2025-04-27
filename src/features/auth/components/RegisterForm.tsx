@@ -1,15 +1,13 @@
-// src/features/auth/components/RegisterForm.tsx
-
 import { useState, FormEvent } from "react";
-import { useAuth } from "../../../store/authStore";
 import { useNavigate } from "react-router-dom";
+import { useContextAuth } from "../hooks/useContextAuth";
 
 const RegisterForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordError, setPasswordError] = useState("");
-  const { register, state } = useAuth();
+  const { register, state } = useContextAuth();
   const navigate = useNavigate();
 
   const validatePasswords = () => {

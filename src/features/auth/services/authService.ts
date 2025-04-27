@@ -1,11 +1,15 @@
-// src/features/auth/services/authService.ts
-
 import { api } from "../../../core/services/api";
 import {
   AuthResponse,
   LoginCredentials,
   RegisterCredentials,
 } from "../types/auth.types";
+
+interface CurrentUser {
+  id: number;
+  email: string;
+  name: string;
+}
 
 export const authService = {
   login: async (credentials: LoginCredentials): Promise<AuthResponse> => {
@@ -16,8 +20,8 @@ export const authService = {
     return api.post<AuthResponse>("/auth/register", userData);
   },
 
-  getCurrentUser: async (token: string): Promise<any> => {
-    return api.get<any>("/auth/me", token);
+  getCurrentUser: async (token: string): Promise<CurrentUser> => {
+    return api.get<CurrentUser>("/auth/me", token);
   },
 
   // Método para verificar si el token es válido
@@ -26,6 +30,11 @@ export const authService = {
       await api.get("/auth/verify", token);
       return true;
     } catch (error) {
+      if (error instanceof Error) {
+        console.error(error.message);
+      } else {
+        console.error("Unknown error occurred");
+      }
       return false;
     }
   },

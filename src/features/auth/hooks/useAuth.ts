@@ -1,6 +1,4 @@
-// src/features/auth/hooks/useAuth.ts
-
-import { useAuth as useAuthStore } from "../../../store/authStore";
+import { useContextAuth as useAuthStore } from "./useContextAuth";
 
 // Este hook es un wrapper alrededor del hook del store para poder extenderlo
 // con funcionalidades adicionales específicas de autenticación

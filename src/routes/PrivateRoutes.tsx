@@ -1,10 +1,8 @@
-// src/routes/PrivateRoutes.tsx
-
 import { Navigate, Outlet } from "react-router-dom";
-import { useAuth } from "../store/authStore";
+import { useContextAuth } from "../features/auth/hooks/useContextAuth";
 
 const PrivateRoutes = () => {
-  const { state } = useAuth();
+  const { state } = useContextAuth();
 
   // Si el usuario no está autenticado, redirigir al login
   // Si está en proceso de carga, mostrar un indicador de carga

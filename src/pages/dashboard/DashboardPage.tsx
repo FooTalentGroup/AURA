@@ -1,8 +1,8 @@
+import { useContextAuth } from "../../features/auth/hooks/useContextAuth";
 import DashboardLayout from "../../layouts/DashboardLayout";
-import { useAuth } from "../../store/authStore";
 
 const DashboardPage = () => {
-  const { state } = useAuth();
+  const { state } = useContextAuth();
 
   return (
     <DashboardLayout>

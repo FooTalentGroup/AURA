@@ -1,15 +1,13 @@
-// src/layouts/DashboardLayout.tsx
-
 import { ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../store/authStore";
+import { useContextAuth } from "../features/auth/hooks/useContextAuth";
 
 interface DashboardLayoutProps {
   children: ReactNode;
 }
 
 const DashboardLayout = ({ children }: DashboardLayoutProps) => {
-  const { logout, state } = useAuth();
+  const { logout, state } = useContextAuth();
   const navigate = useNavigate();
 
   const handleLogout = () => {
