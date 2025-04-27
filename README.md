@@ -69,6 +69,40 @@ backend/
 
 ---
 
+## 🌐 Enlace de Producción
+
+- Backend: [https://clinica-08df.onrender.com/](https://clinica-08df.onrender.com/m)
+
+
+---
+
+## ⚙️ Variables de Entorno en Producción
+
+- `SPRING_DATASOURCE_URL`: URL de conexión a la base de datos en producción.
+- `SPRING_DATASOURCE_USERNAME`: Usuario de la base de datos.
+- `SPRING_DATASOURCE_PASSWORD`: Contraseña de la base de datos.
+- `JWT_SECRET`: Clave secreta para generar tokens JWT.
+
+---
+
+## 🔧 Detalles Técnicos de Despliegue
+
+- **Plataforma**: Render
+- **Puerto abierto**: 8080
+- **Comando de build**: `mvn clean package`
+- **Comando de ejecución**: `java -jar target/backend-0.0.1-SNAPSHOT.jar`
+- **HTTPS**: Configuración automática proporcionada por Render
+- **CI/CD**: El despliegue se realiza automáticamente mediante integración continua (CI/CD) conectando el repositorio de GitHub a Render.
+- **DockerHub**: La imagen del backend se construye y publica en DockerHub como parte del proceso de CI/CD.
+
+---
+
+## 📡 Verificación de Endpoints
+
+- Endpoint de prueba: `GET https://clinica-08df.onrender.com/swagger-ui/index.html`
+- Estado: ✅ Funciona correctamente.
+
+---
 ## 🔷 Requisitos e Instalación
 
 
