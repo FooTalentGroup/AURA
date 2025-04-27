@@ -9,7 +9,9 @@ const AuthLayout = ({ children }: AuthLayoutProps) => {
     <div className="min-h-screen bg-gray-100 flex flex-col">
       <header className="bg-white shadow-sm py-4">
         <div className="container mx-auto px-4">
-          <h1 className="text-xl font-semibold text-gray-800">Mi Aplicación</h1>
+          <h1 className="text-xl font-semibold text-gray-800">
+            AURA | Administración Unificada de Registros y Atenciones
+          </h1>
         </div>
       </header>
 
@@ -17,8 +19,7 @@ const AuthLayout = ({ children }: AuthLayoutProps) => {
 
       <footer className="bg-white py-4 mt-auto">
         <div className="container mx-auto px-4 text-center text-gray-500 text-sm">
-          &copy; {new Date().getFullYear()} Mi Aplicación. Todos los derechos
-          reservados.
+          &copy; {new Date().getFullYear()} Aura. Todos los derechos reservados.
         </div>
       </footer>
     </div>
