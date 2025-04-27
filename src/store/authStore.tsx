@@ -1,10 +1,4 @@
-import {
-  //createContext,
-  // useContext,
-  useReducer,
-  ReactNode,
-  useEffect,
-} from "react";
+import { useReducer, ReactNode, useEffect } from "react";
 import { AuthState, AuthUser } from "../features/auth/types/auth.types";
 import { authService } from "../features/auth/services/authService";
 import { AuthContext } from "../features/auth/services/authContext";
@@ -81,10 +75,6 @@ export type AuthContextType = {
   logout: () => void;
   clearError: () => void;
 };
-
-// export const AuthContext = createContext<AuthContextType | undefined>(
-//   undefined
-// );
 
 // Proveedor del contexto
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
@@ -249,12 +239,3 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     </AuthContext.Provider>
   );
 };
-
-// Hook personalizado para usar el contexto
-// export const useAuth = () => {
-//   const context = useContext(AuthContext);
-//   if (context === undefined) {
-//     throw new Error("useAuth debe ser usado dentro de un AuthProvider");
-//   }
-//   return context;
-// };
