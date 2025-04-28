@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useContextAuth } from "../features/auth/hooks/useContextAuth";
 import { FaHome, FaUserFriends, FaCalendarAlt } from "react-icons/fa";
@@ -16,20 +16,21 @@ interface DashboardLayoutProps {
 const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const { logout, state } = useContextAuth();
   const navigate = useNavigate();
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
     navigate("/login");
   };
 
+  const handleModal = () => {
+    setIsModalOpen(!isModalOpen);
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
       <header className="bg-white shadow-sm">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          {/* <h1 className="text-xl font-semibold text-gray-800">
-            Panel de Control
-          </h1> */}
-
           <nav className="">
             <ul className="flex">
               <li className="">
@@ -62,64 +63,69 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
             </ul>
           </nav>
 
-          <div className="flex items-center">
+          <div className="flex items-center relative">
             <ul className="flex items-center gap-2">
               <li>
-                <FiMessageCircle />
+                <a
+                  href="#"
+                  className="flex items-center gap-2 p-3 rounded-full border hover:bg-gray-100 text-gray-800"
+                >
+                  <FiMessageCircle size={20} />
+                </a>
               </li>
               <li>
-                <FiBell />
+                <a
+                  href="#"
+                  className="flex items-center gap-2 p-3 rounded-full border hover:bg-gray-100 text-gray-800"
+                >
+                  <FiBell size={20} />
+                </a>
               </li>
               <li>
-                <FiChevronDown />
+                <a
+                  href="#"
+                  className="text-xl font-semibold w-11 h-11 flex justify-center items-center gap-2 p-3 rounded-full border hover:bg-gray-100 text-gray-800"
+                >
+                  P
+                </a>
+              </li>
+              <li className="flex items-center">
+                <button onClick={handleModal} className="cursor-pointer">
+                  <FiChevronDown size={24} />
+                </button>
               </li>
             </ul>
-            {state.user && (
-              <span className="text-gray-600 mr-4">{state.user.email}</span>
-            )}
-            <button
-              onClick={handleLogout}
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded cursor-pointer"
+
+            <div
+              className={`${
+                isModalOpen ? "block" : "hidden"
+              } absolute -bottom-27 right-0 bg-neutral-200 rounded-md p-4`}
             >
-              Cerrar Sesión
-            </button>
+              <nav>
+                <ul className="flex flex-col gap-3">
+                  <li className="font-medium">{state.user?.email}</li>
+                  <li>
+                    <button
+                      onClick={handleLogout}
+                      className="font-semibold cursor-pointer hover:text-blue-600"
+                    >
+                      Cerrar Sesión
+                    </button>
+                  </li>
+                </ul>
+              </nav>
+            </div>
           </div>
         </div>
       </header>
 
       <div className="flex flex-grow">
-        {/* <aside className="w-64 bg-white shadow-md">
-          <nav className="p-4">
-            <ul>
-              <li className="mb-2">
-                <a
-                  href="/dashboard"
-                  className="block p-2 rounded hover:bg-gray-100 text-gray-800"
-                >
-                  Inicio
-                </a>
-              </li>
-              <li className="mb-2">
-                <a
-                  href="/dashboard/profile"
-                  className="block p-2 rounded hover:bg-gray-100 text-gray-800"
-                >
-                  Perfil
-                </a>
-              </li>
-              <li className="mb-2">
-                <a
-                  href="/dashboard/settings"
-                  className="block p-2 rounded hover:bg-gray-100 text-gray-800"
-                >
-                  Configuración
-                </a>
-              </li>
-            </ul>
-          </nav>
-        </aside> */}
-
-        <main className="flex-grow p-6">{children}</main>
+        <main className="flex-grow p-6">
+          <h1 className="text-2xl font-semibold pb-8 pt-2">
+            Bienvenido {state.user?.email}
+          </h1>
+          {children}
+        </main>
       </div>
 
       <footer className="bg-white py-4">

@@ -7,7 +7,9 @@ const DashboardPage = () => {
   return (
     <DashboardLayout>
       <div className="bg-white shadow rounded-lg p-6">
-        <h2 className="text-2xl font-bold mb-4">Bienvenido al Dashboard</h2>
+        <h1 className="text-2xl font-bold mb-4">
+          Bienvenido {state.user?.email}
+        </h1>
 
         <div className="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6">
           <p className="text-blue-700">
