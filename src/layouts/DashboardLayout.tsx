@@ -1,5 +1,5 @@
 import { ReactNode, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useContextAuth } from "../features/auth/hooks/useContextAuth";
 import { FaHome, FaUserFriends, FaCalendarAlt } from "react-icons/fa";
 import {
@@ -34,31 +34,31 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
           <nav className="">
             <ul className="flex">
               <li className="">
-                <a
-                  href="/dashboard"
+                <Link
+                  to="/dashboard"
                   className="flex items-center gap-2 py-2 px-4 rounded-full hover:bg-gray-100 text-gray-800"
                 >
                   <FaHome />
                   Home
-                </a>
+                </Link>
               </li>
               <li className="">
-                <a
-                  href="/dashboard/profile"
+                <Link
+                  to="/patients"
                   className="flex items-center gap-2 py-2 px-4 rounded-full hover:bg-gray-100 text-gray-800"
                 >
                   <FaUserFriends />
                   Pacientes
-                </a>
+                </Link>
               </li>
               <li className="">
-                <a
-                  href="/dashboard/settings"
+                <Link
+                  to="/appointments"
                   className="flex items-center gap-2 py-2 px-4 rounded-full hover:bg-gray-100 text-gray-800"
                 >
                   <FaCalendarAlt />
                   Agenda
-                </a>
+                </Link>
               </li>
             </ul>
           </nav>
@@ -120,12 +120,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       </header>
 
       <div className="flex flex-grow">
-        <main className="flex-grow p-6">
-          <h1 className="text-2xl font-semibold pb-8 pt-2">
-            Bienvenido {state.user?.email}
-          </h1>
-          {children}
-        </main>
+        <main className="flex-grow p-6">{children}</main>
       </div>
 
       <footer className="bg-white py-4">

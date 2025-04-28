@@ -28,7 +28,6 @@ const RegisterForm = () => {
 
     await register(email, password);
 
-    // Si el registro es exitoso, redirigir al dashboard
     if (state.isAuthenticated) {
       navigate("/dashboard");
     }

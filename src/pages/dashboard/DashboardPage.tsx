@@ -6,6 +6,9 @@ const DashboardPage = () => {
 
   return (
     <DashboardLayout>
+      <h1 className="text-2xl font-semibold pb-8 pt-2">
+        Bienvenido {state.user?.email}
+      </h1>
       <div className="grid grid-cols-3 gap-4 rounded-lg">
         <div className="col-span-1 bg-white p-4 mb-6">
           <div>

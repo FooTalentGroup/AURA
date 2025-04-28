@@ -12,7 +12,6 @@ const LoginForm = () => {
     e.preventDefault();
     await login(email, password);
 
-    // Si el login es exitoso, redirigir al dashboard
     if (state.isAuthenticated) {
       navigate("/dashboard");
     }

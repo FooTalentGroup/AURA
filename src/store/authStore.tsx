@@ -3,7 +3,6 @@ import { AuthState, AuthUser } from "../features/auth/types/auth.types";
 import { authService } from "../features/auth/services/authService";
 import { AuthContext } from "../features/auth/services/authContext";
 
-// Estado inicial
 const initialState: AuthState = {
   user: null,
   isAuthenticated: false,
@@ -11,7 +10,6 @@ const initialState: AuthState = {
   error: null,
 };
 
-// Tipos de acciones
 type AuthAction =
   | { type: "LOGIN_REQUEST" }
   | { type: "LOGIN_SUCCESS"; payload: AuthUser }
@@ -22,7 +20,7 @@ type AuthAction =
   | { type: "LOGOUT" }
   | { type: "CLEAR_ERROR" };
 
-// Reducer
+// TODO dividir Reducer
 function authReducer(state: AuthState, action: AuthAction): AuthState {
   switch (action.type) {
     case "LOGIN_REQUEST":
@@ -82,46 +80,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   // Verificar si hay un token almacenado al cargar la aplicación
   useEffect(() => {
-    // const initAuth = async () => {
-    //   const token = authService.getStoredToken();
-
-    //   if (token) {
-    //     try {
-    //       const isValid = await authService.verifyToken(token);
-
-    //       if (isValid) {
-    //         // Supongamos que podemos extraer el ID y email del token o hacer una llamada a la API
-    //         // para obtener los datos del usuario
-    //         const userData = await authService.getCurrentUser(token);
-
-    //         dispatch({
-    //           type: "LOGIN_SUCCESS",
-    //           payload: {
-    //             id: userData.id,
-    //             email: userData.email,
-    //             token: token,
-    //           },
-    //         });
-    //       } else {
-    //         authService.removeStoredToken();
-    //         dispatch({ type: "LOGOUT" });
-    //       }
-    //     } catch (error) {
-    //       authService.removeStoredToken();
-    //       console.error((error as Error).message);
-
-    //       dispatch({ type: "LOGOUT" });
-    //     }
-    //   } else {
-    //     dispatch({ type: "LOGOUT" });
-    //   }
-
-    //   // Finalmente, marcamos la carga como completada incluso si no hay token
-    //   if (state.isLoading) {
-    //     dispatch({ type: "LOGIN_FAILURE", payload: "" });
-    //   }
-    // };
-
     const initAuth = async () => {
       try {
         const token = authService.getStoredToken();
@@ -150,7 +108,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         console.error((error as Error).message);
         dispatch({ type: "LOGOUT" });
       } finally {
-        // Marcar la carga como completada
         dispatch({ type: "LOGIN_FAILURE", payload: "" });
       }
     };

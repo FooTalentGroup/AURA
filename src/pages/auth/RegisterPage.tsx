@@ -1,5 +1,3 @@
-// src/pages/auth/RegisterPage.tsx
-
 import { Link } from "react-router-dom";
 import RegisterForm from "../../features/auth/components/RegisterForm";
 import AuthLayout from "../../layouts/AuthLayout";

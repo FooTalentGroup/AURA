@@ -27,7 +27,6 @@ export const authService = {
     return api.get<CurrentUser>("/auth/me", token);
   },
 
-  // Método para verificar si el token es válido
   verifyToken: async (token: string): Promise<boolean> => {
     try {
       await api.get("/auth/verify", token);
