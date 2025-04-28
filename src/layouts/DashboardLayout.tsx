@@ -1,6 +1,13 @@
 import { ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import { useContextAuth } from "../features/auth/hooks/useContextAuth";
+import { FaHome, FaUserFriends, FaCalendarAlt } from "react-icons/fa";
+import {
+  FiMessageCircle,
+  FiBell,
+  // FiSearch,
+  FiChevronDown,
+} from "react-icons/fi";
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -19,11 +26,54 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     <div className="min-h-screen bg-gray-100 flex flex-col">
       <header className="bg-white shadow-sm">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <h1 className="text-xl font-semibold text-gray-800">
+          {/* <h1 className="text-xl font-semibold text-gray-800">
             Panel de Control
-          </h1>
+          </h1> */}
+
+          <nav className="">
+            <ul className="flex">
+              <li className="">
+                <a
+                  href="/dashboard"
+                  className="flex items-center gap-2 py-2 px-4 rounded-full hover:bg-gray-100 text-gray-800"
+                >
+                  <FaHome />
+                  Home
+                </a>
+              </li>
+              <li className="">
+                <a
+                  href="/dashboard/profile"
+                  className="flex items-center gap-2 py-2 px-4 rounded-full hover:bg-gray-100 text-gray-800"
+                >
+                  <FaUserFriends />
+                  Pacientes
+                </a>
+              </li>
+              <li className="">
+                <a
+                  href="/dashboard/settings"
+                  className="flex items-center gap-2 py-2 px-4 rounded-full hover:bg-gray-100 text-gray-800"
+                >
+                  <FaCalendarAlt />
+                  Agenda
+                </a>
+              </li>
+            </ul>
+          </nav>
 
           <div className="flex items-center">
+            <ul className="flex items-center gap-2">
+              <li>
+                <FiMessageCircle />
+              </li>
+              <li>
+                <FiBell />
+              </li>
+              <li>
+                <FiChevronDown />
+              </li>
+            </ul>
             {state.user && (
               <span className="text-gray-600 mr-4">{state.user.email}</span>
             )}
@@ -38,7 +88,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       </header>
 
       <div className="flex flex-grow">
-        <aside className="w-64 bg-white shadow-md">
+        {/* <aside className="w-64 bg-white shadow-md">
           <nav className="p-4">
             <ul>
               <li className="mb-2">
@@ -67,7 +117,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
               </li>
             </ul>
           </nav>
-        </aside>
+        </aside> */}
 
         <main className="flex-grow p-6">{children}</main>
       </div>
