@@ -7,6 +7,8 @@ import com.clinica.aura.entities.patient.model.PatientModel;
 import com.clinica.aura.entities.patient.service.PatientService;
 import com.clinica.aura.entities.professional.dtoRequest.ProfessionalRequestDto;
 import com.clinica.aura.entities.professional.service.ProfessionalService;
+import com.clinica.aura.entities.receptionist.dtoRequest.ReceptionistRequestDto;
+import com.clinica.aura.entities.receptionist.service.ReceptionistService;
 import com.clinica.aura.entities.user_account.dtoRequest.AuthLoginRequestDto;
 import com.clinica.aura.entities.user_account.dtoResponse.AuthResponseDto;
 import com.clinica.aura.entities.user_account.dtoResponse.AuthResponseRegisterDto;
@@ -34,6 +36,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AuthController {
     private final ProfessionalService professionalService;
+    private final ReceptionistService receptionistService;
     private final UserDetailsServiceImpl userDetailsService;
     private final JwtUtils jwtUtils;
 
@@ -73,7 +76,7 @@ public class AuthController {
     @PostMapping(value = "/professional/register")
     public ResponseEntity<AuthResponseRegisterDto> registerProfessional(
             @RequestBody @Valid ProfessionalRequestDto authCreateUserDto,
-            HttpServletResponse servletResponse) { // 2. Añadir parámetro de respuesta
+            HttpServletResponse servletResponse) {
 
         AuthResponseRegisterDto response = professionalService.createUser(authCreateUserDto);
 
@@ -94,4 +97,35 @@ public class AuthController {
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
+
+    @Operation(summary = "Registrar nuevo recepcionista", description = """
+            Registra un nuevo recepcionista y obtiene un token de autenticación.
+            """)
+    @PostMapping(value = "/receptionist/register")
+    public ResponseEntity<AuthResponseRegisterDto> registerReceptionist(
+            @RequestBody @Valid ReceptionistRequestDto authCreateUserDto,
+            HttpServletResponse servletResponse) {
+
+        AuthResponseRegisterDto response = receptionistService.createUser(authCreateUserDto);
+
+        // 3. Configurar cookie con el token
+        Cookie jwtCookie = new Cookie("jwt_token", response.getToken());
+        jwtCookie.setHttpOnly(true);
+        jwtCookie.setSecure(true);
+        jwtCookie.setPath("/");
+        jwtCookie.setMaxAge(jwtUtils.getExpirationTime());
+
+        // 4. Añadir política SameSite
+        String cookieHeader = String.format(
+                "jwt_token=%s; Path=/; HttpOnly; SameSite=Lax; Max-Age=%d",
+                response.getToken(),
+                jwtUtils.getExpirationTime()
+        );
+        servletResponse.addHeader("Set-Cookie", cookieHeader);
+
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+
+
 }
