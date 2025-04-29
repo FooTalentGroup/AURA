@@ -1,6 +1,6 @@
 import { useContextAuth } from "../../features/auth/hooks/useContextAuth";
 import DashboardLayout from "../../layouts/DashboardLayout";
-import { FiEdit2 } from "react-icons/fi";
+import { FiEdit2, FiChevronLeft, FiChevronRight } from "react-icons/fi";
 
 const DashboardPage = () => {
   const { state } = useContextAuth();
@@ -26,14 +26,27 @@ const DashboardPage = () => {
         </div>
 
         <article className="col-span-2">
-          <div className="mb-6 bg-white p-4">
-            <ul className="flex justify-between">
-              <li className="">Lucas Fernández</li>
+          <div className="flex justify-between items-center mb-6 text-neutral-600 bg-white py-6 px-6">
+            <button className="hover:text-black cursor-pointer">
+              <FiChevronLeft size={22} />
+            </button>
+            <ul className="w-10/12 flex justify-between items-center">
+              <li className="flex items-center gap-2 font-semibold">
+                <img
+                  className="w-8 h-8 rounded-full"
+                  src="https://randomuser.me/api/portraits/med/men/7.jpg"
+                  alt=""
+                />
+                Lucas Fernández (37)
+              </li>
               <li className="">34.617.293</li>
               <li className="">05 mes a las 14.00</li>
               <li className="">Asistencia</li>
               <li className="">Llamar</li>
             </ul>
+            <button className="hover:text-black cursor-pointer">
+              <FiChevronRight size={22} />
+            </button>
           </div>
 
           <article>
@@ -42,7 +55,7 @@ const DashboardPage = () => {
                 <div className="flex items-center gap-2">
                   <img
                     src="https://randomuser.me/api/portraits/med/men/7.jpg"
-                    className="w-10 h-10 rounded-full"
+                    className="w-12 h-12 rounded-full"
                   />
 
                   <h3 className="text-lg font-semibold">Lucas Fernández</h3>
