@@ -28,80 +28,91 @@ const DashboardPage = () => {
         <article className="col-span-2">
           <div className="mb-6 bg-white p-4">
             <ul className="flex justify-between">
-              <li className="">Nombre del Paciente</li>
-              <li className="">[00.000.000]</li>
-              <li className="">[00 mes a las 00.00]</li>
+              <li className="">Lucas Fernández</li>
+              <li className="">34.617.293</li>
+              <li className="">05 mes a las 14.00</li>
               <li className="">Asistencia</li>
               <li className="">Llamar</li>
             </ul>
           </div>
 
-          <div className="bg-white p-4">
-            <header className="flex justify-between items-center mb-4">
-              <div className="flex items-center gap-2">
-                <span className="text-lg font-semibold w-8 h-8 flex justify-center items-center p-3 rounded-full border hover:bg-gray-100 text-gray-800">
-                  P
-                </span>
-                <h3 className="text-lg font-semibold">Nombre del paciente</h3>
-              </div>
-              <button>
-                <FiEdit2 size={20} />
-              </button>
-            </header>
+          <article>
+            <div className="bg-white p-4">
+              <header className="flex justify-between items-center mb-4">
+                <div className="flex items-center gap-2">
+                  <img
+                    src="https://randomuser.me/api/portraits/med/men/7.jpg"
+                    className="w-10 h-10 rounded-full"
+                  />
 
-            <form className="grid grid-cols-2 gap-4">
-              <div className="col-span-1">
-                <label className="block text-sm font-normal text-gray-500 mb-1">
-                  Fecha de nacimiento
-                </label>
-                <input
-                  type="text"
-                  name="birthDate"
-                  placeholder="00 / 00 / 0000"
-                  className="w-full py-2 px-3 bg-gray-100 rounded text-gray-700"
-                />
-              </div>
+                  <h3 className="text-lg font-semibold">Lucas Fernández</h3>
+                </div>
+                <button>
+                  <FiEdit2 size={20} />
+                </button>
+              </header>
 
-              <div className="col-span-1">
-                <label className="block text-sm font-normal text-gray-500 mb-1">
-                  Edad
-                </label>
-                <input
-                  type="text"
-                  name="age"
-                  placeholder="00"
-                  className="w-full py-2 px-3 bg-gray-100 rounded text-gray-700"
-                />
-              </div>
+              <form className="grid grid-cols-2 gap-4">
+                <div className="col-span-1">
+                  <label className="block text-sm font-normal text-gray-500 mb-1">
+                    Fecha de nacimiento
+                  </label>
+                  <input
+                    type="text"
+                    name="birthDate"
+                    placeholder="00 / 00 / 0000"
+                    value={"15/03/1987"}
+                    className="w-full py-2 px-3 bg-gray-100 rounded text-gray-700"
+                  />
+                </div>
 
-              <div className="col-span-2">
-                <label className="block text-sm font-normal text-gray-500 mb-1">
-                  DNI
-                </label>
-                <input
-                  type="text"
-                  name="dni"
-                  placeholder="00.000.000"
-                  className="w-full py-2 px-3 bg-gray-100 rounded text-gray-700"
-                />
-              </div>
-            </form>
+                <div className="col-span-1">
+                  <label className="block text-sm font-normal text-gray-500 mb-1">
+                    Edad
+                  </label>
+                  <input
+                    type="text"
+                    name="age"
+                    placeholder="00"
+                    value={37}
+                    className="w-full py-2 px-3 bg-gray-100 rounded text-gray-700"
+                  />
+                </div>
 
-            {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="border rounded p-4 hover:bg-gray-50 cursor-pointer">
-                <h4 className="font-medium">Gestionar Perfil</h4>
-                <p className="text-sm text-gray-500">
-                  Actualiza tu información personal
-                </p>
-              </div>
-              <div className="border rounded p-4 hover:bg-gray-50 cursor-pointer">
-                <h4 className="font-medium">Configuración</h4>
-                <p className="text-sm text-gray-500">
-                  Ajusta las preferencias de tu cuenta
-                </p>
-              </div>
-            </div> */}
-          </div>
+                <div className="col-span-2">
+                  <label className="block text-sm font-normal text-gray-500 mb-1">
+                    DNI
+                  </label>
+                  <input
+                    type="text"
+                    name="dni"
+                    placeholder="00.000.000"
+                    value={"34.617.293"}
+                    className="w-full py-2 px-3 bg-gray-100 rounded text-gray-700"
+                  />
+                </div>
+              </form>
+            </div>
+
+            <div className="bg-white p-4">
+              <form className="">
+                <div className="col-span-1">
+                  <label className="block text-sm font-normal text-gray-500 mb-1">
+                    Diagnóstico
+                  </label>
+                  <input
+                    type="text"
+                    name="birthDate"
+                    placeholder="Escriba el diagnóstico"
+                    value={
+                      "Paciente masculino de 37 años con antecedentes de hipertensión arterial controlada. Presenta dolor lumbar crónico irradiado a pierna izquierda, asociado a hernia de disco L4-L5 confirmada por resonancia. Refiere limitación funcional moderada. En tratamiento con kinesiología y AINEs."
+                    }
+                    className="w-full py-2 px-3 bg-gray-100 rounded text-gray-700"
+                  />
+                </div>
+              </form>
+            </div>
+          </article>
         </article>
       </div>
     </DashboardLayout>
