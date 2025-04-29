@@ -46,8 +46,8 @@ const DashboardPage = () => {
         Bienvenido {state.user?.email}
       </h1>
       <div className="grid grid-cols-7 gap-4 rounded-lg">
-        <div className="col-span-2 bg-white p-4 mb-6">
-          <div>
+        <div className="col-span-2 mb-6">
+          <div className="bg-white p-4">
             <header className="flex justify-between">
               <h2 className="">Turnos de hoy</h2>
               <p>Lunes 5</p>
