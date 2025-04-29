@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Getter
 @Setter
@@ -23,4 +24,5 @@ public class PatientResponseDto {
     private String insuranceName;
     private String school;
     private String paymentType;
+    private List<Long> professionalIds;
 }

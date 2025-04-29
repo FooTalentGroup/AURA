@@ -151,7 +151,13 @@ public class ReceptionistService {
         List<ReceptionistResponseDto> receptionistResponseDtos = receptionists.stream()
                 .map(receptionistMapper::toReceptionistResponseDto)
                 .toList();
-        return new PaginatedResponse<>(receptionistResponseDtos, receptionistsPage.getTotalPages(), receptionistsPage.getTotalElements());
+        return new PaginatedResponse<>(
+                receptionistResponseDtos,
+                receptionistsPage.getNumber(),
+                receptionistsPage.getSize(),
+                receptionistsPage.getTotalPages(),
+                receptionistsPage.getTotalElements()
+        );
     }
 
     @Transactional

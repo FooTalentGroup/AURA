@@ -8,6 +8,7 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Setter
 @Getter
@@ -58,4 +59,8 @@ public class PatientRequestDto {
 
     @Schema(description = "Tipo de pago preferido", example = "Efectivo")
     private String paymentType;
+
+    @Schema(description = "Los IDs de los Profesionales asignados al paciente", example = "[1, 2, 3]")
+    private List<Long> professionalIds;
+
 }

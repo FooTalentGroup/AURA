@@ -25,7 +25,8 @@ public class PatientController {
     private final PatientService patientService;
 
     @Operation(summary = "Registrar nuevo paciente", description = """
-            Registra un nuevo paciente
+            Registra un nuevo paciente, el campo professionalIds es opcional y se lo puede dejar en blanco, pero
+            si se lo llena se debe asegurarse de que sean ids de profesionales existentes en la base de datos
             """)
     @PostMapping(value = "/register")
     @Tag(name = "Patient")

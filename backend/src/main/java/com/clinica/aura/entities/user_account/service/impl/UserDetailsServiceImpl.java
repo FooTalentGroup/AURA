@@ -3,13 +3,17 @@ package com.clinica.aura.entities.user_account.service.impl;
 import com.clinica.aura.config.jwt.JwtUtils;
 import com.clinica.aura.entities.professional.repository.ProfessionalRepository;
 import com.clinica.aura.entities.user_account.dtoRequest.AuthLoginRequestDto;
+import com.clinica.aura.entities.user_account.dtoRequest.SuspendRequestDto;
 import com.clinica.aura.entities.user_account.dtoResponse.AuthResponseDto;
+import com.clinica.aura.entities.user_account.dtoResponse.UserResponseDto;
 import com.clinica.aura.entities.user_account.models.UserModel;
 import com.clinica.aura.entities.user_account.repository.RoleRepository;
 import com.clinica.aura.entities.user_account.repository.UserRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -20,8 +24,10 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,7 +58,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
         return new User(userEntity.getEmail(),
                 userEntity.getPassword(),
-                true,
+                userEntity.isEnabled(),
                 true,
                 true,
                 true,
@@ -80,9 +86,25 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     public Authentication authenticate(String username, String password) {
         UserDetails userDetails = loadUserByUsername(username);
-        if (userDetails == null) {
-            throw new BadCredentialsException("Usuario no encontrado");
+
+        UserModel userEntity = userRepository.findByEmail(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
+
+        if (!userEntity.isEnabled()) {
+            throw new DisabledException("Usuario suspendido hasta: " + userEntity.getSuspensionEnd());
         }
+
+//        if (!userDetails.isEnabled()) {
+//            throw new DisabledException("Usuario suspendido hasta: " +
+//                    ((UserModel) userDetails).getSuspensionEnd());
+//        }
+//        if (!userDetails.isAccountNonLocked()) {
+//            throw new LockedException("Cuenta bloqueada");
+//        }
+
+//        if (userDetails == null) {
+//            throw new BadCredentialsException("Usuario no encontrado");
+//        }
 
         if (!passwordEncoder.matches(password, userDetails.getPassword())) {
             throw new BadCredentialsException("Contraseña incorrecta");
@@ -90,5 +112,39 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
         return new UsernamePasswordAuthenticationToken(userDetails, userDetails.getPassword(), userDetails.getAuthorities());
 
+    }
+
+    public UserResponseDto getUserById(Long userId) {
+        UserModel user = userRepository.findById(userId)
+                .orElseThrow(() -> new UsernameNotFoundException("El Id del usuario " + userId + " no existe"));
+        return new UserResponseDto(user.getPerson().getName(), user.getPerson().getLastName());
+    }
+
+
+    @Transactional
+    public void suspendUser(Long userId, int duration, SuspendRequestDto.TimeUnit unit) {
+        UserModel user = userRepository.findById(userId)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
+
+        LocalDateTime now = LocalDateTime.now();
+        user.setSuspensionEnd(calculateSuspensionEnd(now, duration, unit));
+        userRepository.save(user);
+    }
+
+    private LocalDateTime calculateSuspensionEnd(LocalDateTime start, int duration, SuspendRequestDto.TimeUnit unit) {
+        return switch (unit) {
+            case HOURS -> start.plusHours(duration);
+            case DAYS -> start.plusDays(duration);
+            case WEEKS -> start.plusWeeks(duration);
+            case MONTHS -> start.plusMonths(duration);
+        };
+    }
+
+    @Transactional
+    public void activateUser(Long userId) {
+        UserModel user = userRepository.findById(userId)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
+        user.setSuspensionEnd(null);
+        userRepository.save(user);
     }
 }

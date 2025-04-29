@@ -119,13 +119,13 @@ public class ProfessionalService {
         );
     }
 
-    //listar todos los profesionales
-    public List<ProfessionalResponseDto> getAllProfessionals() {
-        return professionalRepository.findByDeletedFalse()
-                .stream()
-                .map(this::mapToDto)
-                .toList();
-    }
+//    //listar todos los profesionales
+//    public List<ProfessionalResponseDto> getAllProfessionals() {
+//        return professionalRepository.findByDeletedFalse()
+//                .stream()
+//                .map(this::mapToDto)
+//                .toList();
+//    }
 
 
     // Buscar profesional por ID

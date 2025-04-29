@@ -26,13 +26,13 @@ public class ProfessionalController {
 
     private final ProfessionalService professionalService;
 
-        //método para obtener todos los professionals
-        @Operation(summary = "Obtener todos los profesionales")
-        @ApiResponse(responseCode = "200", description = "Listado de profesionales obtenido exitosamente")
-        @GetMapping
-        public ResponseEntity<List<ProfessionalResponseDto>> getAllProfessionals() {
-            return ResponseEntity.ok(professionalService.getAllProfessionals());
-        }
+//        //método para obtener todos los professionals
+//        @Operation(summary = "Obtener todos los profesionales")
+//        @ApiResponse(responseCode = "200", description = "Listado de profesionales obtenido exitosamente")
+//        @GetMapping
+//        public ResponseEntity<List<ProfessionalResponseDto>> getAllProfessionals() {
+//            return ResponseEntity.ok(professionalService.getAllProfessionals());
+//        }
 
     // metodo para obtener professional por Id
     @Operation(summary = "Buscar profesional por ID")
@@ -50,7 +50,7 @@ public class ProfessionalController {
             description = "Usá los parámetros 'page' y 'size' en la URL para controlar la paginación. Ejemplo: /professionals/page?page=0&size=5"
     )
     @ApiResponse(responseCode = "200", description = "Listado paginado de profesionales obtenido exitosamente")
-    @GetMapping("/page")
+    @GetMapping()
     public ResponseEntity<Page<ProfessionalResponseDto>> getProfessionalsPaginated(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size

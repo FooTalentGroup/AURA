@@ -8,6 +8,8 @@ import com.clinica.aura.entities.patient.model.PatientModel;
 import com.clinica.aura.entities.patient.repository.PatientRepository;
 import com.clinica.aura.entities.person.model.PersonModel;
 import com.clinica.aura.entities.person.repository.PersonRepository;
+import com.clinica.aura.entities.professional.model.ProfessionalModel;
+import com.clinica.aura.entities.professional.repository.ProfessionalRepository;
 import com.clinica.aura.entities.user_account.Enum.EnumRole;
 import com.clinica.aura.entities.user_account.dtoResponse.AuthResponseRegisterDto;
 import com.clinica.aura.entities.user_account.models.RoleModel;
@@ -27,10 +29,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -43,6 +42,7 @@ public class PatientService {
 
     private final PersonRepository personRepository;//n
     private final MedicalRecordsRepository medicalRecordsRepository;
+    private final ProfessionalRepository professionalRepository;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -85,6 +85,23 @@ public class PatientService {
                 .paymentType(authCreateUserDto.getPaymentType())
                 .build();
 
+        List<Long> profIds = authCreateUserDto.getProfessionalIds();
+        if (profIds != null && !profIds.isEmpty()) {
+            List<ProfessionalModel> professionals = professionalRepository.findAllById(profIds);
+
+
+
+            List<Long> existingProfIds = professionals.stream().map(ProfessionalModel::getId).toList();
+            List<Long> nonExistingProfIds = new ArrayList<>(profIds);
+            nonExistingProfIds.removeAll(existingProfIds);
+            if (!nonExistingProfIds.isEmpty()) {
+                throw new EntityNotFoundException("Los siguientes profesionales no fueron encontrados: " + nonExistingProfIds);
+            }
+            patientModel.setProfessionals(professionals);
+        }else {
+            patientModel.setProfessionals(new ArrayList<>());
+        }
+
         patientRepository.save(patientModel);
 
         UserModel userEntity = UserModel.builder()
@@ -110,6 +127,11 @@ public class PatientService {
                 .insuranceName(patientModel.getInsuranceName())
                 .school(patientModel.getSchool())
                 .paymentType(patientModel.getPaymentType())
+                .professionalIds(
+                        patientModel.getProfessionals().stream()
+                                .map(ProfessionalModel::getId)
+                                .toList()
+                )
                 .build();
     }
 

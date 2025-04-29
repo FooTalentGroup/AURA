@@ -7,6 +7,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -46,5 +47,12 @@ public class UserModel {
     @OneToOne(targetEntity = PersonModel.class, fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "person_id", nullable = false)
     private PersonModel person;
+
+    @Column(name = "suspension_end")
+    private LocalDateTime suspensionEnd;
+
+    public boolean isEnabled() {
+        return suspensionEnd == null || suspensionEnd.isBefore(LocalDateTime.now());
+    }
 
 }
