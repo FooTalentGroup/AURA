@@ -1,4 +1,5 @@
 package com.clinica.aura.entities.professional.service;
+import com.clinica.aura.entities.patient.dtoRequest.PatientResponseDto;
 import jakarta.persistence.EntityNotFoundException;
 import com.clinica.aura.exceptions.*;
 import com.clinica.aura.config.jwt.JwtUtils;
@@ -22,10 +23,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
@@ -155,23 +154,44 @@ public class ProfessionalService {
                 .toList();
     }
 
-
-    //mapeo a Dto
+    //mapeo a dto
     private ProfessionalResponseDto mapToDto(ProfessionalModel professional) {
+        // Mapeo de los pacientes del profesional
+        List<PatientResponseDto> patientsDto = professional.getPatients() != null
+                ? professional.getPatients().stream()
+                .map(patient -> PatientResponseDto.builder()
+                        .id(patient.getId())
+                        .name(patient.getPerson() != null ? patient.getPerson().getName() : null) // Control de null
+                        .lastName(patient.getPerson() != null ? patient.getPerson().getLastName() : null)
+                        .email(null) // Omitimos `getUser` porque no existe en `PersonModel`
+                        .school(patient.getSchool())
+                        .professionalIds(patient.getProfessionals() != null
+                                ? patient.getProfessionals().stream()
+                                .map(ProfessionalModel::getId)
+                                .toList()
+                                : Collections.emptyList()) // Validar `professionalIds`
+                        .build()
+                )
+                .toList()
+                : Collections.emptyList(); // Si no hay pacientes, devolver lista vacía.
+
+        // Construimos el DTO utilizando los datos disponibles
+        PersonModel person = professional.getPerson(); // Aseguramos validaciones de null
         return new ProfessionalResponseDto(
                 professional.getId(),
-
-                professional.getPerson().getDni(),
-                professional.getPerson().getName(),
-                professional.getPerson().getLastName(),
-                professional.getPerson().getPhoneNumber(),
-                professional.getPerson().getCountry(),
-                professional.getPerson().getPhotoUrl(),
-                professional.getPerson().getBirthDate(),
+                person != null ? person.getDni() : null, // Validamos si existe `PersonModel`
+                person != null ? person.getName() : null,
+                person != null ? person.getLastName() : null,
+                person != null ? person.getPhoneNumber() : null,
+                person != null ? person.getCountry() : null,
+                person != null ? person.getPhotoUrl() : null,
+                person != null ? person.getBirthDate() : null,
                 professional.getLicenseNumber(),
-                professional.getSpecialty()
+                professional.getSpecialty(),
+                patientsDto // Agregamos los pacientes mapeados
         );
     }
+
 
     //metodo para hacer update a profesional
     public ProfessionalResponseDto updateProfessional(Long id, @Valid ProfessionalRequestDto dto) {
@@ -210,6 +230,38 @@ public class ProfessionalService {
         professional.setDeleted(true);
         professionalRepository.save(professional);
     }
+
+    //metodo para listar los pacientes de un profesional por su id
+    @Transactional(readOnly = true)
+    public List<PatientResponseDto> getPatientsByProfessionalId(Long professionalId) {
+        // Obtener el profesional por su ID
+        ProfessionalModel professional = professionalRepository.findById(professionalId)
+                .orElseThrow(() -> new EntityNotFoundException("Profesional no encontrado con ID: " + professionalId));
+
+        // Mapeo de sus pacientes (si existen)
+        return professional.getPatients() != null
+                ? professional.getPatients().stream()
+                .map(patient -> PatientResponseDto.builder()
+                        .id(patient.getId())
+                        .name(patient.getPerson() != null ? patient.getPerson().getName() : null) // Validación para posibles null
+                        .lastName(patient.getPerson() != null ? patient.getPerson().getLastName() : null)
+                        .email(null)
+                        .school(patient.getSchool())
+                        .professionalIds(patient.getProfessionals() != null
+                                ? patient.getProfessionals().stream()
+                                .map(ProfessionalModel::getId)
+                                .toList()
+                                : Collections.emptyList()) // Si no hay profesionales asociados, lista vacía
+                        .build()
+                )
+                .toList()
+                : Collections.emptyList(); // Si no tiene pacientes, devolvemos una lista vacía
+    }
+
+
+
+
+
 
 
 

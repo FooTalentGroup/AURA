@@ -1,5 +1,6 @@
 package com.clinica.aura.entities.professional.controller;
 
+import com.clinica.aura.entities.patient.dtoRequest.PatientResponseDto;
 import com.clinica.aura.entities.professional.dtoResponse.ProfessionalResponseDto;
 import com.clinica.aura.entities.professional.model.ProfessionalModel;
 import com.clinica.aura.entities.professional.service.ProfessionalService;
@@ -91,6 +92,19 @@ public ResponseEntity<ProfessionalResponseDto> updateProfessional(
         professionalService.deleteProfessional(id);
         return ResponseEntity.noContent().build();
     }
+
+    //obtener pacientes de un profesional
+
+    @Operation(summary = "Listar pacientes de un profesional",
+            description = "Devuelve una lista de los pacientes asociados al profesional especificado por su ID")
+    @ApiResponse(responseCode = "200", description = "Lista de pacientes obtenida exitosamente")
+    @ApiResponse(responseCode = "404", description = "Profesional no encontrado")
+    @GetMapping("/{id}/patients")
+    public ResponseEntity<List<PatientResponseDto>> getPatientsByProfessionalId(@PathVariable Long id) {
+        List<PatientResponseDto> patients = professionalService.getPatientsByProfessionalId(id);
+        return ResponseEntity.ok(patients);
+    }
+
 
 
 }
