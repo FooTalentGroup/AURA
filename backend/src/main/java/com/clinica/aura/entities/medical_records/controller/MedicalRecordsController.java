@@ -35,10 +35,9 @@ public class MedicalRecordsController {
         return ResponseEntity.ok(service.getAllMedicalRecords());
     }
 
-    @GetMapping("/historiaPage")
     //URL de prueba
     /*http://localhost:8080/medical-records/historiaPage?page=0&size=10*/
-
+    @GetMapping("/historiaPage")
     public ResponseEntity<Page<MedicalRecordsResponseDto>> getMedicalRecordsPage(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
@@ -49,7 +48,7 @@ public class MedicalRecordsController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
         service.delete(id);
-        return ResponseEntity.ok("Historial eliminado exitosamente.");
+        return ResponseEntity.ok("Historial con el ID "+ id +" eliminado exitosamente.");
     }
 
     @PutMapping("/{id}")

@@ -13,4 +13,5 @@ public class MedicalRecordsResponseDto {
     private String allergies;
     private String previousConditions;
     private Long patientId;
+    private Long professionalId;
 }

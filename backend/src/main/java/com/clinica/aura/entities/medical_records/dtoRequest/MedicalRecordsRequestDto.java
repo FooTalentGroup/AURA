@@ -11,6 +11,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class MedicalRecordsRequestDto {
     private Long patientId;
+    private Long professionalId;
     private String notes;
     private String allergies;
     private String previousConditions;
