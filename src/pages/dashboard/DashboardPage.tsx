@@ -1,145 +1,72 @@
 // TODO eliminar los componentes que elimine el equipo de UX/UI antes de componetizar
 import { useContextAuth } from "../../features/auth/hooks/useContextAuth";
 import DashboardLayout from "../../layouts/DashboardLayout";
-import { FiEdit2, FiMoreHorizontal } from "react-icons/fi";
-
-interface DiagnosisInputProps {
-  title: string;
-  day: boolean;
-}
-
-const DiagnosisInput = ({ title, day }: DiagnosisInputProps) => {
-  return (
-    <div className="w-full mx-auto bg-white p-4 mt-2">
-      <div className="flex items-center justify-between mb-5">
-        <h2 className="text-sm text-gray-800">{title}</h2>
-        <button className="text-gray-700 hover:text-black focus:outline-none cursor-pointer">
-          <FiMoreHorizontal size={20} />
-        </button>
-      </div>
-      {day && <h3 className="text-sm text-gray-800 mb-3">Día</h3>}
-
-      <div className="relative mb-2">
-        <input
-          type="text"
-          placeholder="Ingrese una descripción"
-          className="peer w-full border border-gray-900 rounded px-3 pt-3 pb-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-        <label className="absolute left-3 top-1 text-gray-500 text-sm bg-white px-1 peer-placeholder-shown:-top-2 peer-placeholder-shown:text-xs peer-placeholder-shown:text-gray-400 transition-all duration-200">
-          Descripción
-        </label>
-      </div>
-    </div>
-  );
-};
-
-const DiagnosisForm = () => {
-  return (
-    <div className="p-4">
-      <form className="">
-        <header className="flex justify-between items-center mb-4">
-          <h2 className="">Diagnóstico</h2>
-          <button
-            className="cursor-pointer"
-            onClick={(e) => e.preventDefault()}
-          >
-            <FiEdit2 size={20} />
-          </button>
-        </header>
-        <p className="py-1 px-3 bg-gray-100 text-gray-700 line-clamp-4">
-          Paciente masculino de 37 años con antecedentes de hipertensión
-          arterial controlada. Presenta dolor lumbar crónico irradiado a pierna
-          izquierda, asociado a hernia de disco L4-L5 confirmada por resonancia.
-          Refiere limitación funcional moderada. En tratamiento con kinesiología
-          y AINEs.
-        </p>
-      </form>
-    </div>
-  );
-};
-
-const PatientItem = () => {
-  return (
-    <div className="p-4">
-      <header className="flex justify-between items-center mb-4">
-        <div className="flex items-center gap-2">
-          <img
-            src="https://randomuser.me/api/portraits/med/men/7.jpg"
-            className="w-12 h-12 rounded-full"
-          />
-
-          <h3 className="text-lg font-semibold">Lucas Fernández</h3>
-        </div>
-        <button className="cursor-pointer">
-          <FiEdit2 size={20} />
-        </button>
-      </header>
-
-      <form className="grid grid-cols-2 gap-4">
-        <div className="col-span-1">
-          <label className="block text-sm font-semibold text-gray-500 mb-2">
-            Fecha de nacimiento
-          </label>
-          <input
-            type="text"
-            name="birthDate"
-            placeholder="00 / 00 / 0000"
-            value={"15/03/1987"}
-            className="w-full py-2 px-3 bg-gray-100 rounded text-gray-700"
-          />
-        </div>
-
-        <div className="col-span-1">
-          <label className="block text-sm font-semibold text-gray-500 mb-2">
-            Edad
-          </label>
-          <input
-            type="text"
-            name="age"
-            placeholder="00"
-            value={37}
-            className="w-full py-2 px-3 bg-gray-100 rounded text-gray-700"
-          />
-        </div>
-
-        <div className="col-span-2">
-          <label className="block text-sm font-semibold text-gray-500 mb-2">
-            DNI
-          </label>
-          <input
-            type="text"
-            name="dni"
-            placeholder="00.000.000"
-            value={"34.617.293"}
-            className="w-full py-2 px-3 bg-gray-100 rounded text-gray-700"
-          />
-        </div>
-      </form>
-    </div>
-  );
-};
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
 const PatientItemList = () => {
   return (
-    <div className="bg-white mb-6 text-neutral-600 py-6 px-6">
+    <div className="text-neutral-600">
       <ul className="flex justify-between items-center">
-        <li className="flex items-center gap-2 font-semibold">
-          <img
-            className="w-8 h-8 rounded-full"
-            src="https://randomuser.me/api/portraits/med/men/7.jpg"
-            alt=""
-          />
-          Lucas Fernández (37)
+        <li className="flex gap-2">
+          <span className="text-sm bg-gray-200 px-2 py-1 rounded-xl">
+            12:00
+          </span>
+          <div className="flex items-center gap-2">
+            <img
+              className="w-8 h-8 rounded-full object-cover"
+              src="https://images.unsplash.com/photo-1605783313291-1b996e9e7376?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+              alt=""
+            />
+            <ul className="leading-3 font-semibold">
+              <li className="text-gray-700">Lucas Fernández</li>
+              <li className="text-gray-500 text-sm">(13)</li>
+            </ul>
+          </div>
         </li>
-        <li className="">34.617.293</li>
-        <li className="">05 mes a las 14.00</li>
-        <li className="">Asistencia</li>
-        <li className="">Llamar</li>
+        <li className="">44.617.293</li>
+        <li className="">[Obra Social]</li>
+        <li className="">
+          <button className="py-2 px-5 border rounded-4xl hover:bg-gray-300 cursor-pointer">
+            Ver paciente
+          </button>
+        </li>
       </ul>
     </div>
   );
 };
 
+const MedicalHistory = () => {
+  return (
+    <article>
+      <h2 className="text-xl font-semibold mb-4">Historial clinico</h2>
+      <ul className="[&>li]:mb-2 text-sm">
+        <li>05/04/2025 — Audiometría infantil — Normal</li>
+        <li>20/03/2025 — Evaluación neurológica — Seguimiento recomendado</li>
+        <li>12/02/2025 — Test de lenguaje — Déficit leve</li>
+      </ul>
+    </article>
+  );
+};
+
+const PatientNotes = () => {
+  return (
+    <article>
+      <header className="flex justify-between mb-4">
+        <h2 className="text-xl font-semibold">Notas</h2>
+        <button className="text-neutral-600 py-2 px-5 border rounded-4xl hover:bg-gray-300 cursor-pointer">
+          Agregar Nota
+        </button>
+      </header>
+      <p>
+        Paciente de 13 años con déficit leve en lenguaje, evaluado en febrero.
+        Seguimiento neurológico recomendado en marzo por posibles dificultades
+        de aprendizaje. Audiometría normal en abril, sin alteraciones auditivas.
+        Se sugiere terapia de lenguaje y control neurológico periódico para
+        monitorear evolución. Familia comprometida con el proceso.
+      </p>
+    </article>
+  );
+};
 const DashboardPage = () => {
   const { state } = useContextAuth();
 
@@ -150,7 +77,7 @@ const DashboardPage = () => {
       </h1>
       <div className="grid grid-cols-7 gap-4 rounded-lg">
         <div className="col-span-2 mb-6">
-          <div className="bg-white p-4">
+          <div className="bg-white p-4 rounded-2xl">
             <h2 className="text-center mb-6">Turnos de hoy</h2>
 
             <div className="flex justify-between px-4">
@@ -170,22 +97,33 @@ const DashboardPage = () => {
           </div>
         </div>
 
-        <article className="col-span-5">
-          <PatientItemList />
+        <article className="col-span-5 flex flex-col gap-4">
+          <div className="flex justify-between items-center bg-white py-6 px-4 rounded-2xl">
+            <h2 className="text-xl">Paciente asignado</h2>
 
-          <article className="bg-white grid grid-cols-7">
-            <div className="col-span-3">
-              <PatientItem />
-              <DiagnosisForm />
+            <div className="flex gap-4">
+              <span className="font-semibold text-gray-500">11/12</span>
+              <button className="text-gray-500 hover:text-gray-900 cursor-pointer">
+                <FaChevronLeft />
+              </button>
+              <button className="text-gray-500 hover:text-gray-900 cursor-pointer">
+                <FaChevronRight />
+              </button>
             </div>
-            <div className="col-span-2">
-              <DiagnosisInput title="Diagnóstico" day={false} />
-              <DiagnosisInput title="Observaciones" day={true} />
-            </div>
-            <div className="col-span-2">
-              <DiagnosisInput title="Sesiones" day={true} />
-            </div>
-          </article>
+          </div>
+          <div className="flex flex-col gap-4 bg-white rounded-2xl p-4">
+            <PatientItemList />
+            <MedicalHistory />
+            <PatientNotes />
+            <footer className="flex justify-end gap-2">
+              <button className="text-neutral-600 py-2 px-5 border rounded-4xl hover:bg-gray-300 cursor-pointer">
+                Asistencia
+              </button>
+              <button className="text-white py-2 px-5 bg-blue-500 rounded-4xl hover:bg-blue-700 cursor-pointer">
+                Llamar
+              </button>
+            </footer>
+          </div>
         </article>
       </div>
     </DashboardLayout>
