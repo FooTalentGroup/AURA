@@ -1,116 +1,70 @@
-import { useState, useEffect } from "react";
+
 import DashboardLayout from "../../layouts/DashboardLayout";
-import { patientService } from "../../features/patients/services/patientService";
-import { Patient } from "../../features/patients/types/patient.types";
-import { useContextAuth } from "../../features/auth/hooks/useContextAuth";
+import { usePatients } from '../../core/hooks/patients/usePatients';
+import { PatientRow } from '../../core/components/patients/PatientRow.tsx';
+import { FiSearch, FiUserPlus } from 'react-icons/fi';
+import { IconType } from 'react-icons';
+import { useState } from "react";
 
+const Icons: Record<string, IconType> = {
+  search: FiSearch,
+  addPatient: FiUserPlus,
+};
 const PatientsPage = () => {
-  const [patients, setPatients] = useState<Patient[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const { state } = useContextAuth();
+  const { patients, loading } = usePatients();
+  const [query, setQuery] = useState('');
+  const SearchIcon = Icons.search;
+  const AddIcon = Icons.addPatient;
 
-  useEffect(() => {
-    const fetchPatients = async () => {
-      try {
-        if (state.user?.token) {
-          const data = await patientService.getPatients(state.user.token);
-          setPatients(data);
-          setError(null);
-        }
-      } catch (err) {
-        setError("Error al cargar los pacientes");
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const filtered = patients.filter(p =>
+    p.name.toLowerCase().includes(query.toLowerCase()) ||
+    p.dni.includes(query)
+  );
 
-    fetchPatients();
-  }, [state.user]);
+  const handleView = (id: string) => {
+    console.log('Ver paciente', id);
+  };
+
 
   return (
     <DashboardLayout>
-      <div className="container mx-auto px-4 py-6">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold">Pacientes</h1>
-          <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-            Nuevo Paciente
-          </button>
+     <div className="max-w-[100rem] mx-auto px-2 py-8 bg-gray-50">
+        {/* Header */}
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-6">
+          <h1 className="text-2xl font-semibold text-gray-800 mb-4 md:mb-0">Lista de pacientes</h1>
+          <div className="flex items-center space-x-4 w-full md:w-auto">
+            <div className="relative w-full md:w-64">
+              <input
+                type="text"
+                value={query}
+                onChange={e => setQuery(e.target.value)}
+                placeholder="Buscar..."
+                className="h-12 w-full rounded-full border border-gray-300 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-[#65558F]"
+              />
+              <SearchIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-lg" />
+            </div>
+            <button className="h-12 bg-[#65558F] hover:bg-opacity-90 text-white px-5 rounded-full flex items-center space-x-2 transition">
+              <AddIcon className="text-xl" />
+              <span>Agregar paciente</span>
+            </button>
+          </div>
         </div>
 
+        {/* Column Headers */}
+        <div className="grid grid-cols-[2fr_1fr_1fr_1fr_2fr_1fr] text-sm text-gray-500 mb-4 px-4">
+          <span>Paciente</span>
+          <span>DNI</span>
+          <span>Próxima sesión</span>
+          <span>Última sesión</span>
+          <span>Contacto</span>
+          <span> Historia clinica</span>
+        </div>
+
+        {/* Patient Rows */}
         {loading ? (
-          <div className="flex justify-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-          </div>
-        ) : error ? (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-            {error}
-          </div>
+          <p className="text-center text-gray-600">Cargando pacientes...</p>
         ) : (
-          <div className="bg-white shadow-md rounded-lg overflow-hidden">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Nombre
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    DNI
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Email
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Teléfono
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Acciones
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {patients.length > 0 ? (
-                  patients.map((patient) => (
-                    <tr key={patient.id}>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        {patient.firstName} {patient.lastName}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        {patient.dni}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        {patient.email || "-"}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        {patient.phone || "-"}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <button className="text-blue-600 hover:text-blue-900 mr-3">
-                          Ver
-                        </button>
-                        <button className="text-green-600 hover:text-green-900 mr-3">
-                          Editar
-                        </button>
-                        <button className="text-red-600 hover:text-red-900">
-                          Eliminar
-                        </button>
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td
-                      colSpan={5}
-                      className="px-6 py-4 text-center text-gray-500"
-                    >
-                      No hay pacientes registrados
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
+          filtered.map(p => <PatientRow key={p.id} patient={p} onView={handleView} />)
         )}
       </div>
     </DashboardLayout>
@@ -118,3 +72,6 @@ const PatientsPage = () => {
 };
 
 export default PatientsPage;
+
+
+
