@@ -157,30 +157,17 @@ public class ProfessionalService {
 
     //mapeo a dto
     private ProfessionalResponseDto mapToDto(ProfessionalModel professional) {
-        // Mapeo de los pacientes del profesional
-        List<PatientResponseDto> patientsDto = professional.getPatients() != null
-                ? professional.getPatients().stream()
-                .map(patient -> PatientResponseDto.builder()
-                        .id(patient.getId())
-                        .name(patient.getPerson() != null ? patient.getPerson().getName() : null) // Control de null
-                        .lastName(patient.getPerson() != null ? patient.getPerson().getLastName() : null)
-                        .email(null) // Omitimos `getUser` porque no existe en `PersonModel`
-                        .school(patient.getSchool())
-                        .professionalIds(patient.getProfessionals() != null
-                                ? patient.getProfessionals().stream()
-                                .map(ProfessionalModel::getId)
-                                .toList()
-                                : Collections.emptyList()) // Validar `professionalIds`
-                        .build()
-                )
-                .toList()
-                : Collections.emptyList(); // Si no hay pacientes, devolver lista vacía.
+        PersonModel person = professional.getPerson();
 
-        // Construimos el DTO utilizando los datos disponibles
-        PersonModel person = professional.getPerson(); // Aseguramos validaciones de null
+        List<Long> patientIds = professional.getPatients() != null
+                ? professional.getPatients().stream()
+                .map(PatientModel::getId)
+                .toList()
+                : Collections.emptyList();
+
         return new ProfessionalResponseDto(
                 professional.getId(),
-                person != null ? person.getDni() : null, // Validamos si existe `PersonModel`
+                person != null ? person.getDni() : null,
                 person != null ? person.getName() : null,
                 person != null ? person.getLastName() : null,
                 person != null ? person.getPhoneNumber() : null,
@@ -189,7 +176,7 @@ public class ProfessionalService {
                 person != null ? person.getBirthDate() : null,
                 professional.getLicenseNumber(),
                 professional.getSpecialty(),
-                patientsDto // Agregamos los pacientes mapeados
+                patientIds // ahora solo devuelvo los IDs de los pacientes
         );
     }
 

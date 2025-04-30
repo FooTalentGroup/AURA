@@ -47,5 +47,5 @@ public class ProfessionalResponseDto {
     @Schema(description = "Especialidad del profesional", example = "Medicina")
     private String specialty;
 
-    private List<PatientResponseDto> patients;
+    private List<Long> patientIds; // Cambiado aquí
 }
