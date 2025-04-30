@@ -8,7 +8,7 @@ const PatientItemList = () => {
     <div className="text-neutral-600">
       <ul className="flex justify-between items-center">
         <li className="flex gap-2">
-          <span className="text-sm bg-gray-200 px-2 py-1 rounded-xl">
+          <span className="flex items-center font-semibold text-sm bg-gray-200/60 px-3 py-[1px] rounded-xl">
             12:00
           </span>
           <div className="flex items-center gap-2">
@@ -24,9 +24,9 @@ const PatientItemList = () => {
           </div>
         </li>
         <li className="">44.617.293</li>
-        <li className="">[Obra Social]</li>
+        <li className="">OSPLAD</li>
         <li className="">
-          <button className="py-2 px-5 border rounded-4xl hover:bg-gray-300 cursor-pointer">
+          <button className="text-blue-600 py-2 px-5 border border-black rounded-4xl hover:bg-gray-200 cursor-pointer">
             Ver paciente
           </button>
         </li>
@@ -38,7 +38,10 @@ const PatientItemList = () => {
 const MedicalHistory = () => {
   return (
     <article>
-      <h2 className="text-xl font-semibold mb-4">Historial clinico</h2>
+      <h2 className="flex items-center gap-2 text-xl font-semibold mb-4">
+        {" "}
+        <ClipBoardIcon /> Historial clínico
+      </h2>
       <ul className="[&>li]:mb-2 text-sm">
         <li>05/04/2025 — Audiometría infantil — Normal</li>
         <li>20/03/2025 — Evaluación neurológica — Seguimiento recomendado</li>
@@ -52,8 +55,10 @@ const PatientNotes = () => {
   return (
     <article>
       <header className="flex justify-between mb-4">
-        <h2 className="text-xl font-semibold">Notas</h2>
-        <button className="text-neutral-600 py-2 px-5 border rounded-4xl hover:bg-gray-300 cursor-pointer">
+        <h2 className="flex gap-2 items-center text-xl font-semibold">
+          <ClipBoardIcon /> Notas
+        </h2>
+        <button className="text-blue-600 py-2 px-5 border border-black rounded-4xl hover:bg-gray-200 cursor-pointer">
           Agregar Nota
         </button>
       </header>
@@ -67,6 +72,64 @@ const PatientNotes = () => {
     </article>
   );
 };
+
+const ClipBoardIcon = () => {
+  return (
+    <div className="bg-purple-200 p-2 rounded-full">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        strokeWidth={1.5}
+        stroke="currentColor"
+        className="size-6"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M15.666 3.888A2.25 2.25 0 0 0 13.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 0 1-.75.75H9a.75.75 0 0 1-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 0 1-2.25 2.25H6.75A2.25 2.25 0 0 1 4.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 0 1 1.927-.184"
+        />
+      </svg>
+    </div>
+  );
+};
+
+const CalendarIcon = () => {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      strokeWidth={1.5}
+      stroke="currentColor"
+      className="size-6 text-blue-600"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5m-9-6h.008v.008H12v-.008ZM12 15h.008v.008H12V15Zm0 2.25h.008v.008H12v-.008ZM9.75 15h.008v.008H9.75V15Zm0 2.25h.008v.008H9.75v-.008ZM7.5 15h.008v.008H7.5V15Zm0 2.25h.008v.008H7.5v-.008Zm6.75-4.5h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V15Zm0 2.25h.008v.008h-.008v-.008Zm2.25-4.5h.008v.008H16.5v-.008Zm0 2.25h.008v.008H16.5V15Z"
+      />
+    </svg>
+  );
+};
+
+const CheckIcon = () => {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      className="size-6 text-blue-600"
+    >
+      <path
+        fillRule="evenodd"
+        d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm13.36-1.814a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z"
+        clipRule="evenodd"
+      />
+    </svg>
+  );
+};
+
 const DashboardPage = () => {
   const { state } = useContextAuth();
 
@@ -78,19 +141,20 @@ const DashboardPage = () => {
       <div className="grid grid-cols-7 gap-4 rounded-lg">
         <div className="col-span-2 mb-6">
           <div className="bg-white p-4 rounded-2xl">
-            <h2 className="text-center mb-6">Turnos de hoy</h2>
+            <h2 className="text-xl mb-6">Turnos de hoy</h2>
 
             <div className="flex justify-between px-4">
               <article className="">
-                <p className="text-sm mb-2">Agendados</p>
-                <p className="w-32 font-semibold border border-gray-300 p-2 rounded-2xl">
-                  0005
+                <p className="text-blue-600 text-sm mb-2">Agendados</p>
+                <p className="flex gap-2 w-32 font-semibold border border-gray-300 p-2 rounded-xl">
+                  <CalendarIcon />
+                  12
                 </p>
               </article>
               <article className="">
-                <p className="text-sm mb-2">Atendidos</p>
-                <p className="w-32 font-semibold border border-gray-300 p-2 rounded-2xl">
-                  00/00
+                <p className="text-blue-600 text-sm mb-2">Atendidos</p>
+                <p className="flex gap-2 w-32 font-semibold border border-gray-300 p-2 rounded-xl">
+                  <CheckIcon /> 01/12
                 </p>
               </article>
             </div>
@@ -102,7 +166,7 @@ const DashboardPage = () => {
             <h2 className="text-xl">Paciente asignado</h2>
 
             <div className="flex gap-4">
-              <span className="font-semibold text-gray-500">11/12</span>
+              <span className="font-semibold text-gray-500">1/12</span>
               <button className="text-gray-500 hover:text-gray-900 cursor-pointer">
                 <FaChevronLeft />
               </button>
@@ -111,12 +175,18 @@ const DashboardPage = () => {
               </button>
             </div>
           </div>
-          <div className="flex flex-col gap-4 bg-white rounded-2xl p-4">
-            <PatientItemList />
-            <MedicalHistory />
-            <PatientNotes />
-            <footer className="flex justify-end gap-2">
-              <button className="text-neutral-600 py-2 px-5 border rounded-4xl hover:bg-gray-300 cursor-pointer">
+          <div className="flex flex-col bg-white rounded-2xl p-6">
+            <div className="border-b border-gray-400 pb-6">
+              <PatientItemList />
+            </div>
+            <div className="border-b border-gray-400 py-6">
+              <MedicalHistory />
+            </div>
+            <div className="border-b border-gray-400 py-6">
+              <PatientNotes />
+            </div>
+            <footer className="flex justify-end gap-2 pt-6">
+              <button className="text-neutral-600 py-2 px-5 border rounded-4xl hover:bg-gray-200 cursor-pointer">
                 Asistencia
               </button>
               <button className="text-white py-2 px-5 bg-blue-500 rounded-4xl hover:bg-blue-700 cursor-pointer">
