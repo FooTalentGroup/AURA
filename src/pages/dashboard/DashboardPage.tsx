@@ -164,7 +164,7 @@ const DashboardPage = () => {
 
         <article className="col-span-5 flex flex-col gap-4">
           <div className="flex justify-between items-center bg-white py-6 px-4 rounded-2xl">
-            <h2 className="text-xl">Paciente asignado</h2>
+            <h2 className="text-xl">Lucas Fernández</h2>
 
             <div className="flex gap-4">
               <span className="font-semibold text-gray-500">1/12</span>
