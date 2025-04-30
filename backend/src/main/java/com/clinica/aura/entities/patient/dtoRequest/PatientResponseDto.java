@@ -25,4 +25,7 @@ public class PatientResponseDto {
     private String school;
     private String paymentType;
     private List<Long> professionalIds;
+
+
+
 }
