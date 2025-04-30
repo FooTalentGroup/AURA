@@ -11,6 +11,7 @@ const PatientItemList = () => {
           <span className="flex items-center font-semibold text-sm bg-gray-200/60 px-3 py-[1px] rounded-xl">
             12:00
           </span>
+
           <div className="flex items-center gap-2">
             <img
               className="w-8 h-8 rounded-full object-cover"
@@ -154,7 +155,7 @@ const DashboardPage = () => {
               <article className="">
                 <p className="text-blue-600 text-sm mb-2">Atendidos</p>
                 <p className="flex gap-2 w-32 font-semibold border border-gray-300 p-2 rounded-xl">
-                  <CheckIcon /> 01/12
+                  <CheckIcon /> 1/12
                 </p>
               </article>
             </div>
@@ -185,10 +186,16 @@ const DashboardPage = () => {
             <div className="border-b border-gray-400 py-6">
               <PatientNotes />
             </div>
-            <footer className="flex justify-end gap-2 pt-6">
-              <button className="text-neutral-600 py-2 px-5 border rounded-4xl hover:bg-gray-200 cursor-pointer">
-                Asistencia
-              </button>
+            <footer className="flex justify-end gap-4 pt-6">
+              <select
+                className="border border-gray-400 px-2 rounded-lg cursor-pointer"
+                name=""
+                id=""
+              >
+                <option value="">Asistencia</option>
+                <option value="">Presente</option>
+                <option value="">Ausente</option>
+              </select>
               <button className="text-white py-2 px-5 bg-blue-500 rounded-4xl hover:bg-blue-700 cursor-pointer">
                 Llamar
               </button>
