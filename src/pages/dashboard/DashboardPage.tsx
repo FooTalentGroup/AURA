@@ -1,5 +1,5 @@
 // TODO eliminar los componentes que elimine el equipo de UX/UI antes de componetizar
-import { useContextAuth } from "../../features/auth/hooks/useContextAuth";
+// import { useContextAuth } from "../../features/auth/hooks/useContextAuth";
 import DashboardLayout from "../../layouts/DashboardLayout";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
@@ -132,13 +132,13 @@ const CheckIcon = () => {
 };
 
 const DashboardPage = () => {
-  const { state } = useContextAuth();
+  // const { state } = useContextAuth();
 
   return (
     <DashboardLayout>
-      <h1 className="text-2xl font-semibold pb-8 pt-2">
+      {/* <h1 className="text-2xl font-semibold pb-8 pt-2">
         Bienvenido {state.user?.email}
-      </h1>
+      </h1> */}
       <div className="grid grid-cols-7 gap-4 rounded-lg">
         <div className="col-span-2 mb-6">
           <div className="bg-white p-4 rounded-2xl">
@@ -147,14 +147,14 @@ const DashboardPage = () => {
             <div className="flex justify-between px-4">
               <article className="">
                 <p className="text-blue-600 text-sm mb-2">Agendados</p>
-                <p className="flex gap-2 w-32 font-semibold border border-gray-300 p-2 rounded-xl">
+                <p className="flex gap-2 w-28 font-semibold border border-gray-300 p-2 rounded-lg">
                   <CalendarIcon />
                   12
                 </p>
               </article>
               <article className="">
                 <p className="text-blue-600 text-sm mb-2">Atendidos</p>
-                <p className="flex gap-2 w-32 font-semibold border border-gray-300 p-2 rounded-xl">
+                <p className="flex gap-2 w-28 font-semibold border border-gray-300 p-2 rounded-lg">
                   <CheckIcon /> 1/12
                 </p>
               </article>
