@@ -1,5 +1,6 @@
 package com.clinica.aura.entities.professional.service;
 import com.clinica.aura.entities.patient.dtoRequest.PatientResponseDto;
+import com.clinica.aura.entities.patient.model.PatientModel;
 import jakarta.persistence.EntityNotFoundException;
 import com.clinica.aura.exceptions.*;
 import com.clinica.aura.config.jwt.JwtUtils;
@@ -234,35 +235,31 @@ public class ProfessionalService {
     //metodo para listar los pacientes de un profesional por su id
     @Transactional(readOnly = true)
     public List<PatientResponseDto> getPatientsByProfessionalId(Long professionalId) {
-        // Obtener el profesional por su ID
-        ProfessionalModel professional = professionalRepository.findById(professionalId)
-                .orElseThrow(() -> new EntityNotFoundException("Profesional no encontrado con ID: " + professionalId));
+        List<PatientModel> patients = professionalRepository.findPatientsByProfessionalId(professionalId);
 
-        // Mapeo de sus pacientes (si existen)
-        return professional.getPatients() != null
-                ? professional.getPatients().stream()
-                .map(patient -> PatientResponseDto.builder()
-                        .id(patient.getId())
-                        .name(patient.getPerson() != null ? patient.getPerson().getName() : null) // Validación para posibles null
-                        .lastName(patient.getPerson() != null ? patient.getPerson().getLastName() : null)
-                        .email(null)
-                        .school(patient.getSchool())
-                        .professionalIds(patient.getProfessionals() != null
-                                ? patient.getProfessionals().stream()
-                                .map(ProfessionalModel::getId)
-                                .toList()
-                                : Collections.emptyList()) // Si no hay profesionales asociados, lista vacía
-                        .build()
-                )
-                .toList()
-                : Collections.emptyList(); // Si no tiene pacientes, devolvemos una lista vacía
+        return patients.stream().map(patient -> {
+            PersonModel person = patient.getPerson(); // extraigo la persona
+
+            return PatientResponseDto.builder()
+                    .id(patient.getId())
+                    .name(person != null ? person.getName() : null)
+                    .lastName(person != null ? person.getLastName() : null)
+                    .dni(person != null ? person.getDni() : null)
+                    .phoneNumber(person != null ? person.getPhoneNumber() : null)
+                    .country(person != null ? person.getCountry() : null)
+                    .photoUrl(person != null ? person.getPhotoUrl() : null)
+                    .birthDate(person != null ? person.getBirthDate() : null)
+                    .email(null) // lo dejás en null porque no tenés el usuario
+                    .hasInsurance(patient.isHasInsurance())
+                    .insuranceName(patient.getInsuranceName())
+                    .school(patient.getSchool())
+                    .paymentType(patient.getPaymentType())
+                    .professionalIds(patient.getProfessionals() != null
+                            ? patient.getProfessionals().stream()
+                            .map(ProfessionalModel::getId)
+                            .toList()
+                            : Collections.emptyList())
+                    .build();
+        }).toList();
     }
-
-
-
-
-
-
-
-
 }
