@@ -112,7 +112,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       </header>
 
       <div className="flex flex-grow">
-        <aside className="flex-grow flex justify-center items-center">
+        <aside className="flex-grow flex justify-center items-center max-w-24">
           <nav className="px-1">
             <ul className="text-gray-800 flex flex-col gap-4 h-full text-center [&>li>a]:flex-col [&>li>a]:hover:text-blue-700 [&>li>a]:hover:bg-sky-200/60">
               <li className="">
