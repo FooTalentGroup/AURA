@@ -1,12 +1,14 @@
 package com.clinica.aura.entities.patient.model;
 
 import com.clinica.aura.entities.person.model.PersonModel;
+import com.clinica.aura.entities.professional.model.ProfessionalModel;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Setter
@@ -32,6 +34,15 @@ public class PatientModel {
     private String school;
 
     private String paymentType;
+
+    @ManyToMany(targetEntity = ProfessionalModel.class, fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "professional_patient",
+            joinColumns = @JoinColumn(name = "patient_id"),
+            inverseJoinColumns = @JoinColumn(name = "professional_id")
+    )
+    private List<ProfessionalModel> professionals;
+
 
     @UpdateTimestamp
     private LocalDateTime createdAt;

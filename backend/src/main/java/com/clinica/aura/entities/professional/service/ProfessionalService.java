@@ -1,4 +1,6 @@
 package com.clinica.aura.entities.professional.service;
+import com.clinica.aura.entities.patient.dtoRequest.PatientResponseDto;
+import com.clinica.aura.entities.patient.model.PatientModel;
 import jakarta.persistence.EntityNotFoundException;
 import com.clinica.aura.exceptions.*;
 import com.clinica.aura.config.jwt.JwtUtils;
@@ -22,10 +24,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
@@ -119,13 +119,13 @@ public class ProfessionalService {
         );
     }
 
-    //listar todos los profesionales
-    public List<ProfessionalResponseDto> getAllProfessionals() {
-        return professionalRepository.findByDeletedFalse()
-                .stream()
-                .map(this::mapToDto)
-                .toList();
-    }
+//    //listar todos los profesionales
+//    public List<ProfessionalResponseDto> getAllProfessionals() {
+//        return professionalRepository.findByDeletedFalse()
+//                .stream()
+//                .map(this::mapToDto)
+//                .toList();
+//    }
 
 
     // Buscar profesional por ID
@@ -155,23 +155,31 @@ public class ProfessionalService {
                 .toList();
     }
 
-
-    //mapeo a Dto
+    //mapeo a dto
     private ProfessionalResponseDto mapToDto(ProfessionalModel professional) {
+        PersonModel person = professional.getPerson();
+
+        List<Long> patientIds = professional.getPatients() != null
+                ? professional.getPatients().stream()
+                .map(PatientModel::getId)
+                .toList()
+                : Collections.emptyList();
+
         return new ProfessionalResponseDto(
                 professional.getId(),
-
-                professional.getPerson().getDni(),
-                professional.getPerson().getName(),
-                professional.getPerson().getLastName(),
-                professional.getPerson().getPhoneNumber(),
-                professional.getPerson().getCountry(),
-                professional.getPerson().getPhotoUrl(),
-                professional.getPerson().getBirthDate(),
+                person != null ? person.getDni() : null,
+                person != null ? person.getName() : null,
+                person != null ? person.getLastName() : null,
+                person != null ? person.getPhoneNumber() : null,
+                person != null ? person.getCountry() : null,
+                person != null ? person.getPhotoUrl() : null,
+                person != null ? person.getBirthDate() : null,
                 professional.getLicenseNumber(),
-                professional.getSpecialty()
+                professional.getSpecialty(),
+                patientIds // ahora solo devuelvo los IDs de los pacientes
         );
     }
+
 
     //metodo para hacer update a profesional
     public ProfessionalResponseDto updateProfessional(Long id, @Valid ProfessionalRequestDto dto) {
@@ -211,6 +219,34 @@ public class ProfessionalService {
         professionalRepository.save(professional);
     }
 
+    //metodo para listar los pacientes de un profesional por su id
+    @Transactional(readOnly = true)
+    public List<PatientResponseDto> getPatientsByProfessionalId(Long professionalId) {
+        List<PatientModel> patients = professionalRepository.findPatientsByProfessionalId(professionalId);
 
+        return patients.stream().map(patient -> {
+            PersonModel person = patient.getPerson(); // extraigo la persona
 
+            return PatientResponseDto.builder()
+                    .id(patient.getId())
+                    .name(person != null ? person.getName() : null)
+                    .lastName(person != null ? person.getLastName() : null)
+                    .dni(person != null ? person.getDni() : null)
+                    .phoneNumber(person != null ? person.getPhoneNumber() : null)
+                    .country(person != null ? person.getCountry() : null)
+                    .photoUrl(person != null ? person.getPhotoUrl() : null)
+                    .birthDate(person != null ? person.getBirthDate() : null)
+                    .email(null) // lo dejás en null porque no tenés el usuario
+                    .hasInsurance(patient.isHasInsurance())
+                    .insuranceName(patient.getInsuranceName())
+                    .school(patient.getSchool())
+                    .paymentType(patient.getPaymentType())
+                    .professionalIds(patient.getProfessionals() != null
+                            ? patient.getProfessionals().stream()
+                            .map(ProfessionalModel::getId)
+                            .toList()
+                            : Collections.emptyList())
+                    .build();
+        }).toList();
+    }
 }

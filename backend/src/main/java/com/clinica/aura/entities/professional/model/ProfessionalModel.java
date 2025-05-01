@@ -1,5 +1,6 @@
 package com.clinica.aura.entities.professional.model;
 
+import com.clinica.aura.entities.patient.model.PatientModel;
 import com.clinica.aura.entities.person.model.PersonModel;
 import jakarta.persistence.*;
 import lombok.*;
@@ -8,6 +9,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.annotations.Where;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Where(clause = "deleted = false")
@@ -31,6 +33,10 @@ public class ProfessionalModel {
     private String licenseNumber;
 
     private String specialty;
+
+    @ManyToMany(targetEntity = PatientModel.class, mappedBy = "professionals", fetch = FetchType.LAZY)
+    private List<PatientModel> patients;
+
 
     @CreationTimestamp
     private LocalDateTime createdAt;

@@ -1,5 +1,6 @@
 package com.clinica.aura.entities.professional.controller;
 
+import com.clinica.aura.entities.patient.dtoRequest.PatientResponseDto;
 import com.clinica.aura.entities.professional.dtoResponse.ProfessionalResponseDto;
 import com.clinica.aura.entities.professional.model.ProfessionalModel;
 import com.clinica.aura.entities.professional.service.ProfessionalService;
@@ -26,13 +27,13 @@ public class ProfessionalController {
 
     private final ProfessionalService professionalService;
 
-        //método para obtener todos los professionals
-        @Operation(summary = "Obtener todos los profesionales")
-        @ApiResponse(responseCode = "200", description = "Listado de profesionales obtenido exitosamente")
-        @GetMapping
-        public ResponseEntity<List<ProfessionalResponseDto>> getAllProfessionals() {
-            return ResponseEntity.ok(professionalService.getAllProfessionals());
-        }
+//        //método para obtener todos los professionals
+//        @Operation(summary = "Obtener todos los profesionales")
+//        @ApiResponse(responseCode = "200", description = "Listado de profesionales obtenido exitosamente")
+//        @GetMapping
+//        public ResponseEntity<List<ProfessionalResponseDto>> getAllProfessionals() {
+//            return ResponseEntity.ok(professionalService.getAllProfessionals());
+//        }
 
     // metodo para obtener professional por Id
     @Operation(summary = "Buscar profesional por ID")
@@ -50,7 +51,7 @@ public class ProfessionalController {
             description = "Usá los parámetros 'page' y 'size' en la URL para controlar la paginación. Ejemplo: /professionals/page?page=0&size=5"
     )
     @ApiResponse(responseCode = "200", description = "Listado paginado de profesionales obtenido exitosamente")
-    @GetMapping("/page")
+    @GetMapping()
     public ResponseEntity<Page<ProfessionalResponseDto>> getProfessionalsPaginated(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
@@ -91,6 +92,19 @@ public ResponseEntity<ProfessionalResponseDto> updateProfessional(
         professionalService.deleteProfessional(id);
         return ResponseEntity.noContent().build();
     }
+
+    //obtener pacientes de un profesional
+
+    @Operation(summary = "Listar pacientes de un profesional",
+            description = "Devuelve una lista de los pacientes asociados al profesional especificado por su ID")
+    @ApiResponse(responseCode = "200", description = "Lista de pacientes obtenida exitosamente")
+    @ApiResponse(responseCode = "404", description = "Profesional no encontrado")
+    @GetMapping("/{id}/patients")
+    public ResponseEntity<List<PatientResponseDto>> getPatientsByProfessionalId(@PathVariable Long id) {
+        List<PatientResponseDto> patients = professionalService.getPatientsByProfessionalId(id);
+        return ResponseEntity.ok(patients);
+    }
+
 
 
 }

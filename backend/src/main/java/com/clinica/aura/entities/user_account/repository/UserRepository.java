@@ -5,6 +5,8 @@ import com.clinica.aura.entities.user_account.models.UserModel;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<UserModel, Long> {
@@ -13,4 +15,5 @@ public interface UserRepository extends JpaRepository<UserModel, Long> {
     Optional<UserModel> findByPerson(PersonModel person);
     Optional<UserModel> findByPersonId(Long personId);
 
+    List<UserModel> findAllBySuspensionEndBefore(LocalDateTime now);
 }
