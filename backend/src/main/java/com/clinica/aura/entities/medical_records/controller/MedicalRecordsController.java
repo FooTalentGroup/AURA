@@ -30,10 +30,11 @@ public class MedicalRecordsController {
         return ResponseEntity.ok(service.findById(id));
     }
 
+    /*
     @GetMapping
     public ResponseEntity<?> findAll() {
         return ResponseEntity.ok(service.getAllMedicalRecords());
-    }
+    }*/
 
     //URL de prueba
     /*http://localhost:8080/medical-records/historiaPage?page=0&size=10*/

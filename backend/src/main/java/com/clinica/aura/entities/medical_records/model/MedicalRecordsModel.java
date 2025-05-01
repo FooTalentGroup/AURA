@@ -25,11 +25,11 @@ public class MedicalRecordsModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(targetEntity = PatientModel.class, fetch = FetchType.LAZY)
+    @ManyToOne(targetEntity = PatientModel.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "patient_id", nullable = false)
     private PatientModel patients;
 
-    @OneToOne(targetEntity = ProfessionalModel.class, fetch = FetchType.LAZY)
+    @ManyToOne(targetEntity = ProfessionalModel.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "professional_id", nullable = false)
     private ProfessionalModel professional;
 
