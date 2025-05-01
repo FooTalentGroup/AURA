@@ -32,7 +32,12 @@ public interface PatientRepository extends JpaRepository<PatientModel, Long> {
     void deletePersonById(Long id);
 
     // se usa en el metodo buscar por dni
-    Optional<PatientModel> findByPersonDni(String dni);
+    List<PatientModel> findByPerson_DniStartingWith(String dni);
+
+
+    //se usa en el metodo buscar por nombre
+    List<PatientModel> findByPerson_NameContainingIgnoreCase(String name);
+
 
 
 }
