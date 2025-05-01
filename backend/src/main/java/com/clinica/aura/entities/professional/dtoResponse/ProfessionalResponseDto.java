@@ -1,11 +1,14 @@
 package com.clinica.aura.entities.professional.dtoResponse;
 
+import com.clinica.aura.entities.patient.dtoRequest.PatientResponseDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.List;
+
 @Getter
 
 
@@ -43,4 +46,6 @@ public class ProfessionalResponseDto {
 
     @Schema(description = "Especialidad del profesional", example = "Medicina")
     private String specialty;
+
+    private List<Long> patientIds; // Cambiado aquí
 }
