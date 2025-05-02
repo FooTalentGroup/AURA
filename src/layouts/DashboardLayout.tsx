@@ -91,7 +91,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
             <div
               className={`${
                 isModalOpen ? "block" : "hidden"
-              } absolute -bottom-27 right-0 bg-neutral-200 rounded-md p-4`}
+              } absolute z-[1] -bottom-27 right-0 bg-neutral-200 rounded-md p-4`}
             >
               <nav>
                 <ul className="flex flex-col gap-3">
