@@ -1,5 +1,6 @@
 package com.clinica.aura.entities.professional.repository;
 
+import com.clinica.aura.entities.patient.model.PatientModel;
 import com.clinica.aura.entities.professional.model.ProfessionalModel;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -17,5 +18,8 @@ public interface ProfessionalRepository extends JpaRepository<ProfessionalModel,
             "WHERE LOWER(p.person.lastName) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
             "OR LOWER(p.specialty) LIKE LOWER(CONCAT('%', :keyword, '%'))")
     List<ProfessionalModel> searchByLastNameOrSpecialty(@Param("keyword") String keyword);
+
+    @Query("SELECT p.patients FROM ProfessionalModel p WHERE p.id = :professionalId")
+    List<PatientModel> findPatientsByProfessionalId(@Param("professionalId") Long professionalId);
 
 }
