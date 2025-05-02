@@ -28,7 +28,8 @@ public class PatientController {
 
     @Operation(summary = "Registrar nuevo paciente", description = """
             Registra un nuevo paciente, el campo professionalIds es opcional y se lo puede dejar en blanco, pero
-            si se lo llena se debe asegurarse de que sean ids de profesionales existentes en la base de datos
+            si se lo llena se debe asegurarse de que sean ids de profesionales existentes en la base de datos, sino quieren
+            agregar profesionales se deben dejar los corchetes vacios.
             """)
     @PostMapping(value = "/register")
     @Tag(name = "Patient")
@@ -81,16 +82,16 @@ public class PatientController {
         }
     }
 
-    //dni con parcialidad
+    //dni exacto
     @GetMapping("/buscar/dni")
-    @Operation(summary = "Buscar paciente por dni", description = "Se busca un paciente por coincidencia exacta o parcial del DNI.")
-    public ResponseEntity<List<PatientResponseDto>> getPatientsByDni(
+    @Operation(summary = "Buscar paciente por dni", description = "Se busca un paciente por dni exacto.")
+    public ResponseEntity<PatientResponseDto> getPatientByDni(
             @RequestParam(name = "dni") String dni) {
-        return ResponseEntity.ok(patientService.getPatientsByDni(dni));
+        return ResponseEntity.ok(patientService.getPatientByDni(dni));
     }
 
     @GetMapping("/buscar/nombre")
-    @Operation(summary = "Buscar paciente por nombre", description = "Se busca un paciente por nombre (coincidencia parcial o total).")
+    @Operation(summary = "Buscar paciente por nombre", description = "Acepta datos totales y parciales para la búsqueda")
     public ResponseEntity<List<PatientResponseDto>> getPatientsByName(
             @RequestParam(name = "nombre") String name) {
         return ResponseEntity.ok(patientService.getPatientsByName(name));
