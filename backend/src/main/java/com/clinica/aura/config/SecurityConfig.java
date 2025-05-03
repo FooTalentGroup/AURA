@@ -5,6 +5,7 @@ import com.clinica.aura.config.jwt.JwtUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -43,7 +44,8 @@ public class SecurityConfig {
                         //.requestMatchers(HttpMethod.POST,"/auth/login").permitAll()
 
                         //Rutas privadas
-                        //.requestMatchers(HttpMethod.POST,"/auth/register").hasRole("ADMIN")
+//                        .requestMatchers(HttpMethod.POST,"/auth/{userId}/activate").hasRole("ADMIN")
+//                        .requestMatchers(HttpMethod.POST,"/auth/{userId}/suspend").hasRole("ADMIN")
 
                         //Cualquier otro endpoint está denegado
                         .anyRequest().permitAll()
