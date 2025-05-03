@@ -9,12 +9,14 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/receptionist")
 @RequiredArgsConstructor
 @Tag(name = "Receptionist", description = "Controlador de recepcionistas")
+@PreAuthorize("hasRole('ADMIN') or hasRole('RECEPTIONIST')")
 public class ReceptionistController {
 
     private final ReceptionistService receptionistService;

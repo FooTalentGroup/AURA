@@ -13,6 +13,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,6 +22,7 @@ import java.util.List;
 @RequestMapping("/patients")
 @RequiredArgsConstructor
 @Tag(name = "Patient", description = "Endpoints para manejar pacientes")
+@PreAuthorize("hasRole('ADMIN') or hasRole('RECEPTIONIST') or hasRole('PROFESSIONAL')")
 public class PatientController {
 
     private final PatientService patientService;

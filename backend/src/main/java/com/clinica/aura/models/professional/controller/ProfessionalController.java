@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.data.domain.Page;
 import com.clinica.aura.models.professional.dtoRequest.ProfessionalRequestDto;
@@ -19,6 +20,7 @@ import java.util.List;
 @RequestMapping("/professionals")
 @RequiredArgsConstructor
 @Tag(name = "Professional", description = "Endpoints para la gestión de profesionales")
+@PreAuthorize("hasRole('ADMIN') or hasRole('PROFESSIONAL')")
 public class ProfessionalController {
 
     private final ProfessionalService professionalService;
