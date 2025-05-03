@@ -20,14 +20,15 @@ public class PatientRequestDto {
 
     // Datos de la persona
     @Pattern(regexp = "\\d+", message = "El DNI solo debe tener números")
+    @Size(min =8, max=8, message = "El dni debe tener entre 8 caracteres")
     @NotBlank(message = "El DNI es obligatorio")
     @Schema(description = "DNI del paciente", requiredMode = Schema.RequiredMode.REQUIRED, example = "40650777")
     private String dni;
 
     @Pattern(regexp = "^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$", message = "El nombre solo debe contener letras")
     @NotBlank
-    @Schema(description = "Nombre del paciente", example = "Juan Carlos", requiredMode = Schema.RequiredMode.REQUIRED)
-    private String name;
+    @Schema(description = "Nombre del paciente", example = "Marina ", requiredMode = Schema.RequiredMode.REQUIRED)
+    private String name; //cambie el nombre del paciente. Ya que no quieren que en el ejemplo sea el mismo que el mail (ya que mail pertenece al tutor y el nombre al paciente menor)
 
     @Pattern(regexp = "^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$", message = "El apellido solo debe contener letras")
     @NotBlank
@@ -45,8 +46,8 @@ public class PatientRequestDto {
     @Schema(description = "URL de la foto del paciente", example = "https://example.com/foto.jpg")
     private String photoUrl;
 
-    @Past
-    @Schema(description = "Fecha de nacimiento del paciente", example = "1990-05-20")
+    @Past //piden una fecha pequeña de molde
+    @Schema(description = "Fecha de nacimiento del paciente", example = "2015-05-20")
     private LocalDate birthDate;
 
     // Datos específicos del paciente
