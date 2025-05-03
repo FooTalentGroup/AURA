@@ -11,6 +11,12 @@ import java.util.List;
 import java.util.Optional;
 
 public interface PatientRepository extends JpaRepository<PatientModel, Long> {
+
+    @Modifying
+    @Transactional //esta query se usa en el metodo delete paciente/professional_patient
+    @Query(value = "DELETE FROM professional_patient WHERE patient_id = :patientId", nativeQuery = true)
+    void deletePatientProfessionalRelation(Long patientId);
+
     @Modifying
     @Transactional     //esta query se usa en  el metodo delete paciente/ users_roles
     @Query(value = "DELETE FROM users_roles WHERE user_id = :userId", nativeQuery = true)
@@ -32,8 +38,7 @@ public interface PatientRepository extends JpaRepository<PatientModel, Long> {
     void deletePersonById(Long id);
 
     // se usa en el metodo buscar por dni
-    List<PatientModel> findByPerson_DniStartingWith(String dni);
-
+    Optional<PatientModel> findByPersonDni(String dni);
 
     //se usa en el metodo buscar por nombre
     List<PatientModel> findByPerson_NameContainingIgnoreCase(String name);

@@ -143,7 +143,7 @@ public class PatientService {
                 .build();
     }
 
-//    //listado de pacientes
+//    //listado de pacientes //esto es viejo se puede borrar si se requiere
 //    public List<PatientResponseDto> getPatientsByRange(int from, int to) {
 //        List<PatientModel> patients = patientRepository.findAll();
 //
@@ -295,56 +295,55 @@ public class PatientService {
                 .build();
     }
 
-    @Transactional //Borrar paciente por id
+    @Transactional
     public void deletePatientById(Long patientId) {
         PatientModel patient = patientRepository.findById(patientId)
                 .orElseThrow(() -> new EntityNotFoundException("Paciente no encontrado"));
 
         Long personId = patient.getId();
 
-        // 1. Eliminar registros médicos asociados
+        // Elimina relaciones con profesionales
+        patientRepository.deletePatientProfessionalRelation(patientId);
+
+        // Elimina registros médicos asociados (si corresponde)
         medicalRecordsRepository.deleteByPatientId(personId);
 
+        // Elimina usuario y sus roles si existen
         Optional<UserModel> userOpt = userRepository.findByPersonId(personId);
         userOpt.ifPresent(user -> {
             patientRepository.deleteUserRolesByUserId(user.getId());
             patientRepository.deleteUserById(user.getId());
         });
 
-        patientRepository.deletePatientByIdNative(personId);
+        //Elimina paciente y persona
+        patientRepository.deletePatientByIdNative(patientId);
         patientRepository.deletePersonById(personId);
     }
 
-    //buscar paciente por dni
-    public List<PatientResponseDto> getPatientsByDni(String dni) {
-        List<PatientModel> patients = patientRepository.findByPerson_DniStartingWith(dni);
+    //buscar paciente por dni exacto
+    public PatientResponseDto getPatientByDni(String dni) {
+        var patient = patientRepository.findByPersonDni(dni)
+                .orElseThrow(() -> new RuntimeException("Paciente no encontrado con DNI: " + dni));
 
-        if (patients.isEmpty()) {
-            throw new RuntimeException("No se encontraron pacientes con DNI que comience con: " + dni);
-        }
+        var person = patient.getPerson();
+        var user = userRepository.findByPerson(person).orElse(null);
 
-        return patients.stream().map(patient -> {
-            PersonModel person = patient.getPerson();
-            var user = userRepository.findByPerson(person).orElse(null);
-
-            return PatientResponseDto.builder()
-                    .id(patient.getId())
-                    .name(person.getName())
-                    .lastName(person.getLastName())
-                    .phoneNumber(person.getPhoneNumber())
-                    .country(person.getCountry())
-                    .photoUrl(person.getPhotoUrl())
-                    .birthDate(person.getBirthDate())
-                    .dni(person.getDni())
-                    .email(user != null ? user.getEmail() : null)
-                    .insuranceName(patient.getInsuranceName())
-                    .hasInsurance(patient.getInsuranceName() != null && !patient.getInsuranceName().isBlank())
-                    .school(patient.getSchool())
-                    .paymentType(patient.getPaymentType())
-                    .build();
-        }).toList();
+        return PatientResponseDto.builder()
+                .id(patient.getId())
+                .name(person.getName())
+                .lastName(person.getLastName())
+                .phoneNumber(person.getPhoneNumber())
+                .country(person.getCountry())
+                .photoUrl(person.getPhotoUrl())
+                .birthDate(person.getBirthDate())
+                .dni(person.getDni())
+                .email(user != null ? user.getEmail() : null)
+                .insuranceName(patient.getInsuranceName())
+                .hasInsurance(patient.getInsuranceName() != null && !patient.getInsuranceName().isBlank())
+                .school(patient.getSchool())
+                .paymentType(patient.getPaymentType())
+                .build();
     }
-
 
     //buscar paciente por nombre
     public List<PatientResponseDto> getPatientsByName(String name) {

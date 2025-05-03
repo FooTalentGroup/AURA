@@ -23,5 +23,6 @@ public class PersonModel {
     private String photoUrl;
     private LocalDate birthDate;
     private String phoneNumber;
-    private String country;
+   private String country;
+
 }
