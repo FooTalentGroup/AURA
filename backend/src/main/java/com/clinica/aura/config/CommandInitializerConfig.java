@@ -1,20 +1,19 @@
 package com.clinica.aura.config;
 
-import com.clinica.aura.entities.person.model.PersonModel;
-import com.clinica.aura.entities.user_account.Enum.EnumPermission;
-import com.clinica.aura.entities.user_account.Enum.EnumRole;
-import com.clinica.aura.entities.user_account.models.PermissionModel;
-import com.clinica.aura.entities.user_account.models.RoleModel;
-import com.clinica.aura.entities.user_account.models.UserModel;
-import com.clinica.aura.entities.user_account.repository.PermissionRepository;
-import com.clinica.aura.entities.user_account.repository.RoleRepository;
-import com.clinica.aura.entities.user_account.repository.UserRepository;
+import com.clinica.aura.models.person.model.PersonModel;
+import com.clinica.aura.models.user_account.Enum.EnumPermission;
+import com.clinica.aura.models.user_account.Enum.EnumRole;
+import com.clinica.aura.models.user_account.models.PermissionModel;
+import com.clinica.aura.models.user_account.models.RoleModel;
+import com.clinica.aura.models.user_account.models.UserModel;
+import com.clinica.aura.models.user_account.repository.PermissionRepository;
+import com.clinica.aura.models.user_account.repository.RoleRepository;
+import com.clinica.aura.models.user_account.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
