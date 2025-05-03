@@ -6,6 +6,7 @@ import com.clinica.aura.entities.medical_records.dtoRequest.MedicalRecordsReques
 import com.clinica.aura.entities.medical_records.service.MedicalRecordsService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,15 +30,26 @@ public class MedicalRecordsController {
         return ResponseEntity.ok(service.findById(id));
     }
 
+    /*
     @GetMapping
     public ResponseEntity<?> findAll() {
         return ResponseEntity.ok(service.getAllMedicalRecords());
+    }*/
+
+    //URL de prueba
+    /*http://localhost:8080/medical-records/historiaPage?page=0&size=10*/
+    @GetMapping("/historiaPage")
+    public ResponseEntity<Page<MedicalRecordsResponseDto>> getMedicalRecordsPage(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ){
+        return ResponseEntity.ok(service.getMedicalRecordsPage(page, size));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
         service.delete(id);
-        return ResponseEntity.ok("Historial eliminado exitosamente.");
+        return ResponseEntity.ok("Historial con el ID "+ id +" eliminado exitosamente.");
     }
 
     @PutMapping("/{id}")
