@@ -32,9 +32,9 @@ public class ReceptionistMapper {
                 .lastName(person.getLastName())
                 .dni(person.getDni())
                 .phoneNumber(person.getPhoneNumber())
-                .country(person.getCountry())
-                .birthDate(person.getBirthDate())
-                .photoUrl(person.getPhotoUrl())
+               // .country(person.getCountry())     // campo que se pide eliminar 02/05/2025
+             //   .birthDate(person.getBirthDate()) // campo que se pide eliminar 02/05/2025 y que este solo en paciente
+              //  .photoUrl(person.getPhotoUrl())  // campo que se pide eliminar 02/05/2025
                 .build();
     }
 
@@ -54,15 +54,15 @@ public class ReceptionistMapper {
         if (dto.getPhoneNumber() != null) {
             person.setPhoneNumber(dto.getPhoneNumber());
         }
-        if (dto.getCountry() != null) {
-            person.setCountry(dto.getCountry());
-        }
-        if (dto.getPhotoUrl() != null) {
-            person.setPhotoUrl(dto.getPhotoUrl());
-        }
-        if (dto.getBirthDate() != null) {
-            person.setBirthDate(dto.getBirthDate());
-        }
+//        if (dto.getCountry() != null) { // campo que se pide eliminar 02/05/2025
+//            person.setCountry(dto.getCountry());
+//        }
+//        if (dto.getPhotoUrl() != null) {
+//            person.setPhotoUrl(dto.getPhotoUrl()); // campo que se pide eliminar 02/05/2025
+//        }
+//        if (dto.getBirthDate() != null) {
+//            person.setBirthDate(dto.getBirthDate()); // campo que se pide eliminar 02/05/2025
+//        }
         if (dto.getEmail() != null) {
             UserModel user = userRepository.findByPersonId(receptionist.getPerson().getId())
                     .orElseThrow(() -> new UserNotFoundException("No se encontró usuario para esta persona."));

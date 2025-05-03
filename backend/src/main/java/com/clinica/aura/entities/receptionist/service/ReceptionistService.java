@@ -57,9 +57,9 @@ public class ReceptionistService {
         String lastName = authCreateUserDto.getLastName();
         String dni = authCreateUserDto.getDni();
         String phoneNumber = authCreateUserDto.getPhoneNumber();
-        String country = authCreateUserDto.getCountry();
-        String photoUrl = authCreateUserDto.getPhotoUrl();
-        LocalDate birthDate = authCreateUserDto.getBirthDate();
+//        String country = authCreateUserDto.getCountry(); // campo que se pide eliminar 02/05/2025
+//        String photoUrl = authCreateUserDto.getPhotoUrl();// campo que se pide eliminar 02/05/2025
+//        LocalDate birthDate = authCreateUserDto.getBirthDate();// campo que se pide eliminar 02/05/2025
 
         UserModel emailExists = userRepository.findByEmail(email).orElse(null);
         if (emailExists != null) {
@@ -79,9 +79,9 @@ public class ReceptionistService {
                 .name(username)
                 .lastName(lastName)
                 .phoneNumber(phoneNumber)
-                .country(country)
-                .birthDate(birthDate)
-                .photoUrl(photoUrl)
+                //.country(country) // campo que se pide eliminar 02/05/2025
+               // .birthDate(birthDate) // campo que se pide eliminar 02/05/2025 y que este solo en paciente
+              //  .photoUrl(photoUrl)  /// campo que se pide eliminar 02/05/2025
                 .build();
 
 

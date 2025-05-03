@@ -40,15 +40,15 @@ public class ProfessionalRequestDto {
     @Schema(description = "Telefono del profesional", requiredMode = Schema.RequiredMode.REQUIRED, example = "123456789")
     private String phoneNumber;
 
-    @NotBlank(message = "El pais es obligatorio")
-    @Schema(description = "Pais del profesional", requiredMode = Schema.RequiredMode.REQUIRED, example = "Spain")
-    private String country;
-
-    @Schema(description = "URL de la foto del profesional", example = "https://example.com/photo.jpg")
-    private String photoUrl;
-
-    @Schema(description = "Fecha de nacimiento del profesional", example = "1990-01-01")
-    private LocalDate birthDate;
+//    @NotBlank(message = "El pais es obligatorio")
+//    @Schema(description = "Pais del profesional", requiredMode = Schema.RequiredMode.REQUIRED, example = "Spain")
+//    private String country; // campo que se pide eliminar 02/05/2025
+//
+//    @Schema(description = "URL de la foto del profesional", example = "https://example.com/photo.jpg")
+//    private String photoUrl; // campo que se pide eliminar 02/05/2025
+//
+//    @Schema(description = "Fecha de nacimiento del profesional", example = "1990-01-01")
+//    private LocalDate birthDate; // campo que se pide eliminar 02/05/2025
 
     @NotBlank(message = "El numero de licencia es obligatorio")
     @Schema(description = "Numero de licencia del profesional", requiredMode = Schema.RequiredMode.REQUIRED, example = "12345678")

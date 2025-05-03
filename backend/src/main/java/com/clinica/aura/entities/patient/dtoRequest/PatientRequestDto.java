@@ -20,6 +20,7 @@ public class PatientRequestDto {
 
     // Datos de la persona
     @Pattern(regexp = "\\d+", message = "El DNI solo debe tener números")
+    @Size(min =8, max=8, message = "El dni debe tener entre 8 caracteres")
     @NotBlank(message = "El DNI es obligatorio")
     @Schema(description = "DNI del paciente", requiredMode = Schema.RequiredMode.REQUIRED, example = "40650777")
     private String dni;
@@ -34,20 +35,18 @@ public class PatientRequestDto {
     @Schema(description = "Apellido del paciente", example = "Pérez", requiredMode = Schema.RequiredMode.REQUIRED)
     private String lastName;
 
-    
+
     @Schema(description = "Número de teléfono del paciente", example = "+541155448833")
     private String phoneNumber;
 
-    @Pattern(regexp = "^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$", message = "El país solo debe contener letras")
-    @Schema(description = "País de residencia del paciente", example = "Costa Rica")
-    private String country;
+//    @Pattern(regexp = "^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$", message = "El país solo debe contener letras")
+//    @Schema(description = "País de residencia del paciente", example = "Costa Rica")
+//    private String country; //02/05/25 campo quitado a partir de la reunion de hoy con Axel, ux y pm dando ok
 
-    @Schema(description = "URL de la foto del paciente", example = "https://example.com/foto.jpg")
-    private String photoUrl;
+//    @Schema(description = "URL de la foto del paciente", example = "https://example.com/foto.jpg")
+//    private String photoUrl; //campo quitado a partir de la reunion de hoy 2/5/2025
 
-    @Past
-    @Schema(description = "Fecha de nacimiento del paciente", example = "1990-05-20")
-    private LocalDate birthDate;
+
 
     // Datos específicos del paciente
     @Schema(description = "Indica si el paciente tiene seguro médico", example = "true")
@@ -59,9 +58,13 @@ public class PatientRequestDto {
     @Schema(description = "Nombre del colegio o institución educativa", example = "Colegio San Juan")
     private String school;
 
-    @Pattern(regexp = "^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$", message = "El método de pago solo debe tener letras")
-    @Schema(description = "Tipo de pago preferido", example = "Efectivo")
-    private String paymentType;
+//    @Pattern(regexp = "^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$", message = "El método de pago solo debe tener letras")
+//    @Schema(description = "Tipo de pago preferido", example = "Efectivo")
+//    private String paymentType; //02/05/2025 campo que piden que sea eliminado
+
+    @Past //cambie la fecha aca que ahora es un campo de paciente 02/05/25
+    @Schema(description = "Fecha de nacimiento del paciente", example = "2015-05-20")
+    private LocalDate birthDate;
 
     @Schema(description = "Los IDs de los Profesionales asignados al paciente", example = "[1, 2, 3]")
     private List<Long> professionalIds;

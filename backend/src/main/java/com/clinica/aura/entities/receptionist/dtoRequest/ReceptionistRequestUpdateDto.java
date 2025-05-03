@@ -32,14 +32,14 @@ public class ReceptionistRequestUpdateDto {
 
     @Schema(description = "Número de teléfono del paciente", example = "+573001112233")
     private String phoneNumber;
-
-    @Schema(description = "País de residencia del paciente", example = "Colombia")
-    private String country;
-
-    @Schema(description = "URL de la foto del paciente", example = "https://example.com/foto.jpg")
-    private String photoUrl;
-
-    @Past
-    @Schema(description = "Fecha de nacimiento del paciente", example = "1990-05-20")
-    private LocalDate birthDate;
+//
+//    @Schema(description = "País de residencia del paciente", example = "Colombia")
+//    private String country; // campo que se pide eliminar 02/05/2025
+//
+//    @Schema(description = "URL de la foto del paciente", example = "https://example.com/foto.jpg")
+//    private String photoUrl; // campo que se pide eliminar 02/05/2025
+//
+//    @Past
+//    @Schema(description = "Fecha de nacimiento del paciente", example = "1990-05-20")
+//    private LocalDate birthDate; // campo que se pide eliminar 02/05/2025
 }

@@ -15,15 +15,15 @@ public class PatientResponseDto {
     private String name;
     private String lastName;
     private String phoneNumber;
-    private String country;
-    private String photoUrl;
-    private LocalDate birthDate;
+//    private String country;  // campo que se pide eliminar 02/05/2025
+//    private String photoUrl; // campo que se pide eliminar 02/05/2025
+    private LocalDate birthDate; //solo debe estar en paciente 02/05/2025
     private String dni;
     private String email;
     private boolean hasInsurance;
     private String insuranceName;
     private String school;
-    private String paymentType;
+//    private String paymentType; // campo que se pide eliminar 02/05/2025
     private List<Long> professionalIds;
 
 

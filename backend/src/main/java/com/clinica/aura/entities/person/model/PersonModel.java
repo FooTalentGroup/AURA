@@ -1,5 +1,9 @@
 package com.clinica.aura.entities.person.model;
 
+
+
+
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,8 +24,12 @@ public class PersonModel {
     private String dni;
     private String name;
     private String lastName;
-    private String photoUrl;
-    private LocalDate birthDate;
+    // private String photoUrl;
+    // private LocalDate birthDate;
     private String phoneNumber;
-    private String country;
+    // private String country;
+
+    /* los campos comentandos son los que pidio Axel que saquemos, Ux y Analista estaban en la
+     * reunión y dieron el okey también.
+     * La fecha de nacimiento solo estará en Paciente por pedidos de los mismos integrantes*/
 }

@@ -32,14 +32,14 @@ public class ProfessionalResponseDto {
     @Schema(description = "Teléfono del profesional", example = "123456789")
     private String phoneNumber;
 
-    @Schema(description = "País del profesional", example = "Spain")
-    private String country;
-
-    @Schema(description = "URL de la foto del profesional", example = "https://example.com/photo.jpg")
-    private String photoUrl;
-
-    @Schema(description = "Fecha de nacimiento del profesional", example = "1990-01-01")
-    private LocalDate birthDate;
+//    @Schema(description = "País del profesional", example = "Spain")
+//    private String country; // campo que se pide eliminar 02/05/2025
+//
+//    @Schema(description = "URL de la foto del profesional", example = "https://example.com/photo.jpg")
+//    private String photoUrl;// campo que se pide eliminar 02/05/2025
+//
+//    @Schema(description = "Fecha de nacimiento del profesional", example = "1990-01-01")
+//    private LocalDate birthDate;// campo que se pide eliminar 02/05/2025
 
     @Schema(description = "Número de licencia del profesional", example = "12345678")
     private String licenseNumber;

@@ -7,6 +7,7 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -33,7 +34,9 @@ public class PatientModel {
 
     private String school;
 
-    private String paymentType;
+    private LocalDate birthDate; //se agrega la fecha aca en paciente, a pedidos de los mismos 02/05/2025
+
+    //private String paymentType; //campo quitado a pedido de Axel, ux (Tomas) y analista Funcional dieron el ok
 
     @ManyToMany(targetEntity = ProfessionalModel.class, fetch = FetchType.LAZY)
     @JoinTable(

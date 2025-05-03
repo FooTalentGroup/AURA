@@ -69,9 +69,9 @@ public class CommandInitializerConfig implements CommandLineRunner {
                     .name("Ryan")
                     .lastName("Gonzales")
                     .phoneNumber("987654321")
-                    .country("Perú")
-                    .birthDate(LocalDate.of(1980, 1, 1))
-                    .photoUrl("https://i.sstatic.net/l60Hf.png")
+                    //.country("Perú")  // campo que se pide eliminar 02/05/2025
+                   // .birthDate(LocalDate.of(1980, 1, 1)) // campo que se pide eliminar 02/05/2025
+                  //  .photoUrl("https://i.sstatic.net/l60Hf.png") // campo que se pide eliminar 02/05/2025
                     .build();
 
             UserModel admin = UserModel.builder()

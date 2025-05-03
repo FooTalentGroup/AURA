@@ -81,13 +81,12 @@ public class PatientController {
         }
     }
 
-    //dni con parcialidad
+    //dni exacto
     @GetMapping("/buscar/dni")
-    @Operation(summary = "Buscar paciente por dni", description = "Se busca un paciente por coincidencia exacta o parcial del DNI. Ten en cuenta que debes digitar los primeros dos digitos del DNI" +
-            " para que encuentre coincidencias.")
-    public ResponseEntity<List<PatientResponseDto>> getPatientsByDni(
+    @Operation(summary = "Buscar paciente por dni", description = "Se busca un paciente por dni deben ingresarse los 8 números exactos.")
+    public ResponseEntity<PatientResponseDto> getPatientByDni(
             @RequestParam(name = "dni") String dni) {
-        return ResponseEntity.ok(patientService.getPatientsByDni(dni));
+        return ResponseEntity.ok(patientService.getPatientByDni(dni));
     }
 
     @GetMapping("/buscar/nombre")
