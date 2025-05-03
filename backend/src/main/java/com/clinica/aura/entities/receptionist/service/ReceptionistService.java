@@ -16,6 +16,7 @@ import com.clinica.aura.entities.user_account.models.RoleModel;
 import com.clinica.aura.entities.user_account.models.UserModel;
 import com.clinica.aura.entities.user_account.repository.RoleRepository;
 import com.clinica.aura.entities.user_account.repository.UserRepository;
+import com.clinica.aura.entities.user_account.service.impl.UserDetailsServiceImpl;
 import com.clinica.aura.exceptions.EmailAlreadyExistsException;
 import com.clinica.aura.exceptions.ReceptionistNotFoundException;
 import com.clinica.aura.util.PaginatedResponse;
@@ -27,6 +28,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,6 +49,7 @@ public class ReceptionistService {
     private final PasswordEncoder passwordEncoder;
     private final ReceptionistMapper receptionistMapper;
     private final JwtUtils jwtUtils;
+    private final UserDetailsServiceImpl userDetailsService;
 
     @Transactional
     public AuthResponseRegisterDto createUser(@Valid ReceptionistRequestDto authCreateUserDto) {
@@ -112,7 +115,8 @@ public class ReceptionistService {
                 .flatMap(role -> role.getPermissions().stream())
                 .forEach(permission -> authoritiesList.add(new SimpleGrantedAuthority(permission.getName())));
 
-        Authentication authentication = new UsernamePasswordAuthenticationToken(userCreated.getEmail(), userCreated.getPassword(), authoritiesList);
+        UserDetails userDetails = userDetailsService.loadUserByUsername(userCreated.getEmail());
+        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, userCreated.getPassword(), authoritiesList);
         String accessToken = jwtUtils.generateJwtToken(authentication);
 
         return new AuthResponseRegisterDto(

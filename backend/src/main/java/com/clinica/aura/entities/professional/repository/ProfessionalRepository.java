@@ -1,6 +1,7 @@
 package com.clinica.aura.entities.professional.repository;
 
 import com.clinica.aura.entities.patient.model.PatientModel;
+import com.clinica.aura.entities.person.model.PersonModel;
 import com.clinica.aura.entities.professional.model.ProfessionalModel;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -22,4 +23,5 @@ public interface ProfessionalRepository extends JpaRepository<ProfessionalModel,
     @Query("SELECT p.patients FROM ProfessionalModel p WHERE p.id = :professionalId")
     List<PatientModel> findPatientsByProfessionalId(@Param("professionalId") Long professionalId);
 
+    Optional<ProfessionalModel> findByPerson(PersonModel person);
 }

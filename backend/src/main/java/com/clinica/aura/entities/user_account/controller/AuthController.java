@@ -13,6 +13,9 @@ import com.clinica.aura.entities.user_account.dtoRequest.AuthLoginRequestDto;
 import com.clinica.aura.entities.user_account.dtoRequest.SuspendRequestDto;
 import com.clinica.aura.entities.user_account.dtoResponse.AuthResponseDto;
 import com.clinica.aura.entities.user_account.dtoResponse.AuthResponseRegisterDto;
+import com.clinica.aura.entities.user_account.dtoResponse.UserMeResponseDto;
+import com.clinica.aura.entities.user_account.models.UserModel;
+import com.clinica.aura.entities.user_account.repository.UserRepository;
 import com.clinica.aura.entities.user_account.service.impl.UserDetailsServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -25,11 +28,15 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 
 @RestController
 @RequestMapping("/auth")
@@ -126,6 +133,35 @@ public class AuthController {
         servletResponse.addHeader("Set-Cookie", cookieHeader);
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    @Operation(summary = "Obtener el usuario actual", description = """
+            Obtiene el usuario actual, que es el que ha iniciado sesión.
+            """)
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/me")
+    public ResponseEntity<UserMeResponseDto> getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        return ResponseEntity.ok(userDetailsService.getCurrentUser(email));
+    }
+
+    @Operation(summary = "Cerrar sesión", description = """
+            Cierra la sesión del usuario actual.
+            """)
+    @PostMapping("/logout")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> logout(HttpServletResponse servletResponse) {
+        Cookie jwtCookie = new Cookie("jwt_token", null);
+        jwtCookie.setHttpOnly(true);
+        jwtCookie.setSecure(true);
+        jwtCookie.setPath("/");
+        jwtCookie.setMaxAge(0); // Elimina la cookie
+
+
+        servletResponse.addCookie(jwtCookie);
+
+        return ResponseEntity.ok().body("Logout exitoso");
     }
 
     @Operation(summary = "Suspender un usuario", description = """

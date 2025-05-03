@@ -1,11 +1,15 @@
 package com.clinica.aura.user.controller;
 
-import com.clinica.aura.exceptions.GlobalExceptionController;
+import com.clinica.aura.config.jwt.JwtUtils;
+import com.clinica.aura.entities.professional.dtoRequest.ProfessionalRequestDto;
 import com.clinica.aura.entities.user_account.controller.AuthController;
 import com.clinica.aura.entities.user_account.dtoRequest.AuthLoginRequestDto;
 import com.clinica.aura.entities.user_account.dtoResponse.AuthResponseDto;
+import com.clinica.aura.entities.user_account.dtoResponse.AuthResponseRegisterDto;
 import com.clinica.aura.entities.user_account.service.impl.UserDetailsServiceImpl;
+import com.clinica.aura.exceptions.GlobalExceptionController;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import static org.hamcrest.Matchers.startsWith;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -16,11 +20,10 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
+import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.test.web.servlet.MockMvc;
@@ -28,12 +31,12 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.stream.Stream;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-
+//@ExtendWith(MockitoExtension.class)
 public class AuthControllerTest {
 
     private MockMvc mockMvc;
@@ -41,6 +44,9 @@ public class AuthControllerTest {
 
     @Mock
     private UserDetailsServiceImpl userDetailsService;
+
+    @Mock
+    private JwtUtils jwtUtils;
 
     @InjectMocks
     private AuthController authController;
@@ -62,18 +68,30 @@ public class AuthControllerTest {
         void validCredentials() throws Exception {
             var request = new AuthLoginRequestDto("admin@example.com", "admin123");
             var response = new AuthResponseDto(1L, "admin@example.com",
-                    "Usuario logeado exitosamente", "jwt.token.here", true);
+                    "Usuario logeado exitosamente", "jwt.token", true);
 
+            // Simular las dependencias
             when(userDetailsService.loginUser(any(AuthLoginRequestDto.class))).thenReturn(response);
+            when(jwtUtils.getExpirationTime()).thenReturn(3600); // Tiempo de expiración controlado
 
             mockMvc.perform(post("/auth/login")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpectAll(
                             status().isOk(),
-                            header().string(HttpHeaders.AUTHORIZATION, "Bearer jwt.token.here"),
+                            // Verificar la cookie
+                            cookie().value("jwt_token", "jwt.token"),
+                            cookie().httpOnly("jwt_token", true),
+                            cookie().secure("jwt_token", true),
+                            cookie().maxAge("jwt_token", 3600),
+                            cookie().path("jwt_token", "/"),
+                            // Verificar SameSite en el encabezado
+                            header().string("Set-Cookie", containsString("SameSite=Strict")),
+                            // Verificar encabezado user-id
+                            header().string("user-id", "1"),
+                            // Verificar cuerpo de la respuesta
                             jsonPath("$.id").value(1L),
-                            jsonPath("$.token").exists(),
+                            jsonPath("$.token").value("jwt.token"),
                             jsonPath("$.success").value(true)
                     );
             verify(userDetailsService).loginUser(any(AuthLoginRequestDto.class));
@@ -98,8 +116,9 @@ public class AuthControllerTest {
                             .contentType(MediaType.APPLICATION_JSON))
                     .andExpectAll(
                             status().isUnauthorized(),
-                            jsonPath("$.code").value("BAD_CREDENTIALS")
+                            jsonPath("$.errorCode").value("AUTH-001")
                     );
+            verify(userDetailsService).loginUser(any());
         }
 
         static Stream<Arguments> invalidCredentialsProvider() {
@@ -123,13 +142,13 @@ public class AuthControllerTest {
             mockMvc.perform(post("/auth/login")
                             .content(invalidJson)
                             .contentType(MediaType.APPLICATION_JSON))
-                    .andExpectAll(
-                            status().isBadRequest(),
-                            jsonPath("$.details").isArray(),
-                            jsonPath("$.details[?(@ =~ /email/)i]").exists(),
-                            jsonPath("$.details[?(@ =~ /password/)i]").exists()
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.details[0]").value(startsWith("credential")))
+                    .andExpect(jsonPath("$.details[1]").value(startsWith("email"))
                     );
         }
+
+
     }
 
     @TestConfiguration

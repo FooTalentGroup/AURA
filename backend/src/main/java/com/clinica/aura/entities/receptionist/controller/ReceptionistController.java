@@ -5,6 +5,7 @@ import com.clinica.aura.entities.receptionist.dtoResponse.ReceptionistResponseDt
 import com.clinica.aura.entities.receptionist.model.ReceptionistModel;
 import com.clinica.aura.entities.receptionist.service.ReceptionistService;
 import com.clinica.aura.util.PaginatedResponse;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,22 +21,26 @@ public class ReceptionistController {
     private final ReceptionistService receptionistService;
 
 
+    @Operation(summary = "Actualiza los datos de un recepcionista", description = "Actualiza los datos de un recepcionista específico.")
     @PatchMapping("/{id}")
     public ResponseEntity<ReceptionistResponseDto> updateReceptionist(@PathVariable  long id, @RequestBody @Valid ReceptionistRequestUpdateDto receptionistRequestUpdateDto) {
         return ResponseEntity.ok(receptionistService.updateReceptionist(id, receptionistRequestUpdateDto));
     }
 
+    @Operation(summary = "Obtener todos los recepcionistas", description = "Obtiene todos los recepcionistas.")
     @GetMapping
     public ResponseEntity<PaginatedResponse<ReceptionistResponseDto>> getAllReceptionists(@RequestParam(defaultValue = "0") int page,
                                                                                    @RequestParam(defaultValue = "10") int size) {
         return ResponseEntity.ok(receptionistService.getAllReceptionists(page, size));
     }
 
+    @Operation(summary = "Obtener un recepcionista por ID", description = "Obtiene un recepcionista por su ID.")
     @GetMapping("/{id}")
     public ResponseEntity<ReceptionistResponseDto> getReceptionistById(@PathVariable long id) {
         return ResponseEntity.ok(receptionistService.getReceptionistById(id));
     }
 
+    @Operation(summary = "Eliminar un recepcionista", description = "Elimina un recepcionista del sistema.")
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteReceptionist(@PathVariable long id) {
         receptionistService.deleteReceptionist(id);

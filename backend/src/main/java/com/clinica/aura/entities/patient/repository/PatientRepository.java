@@ -11,6 +11,12 @@ import java.util.List;
 import java.util.Optional;
 
 public interface PatientRepository extends JpaRepository<PatientModel, Long> {
+
+    @Modifying
+    @Transactional //esta query se usa en el metodo delete paciente/professional_patient
+    @Query(value = "DELETE FROM professional_patient WHERE patient_id = :patientId", nativeQuery = true)
+    void deletePatientProfessionalRelation(Long patientId);
+
     @Modifying
     @Transactional //esta query se usa en el metodo delete paciente/professional_patient
     @Query(value = "DELETE FROM professional_patient WHERE patient_id = :patientId", nativeQuery = true)

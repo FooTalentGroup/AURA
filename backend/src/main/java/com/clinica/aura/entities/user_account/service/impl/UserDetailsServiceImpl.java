@@ -5,6 +5,7 @@ import com.clinica.aura.entities.professional.repository.ProfessionalRepository;
 import com.clinica.aura.entities.user_account.dtoRequest.AuthLoginRequestDto;
 import com.clinica.aura.entities.user_account.dtoRequest.SuspendRequestDto;
 import com.clinica.aura.entities.user_account.dtoResponse.AuthResponseDto;
+import com.clinica.aura.entities.user_account.dtoResponse.UserMeResponseDto;
 import com.clinica.aura.entities.user_account.dtoResponse.UserResponseDto;
 import com.clinica.aura.entities.user_account.models.UserModel;
 import com.clinica.aura.entities.user_account.repository.RoleRepository;
@@ -118,6 +119,19 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         UserModel user = userRepository.findById(userId)
                 .orElseThrow(() -> new UsernameNotFoundException("El Id del usuario " + userId + " no existe"));
         return new UserResponseDto(user.getPerson().getName(), user.getPerson().getLastName());
+    }
+
+    public UserMeResponseDto getCurrentUser(String email) {
+        UserModel user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuario con el email " + email + " no encontrado"));
+
+        return UserMeResponseDto.builder()
+                .id(user.getId())
+                .email(user.getEmail())
+                .roles(user.getRoles().stream()
+                        .map(role -> role.getEnumRole().name())
+                        .toList())
+                .build();
     }
 
 
