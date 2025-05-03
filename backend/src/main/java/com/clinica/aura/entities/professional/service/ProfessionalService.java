@@ -1,6 +1,7 @@
 package com.clinica.aura.entities.professional.service;
 import com.clinica.aura.entities.patient.dtoRequest.PatientResponseDto;
 import com.clinica.aura.entities.patient.model.PatientModel;
+import com.clinica.aura.entities.user_account.service.impl.UserDetailsServiceImpl;
 import jakarta.persistence.EntityNotFoundException;
 import com.clinica.aura.exceptions.*;
 import com.clinica.aura.config.jwt.JwtUtils;
@@ -20,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -39,6 +41,7 @@ public class ProfessionalService {
     private final JwtUtils jwtUtils;
     private final RoleRepository roleRepository;
     private final ProfessionalRepository professionalRepository;
+    private final UserDetailsServiceImpl userDetailsService;
 
     @Transactional
     public AuthResponseRegisterDto createUser(@Valid ProfessionalRequestDto authCreateUserDto) {
@@ -107,7 +110,12 @@ public class ProfessionalService {
                 .flatMap(role -> role.getPermissions().stream())
                 .forEach(permission -> authoritiesList.add(new SimpleGrantedAuthority(permission.getName())));
 
-        Authentication authentication = new UsernamePasswordAuthenticationToken(userCreated.getEmail(), userCreated.getPassword(), authoritiesList);
+        UserDetails userDetails = userDetailsService.loadUserByUsername(userCreated.getEmail());
+        Authentication authentication = new UsernamePasswordAuthenticationToken(
+                userDetails,
+                userCreated.getPassword(),
+                authoritiesList
+        );
         String accessToken = jwtUtils.generateJwtToken(authentication);
 
         return new AuthResponseRegisterDto(
@@ -236,7 +244,7 @@ public class ProfessionalService {
                     .country(person != null ? person.getCountry() : null)
                     .photoUrl(person != null ? person.getPhotoUrl() : null)
                     .birthDate(person != null ? person.getBirthDate() : null)
-                    .email(null) // lo dejás en null porque no tenés el usuario
+                    .email(userRepository.findByPerson(person).map(UserModel::getEmail).orElse(null))
                     .hasInsurance(patient.isHasInsurance())
                     .insuranceName(patient.getInsuranceName())
                     .school(patient.getSchool())

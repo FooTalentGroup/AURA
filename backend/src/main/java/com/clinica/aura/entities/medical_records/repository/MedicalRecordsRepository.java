@@ -10,4 +10,7 @@ public interface MedicalRecordsRepository extends JpaRepository<MedicalRecordsMo
     @Modifying
     @Query("DELETE FROM MedicalRecordsModel m WHERE m.patients.id = :patientId")
     void deleteByPatientId(@Param("patientId") Long patientId);
+
+    @Query("SELECT COUNT(m) > 0 FROM MedicalRecordsModel m WHERE m.patients.id = :patientId")
+    boolean existsByPatientId(Long patientId);
 }

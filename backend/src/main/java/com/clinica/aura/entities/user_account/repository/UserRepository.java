@@ -1,6 +1,7 @@
 package com.clinica.aura.entities.user_account.repository;
 
 import com.clinica.aura.entities.person.model.PersonModel;
+import com.clinica.aura.entities.professional.model.ProfessionalModel;
 import com.clinica.aura.entities.user_account.models.UserModel;
 import org.springframework.data.jpa.repository.JpaRepository;
 

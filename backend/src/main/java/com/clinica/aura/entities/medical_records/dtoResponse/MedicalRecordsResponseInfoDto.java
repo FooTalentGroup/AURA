@@ -1,14 +1,16 @@
-package com.clinica.aura.entities.medical_records.dtoRequest;
+package com.clinica.aura.entities.medical_records.dtoResponse;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
+
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class MedicalRecordsResponseDto {
+public class MedicalRecordsResponseInfoDto {
 
     @Schema(description = "ID del historial médico", example = "10")
     private Long id;
@@ -25,6 +27,11 @@ public class MedicalRecordsResponseDto {
     @Schema(description = "ID del paciente", example = "1")
     private Long patientId;
 
-    @Schema(description = "ID del profesional", example = "3")
-    private Long professionalId;
+    private ProfessionalSummaryDto createdBy;
+
+    private ProfessionalSummaryDto updatedBy;
+
+    private LocalDateTime createdAt;
+
+    private LocalDateTime updatedAt;
 }
