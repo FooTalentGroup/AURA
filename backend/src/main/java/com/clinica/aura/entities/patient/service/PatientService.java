@@ -306,7 +306,7 @@ public class PatientService {
         patientRepository.deletePatientProfessionalRelation(patientId);
 
         // Elimina registros médicos asociados (si corresponde)
-        medicalRecordsRepository.deleteByPatientId(personId);
+       // medicalRecordsRepository.deleteByPatientId(personId);
 
         // Elimina usuario y sus roles si existen
         Optional<UserModel> userOpt = userRepository.findByPersonId(personId);
