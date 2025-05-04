@@ -11,6 +11,6 @@ import lombok.Setter;
 @AllArgsConstructor
 public class MedicalRecordsRequestUpdateDto {
     private String notes;
-    private String allergies;
+//    private String allergies;
     private String previousConditions;
 }

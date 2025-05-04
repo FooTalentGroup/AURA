@@ -67,8 +67,8 @@ public class SecurityConfig {
 //                                .requestMatchers(HttpMethod.POST,"/auth/receptionist/register").permitAll()
 
                         //Rutas privadas
-//                        .requestMatchers(HttpMethod.POST,"/auth/{userId}/activate").hasRole("ADMIN")
-//                        .requestMatchers(HttpMethod.POST,"/auth/{userId}/suspend").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST,"/auth/{userId}/activate").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST,"/auth/{userId}/suspend").hasRole("ADMIN")
 
                         //Cualquier otro endpoint está denegado
                         .anyRequest().permitAll()

@@ -3,6 +3,7 @@ package com.clinica.aura.models.medical_records.service;
 import com.clinica.aura.models.medical_records.dtoRequest.*;
 import com.clinica.aura.models.medical_records.dtoResponse.MedicalRecordsResponseDto;
 import com.clinica.aura.models.medical_records.dtoResponse.MedicalRecordsResponseInfoDto;
+import com.clinica.aura.models.medical_records.dtoResponse.MedicalRecordsSummaryDto;
 import com.clinica.aura.models.medical_records.dtoResponse.ProfessionalSummaryDto;
 import com.clinica.aura.models.medical_records.model.MedicalRecordsModel;
 import com.clinica.aura.models.medical_records.repository.MedicalRecordsRepository;
@@ -63,14 +64,14 @@ public class MedicalRecordsService {
         record.setUpdatedBy(professional);
         record.setPatients(patient);
         record.setNotes(dto.getNotes());
-        record.setAllergies(dto.getAllergies());
+        //record.setAllergies(dto.getAllergies());
         record.setPreviousConditions(dto.getPreviousConditions());
         medicalRecordsRepository.save(record);
 
         MedicalRecordsResponseDto response = new MedicalRecordsResponseDto();
         response.setId(record.getId());
         response.setNotes(record.getNotes());
-        response.setAllergies(record.getAllergies());
+        //response.setAllergies(record.getAllergies());
         response.setPreviousConditions(record.getPreviousConditions());
         response.setPatientId(record.getPatients().getId());
 
@@ -82,7 +83,7 @@ public class MedicalRecordsService {
         MedicalRecordsResponseInfoDto response = new MedicalRecordsResponseInfoDto();
         response.setId(record.getId());
         response.setNotes(record.getNotes());
-        response.setAllergies(record.getAllergies());
+        //response.setAllergies(record.getAllergies());
         response.setPreviousConditions(record.getPreviousConditions());
         response.setPatientId(record.getPatients().getId());
 
@@ -103,6 +104,20 @@ public class MedicalRecordsService {
         response.setUpdatedAt(record.getUpdatedAt());
         return response;
     }
+    public MedicalRecordsSummaryDto findByPatientsId(Long patientId){
+        MedicalRecordsModel record = medicalRecordsRepository.findByPatientsId(patientId)
+                .orElseThrow(() -> new EntityNotFoundException("Historia clínica no encontrada para el paciente con ID: " + patientId));
+
+        MedicalRecordsSummaryDto dto = new MedicalRecordsSummaryDto();
+        dto.setId(record.getId());
+        dto.setPatientId(record.getPatients().getId());
+        dto.setCreatedById(record.getCreatedBy().getId());
+        dto.setUpdatedById(record.getUpdatedBy().getId());
+        dto.setCreatedAt(record.getCreatedAt());
+        dto.setUpdatedAt(record.getUpdatedAt());
+
+        return dto;
+    }
 
     public List<MedicalRecordsResponseDto> getAllMedicalRecords() {
         List<MedicalRecordsModel> records = medicalRecordsRepository.findAll();
@@ -111,7 +126,7 @@ public class MedicalRecordsService {
             MedicalRecordsResponseDto dto = new MedicalRecordsResponseDto();
             dto.setId(record.getId());
             dto.setNotes(record.getNotes());
-            dto.setAllergies(record.getAllergies());
+            //dto.setAllergies(record.getAllergies());
             dto.setPreviousConditions(record.getPreviousConditions());
             dto.setPatientId(record.getPatients().getId());
             response.add(dto);
@@ -135,7 +150,7 @@ public class MedicalRecordsService {
 
         // Actualizar campos
         record.setNotes(dto.getNotes());
-        record.setAllergies(dto.getAllergies());
+        //record.setAllergies(dto.getAllergies());
         record.setPreviousConditions(dto.getPreviousConditions());
         record.setUpdatedBy(professional);
         medicalRecordsRepository.save(record);
@@ -144,7 +159,7 @@ public class MedicalRecordsService {
         MedicalRecordsResponseDto response = new MedicalRecordsResponseDto();
         response.setId(record.getId());
         response.setNotes(record.getNotes());
-        response.setAllergies(record.getAllergies());
+        //response.setAllergies(record.getAllergies());
         response.setPreviousConditions(record.getPreviousConditions());
         response.setPatientId(record.getPatients().getId());
 
@@ -167,7 +182,7 @@ public class MedicalRecordsService {
         return new MedicalRecordsResponseDto(
                 medicalRecordsModel.getId(),
                 medicalRecordsModel.getNotes(),
-                medicalRecordsModel.getAllergies(),
+                //medicalRecordsModel.getAllergies(),
                 medicalRecordsModel.getPreviousConditions(),
                 medicalRecordsModel.getPatients().getId()
         );
