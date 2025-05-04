@@ -1,0 +1,102 @@
+package com.clinica.aura.models.patient.controller;
+
+
+
+import com.clinica.aura.models.patient.dtoRequest.PatientRequestDto;
+import com.clinica.aura.models.patient.dtoRequest.PatientResponseDto;
+import com.clinica.aura.models.patient.service.PatientService;
+import com.clinica.aura.util.PaginatedResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/patients")
+@RequiredArgsConstructor
+@Tag(name = "Patient", description = "Endpoints para manejar pacientes")
+@PreAuthorize("hasRole('ADMIN') or hasRole('RECEPTIONIST') or hasRole('PROFESSIONAL')")
+public class PatientController {
+
+    private final PatientService patientService;
+
+    @Operation(summary = "Registrar nuevo paciente", description = """
+            Registra un nuevo paciente, el campo professionalIds es opcional y se lo puede dejar en blanco, pero
+            si se lo llena se debe asegurar de que sean ids de profesionales existentes en la base de datos
+            """)
+    @PostMapping(value = "/register")
+    @Tag(name = "Patient")
+    public ResponseEntity<PatientResponseDto> registerPatient(@RequestBody @Valid PatientRequestDto authCreateUserDto) {
+        PatientResponseDto response = patientService.createUser(authCreateUserDto);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+//    @GetMapping
+//    @Operation(summary = "Filtrar pacientes por rango", description = "Devuelve los pacientes desde el índice 'from' hasta 'to' (Recordar que empieza desde 0)")
+//    public ResponseEntity<List<PatientResponseDto>> getPatientsByRange(
+//            @RequestParam(name = "from", defaultValue = "0") int from,
+//            @RequestParam(name = "to",defaultValue = "9") int to
+//    ) {
+//        return ResponseEntity.ok(patientService.getPatientsByRange(from, to));
+//    }
+
+    //Nuevo filtrado de lista de pacientes
+    @GetMapping
+    @Operation(summary = "Filtrar pacientes por paginación", description = "Devuelve los pacientes desde el índice 0 hasta 10 (Recordar que empieza desde 0)")
+    public ResponseEntity<PaginatedResponse<PatientResponseDto>> getAllPatients
+    (@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(patientService.getAllPatients(page, size));
+    }
+
+    @GetMapping("/{id}")
+    @Operation(summary = "Buscar paciente por ID", description = "Devuelve los datos de un paciente específico según su ID.")
+    public ResponseEntity<PatientResponseDto> getPatientById(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(patientService.getPatientById(id));
+    }
+
+    @PutMapping("/{id}")
+    @Operation(summary = "Actualizar paciente", description = "Actualiza los datos de un paciente específico. No olvidar de cambiar los campos de example sino quedaran asi en la bd al ejecutar la prueba")
+    public ResponseEntity<PatientResponseDto> updatePatient(@PathVariable("id") Long id, @RequestBody @Valid PatientRequestDto request) {
+        PatientResponseDto patientResponseDto =  patientService.updatePatient(id, request);
+        return new ResponseEntity<>(patientResponseDto, HttpStatus.CREATED);
+    }
+
+    @DeleteMapping("/{id}")
+    @Operation(summary = "Eliminar paciente", description = "Elimina un paciente del sistema junto con su usuario, roles y datos personales.")
+    public ResponseEntity<?> deletePatient(@PathVariable("id") Long id) {
+        try {
+            patientService.deletePatientById(id);
+            return ResponseEntity.ok("Paciente eliminado exitosamente.");
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(404).body(e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Error al eliminar el paciente.");
+        }
+    }
+
+    //dni exacto
+    @GetMapping("/buscar/dni")
+    @Operation(summary = "Buscar paciente por dni", description = "Se busca un paciente por dni deben ingresarse los 8 números exactos.")
+    public ResponseEntity<PatientResponseDto> getPatientByDni(
+            @RequestParam(name = "dni") String dni) {
+        return ResponseEntity.ok(patientService.getPatientByDni(dni));
+    }
+
+    @GetMapping("/buscar/nombre")
+    @Operation(summary = "Buscar paciente por nombre", description = "Se busca un paciente por nombre (coincidencia parcial o total).")
+    public ResponseEntity<List<PatientResponseDto>> getPatientsByName(
+            @RequestParam(name = "nombre") String name) {
+        return ResponseEntity.ok(patientService.getPatientsByName(name));
+    }
+
+
+
+}
