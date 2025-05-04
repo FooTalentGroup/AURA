@@ -84,7 +84,7 @@ public class PatientController {
 
     //dni exacto
     @GetMapping("/buscar/dni")
-    @Operation(summary = "Buscar paciente por dni", description = "Se busca un paciente por dni deben ingresarse los 8 números exactos.")
+    @Operation(summary = "Buscar paciente por dni", description = "Se busca un paciente por dni deben ingresarse los 8 caracteres exactos.")
     public ResponseEntity<PatientResponseDto> getPatientByDni(
             @RequestParam(name = "dni") String dni) {
         return ResponseEntity.ok(patientService.getPatientByDni(dni));
