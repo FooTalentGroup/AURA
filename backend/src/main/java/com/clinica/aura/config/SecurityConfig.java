@@ -55,23 +55,23 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)  // Deshabilitar CSRF completamente
                 .authorizeHttpRequests(authorize -> authorize
                         //Rutas públicas
-                        .requestMatchers(HttpMethod.POST,"/auth/login").permitAll()
-                                .requestMatchers(HttpMethod.POST,"/auth/professional/register").permitAll()
-                                .requestMatchers("/swagger-ui.html",
-                                        "/swagger-ui/**",
-                                        "/v3/api-docs/**",
-                                        "/swagger-resources/**",
-                                        "/swagger-resources",
-                                        "/webjars/**"
-                                ).permitAll()
-                                .requestMatchers(HttpMethod.POST,"/auth/receptionist/register").permitAll()
+//                        .requestMatchers(HttpMethod.POST,"/auth/login").permitAll()
+//                                .requestMatchers(HttpMethod.POST,"/auth/professional/register").permitAll()
+//                                .requestMatchers("/swagger-ui.html",
+//                                        "/swagger-ui/**",
+//                                        "/v3/api-docs/**",
+//                                        "/swagger-resources/**",
+//                                        "/swagger-resources",
+//                                        "/webjars/**"
+//                                ).permitAll()
+//                                .requestMatchers(HttpMethod.POST,"/auth/receptionist/register").permitAll()
 
                         //Rutas privadas
 //                        .requestMatchers(HttpMethod.POST,"/auth/{userId}/activate").hasRole("ADMIN")
 //                        .requestMatchers(HttpMethod.POST,"/auth/{userId}/suspend").hasRole("ADMIN")
 
                         //Cualquier otro endpoint está denegado
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll()
                 )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)

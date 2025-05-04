@@ -20,7 +20,7 @@ public class PatientRequestDto {
 
     // Datos de la persona
     @Pattern(regexp = "\\d+", message = "El DNI solo debe tener números")
-    @Size(min =8, max=8, message = "El dni debe tener entre 8 caracteres")
+    @Size(min =8, max=8, message = "El dni debe 8 caracteres")
     @NotBlank(message = "El DNI es obligatorio")
     @Schema(description = "DNI del paciente", requiredMode = Schema.RequiredMode.REQUIRED, example = "40650777")
     private String dni;
@@ -65,6 +65,20 @@ public class PatientRequestDto {
     @Past //cambie la fecha aca que ahora es un campo de paciente 02/05/25
     @Schema(description = "Fecha de nacimiento del paciente", example = "2015-05-20")
     private LocalDate birthDate;
+
+    @Schema(description = "Dirección del paciente", example = "Av. Libertador 1925, CABA")
+    @NotBlank(message = "La dirección es obligatoria")
+    private String address;
+
+    @Schema(description = "Nombre del tutor paciente", example = "Mariela Peres")
+    @Pattern(regexp = "^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$", message = "El nombre del tutor solo debe contener letras")
+    @NotBlank(message = "El nombre del tutor es obligatoria")
+    private String tutorName;
+
+    @Schema(description = "Vinculo del tutor con el paciente", example = "Madre/padre/tutor")
+    @Pattern(regexp = "^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$", message = "El vinculo solo debe contener letras")
+    @NotBlank(message = "La relación  del tutor con el paciente es obligatoria")
+    private String relationToPatient;
 
     @Schema(description = "Los IDs de los Profesionales asignados al paciente", example = "[1, 2, 3]")
     private List<Long> professionalIds;

@@ -59,6 +59,9 @@ public class PatientService {
         // String country = authCreateUserDto.getCountry(); //02/05/2025 campo que se pide eliminar
         //  String photoUrl = authCreateUserDto.getPhotoUrl(); //02/05/2025 campo que se pide eliminar
         LocalDate birthDate = authCreateUserDto.getBirthDate();
+        String address = authCreateUserDto.getAddress();
+        String tutorName =authCreateUserDto.getTutorName();
+        String relationToPatient=authCreateUserDto.getRelationToPatient();
 
         Optional<RoleModel> professionalRole = roleRepository.findByEnumRole(EnumRole.PATIENT);
         if (professionalRole.isEmpty()) {
@@ -85,6 +88,10 @@ public class PatientService {
                 .school(authCreateUserDto.getSchool())
                 .birthDate(authCreateUserDto.getBirthDate())
                 //  .paymentType(authCreateUserDto.getPaymentType()) 02/05/2025
+                .address(authCreateUserDto.getAddress())
+                .tutorName(authCreateUserDto.getTutorName())
+                .relationToPatient(authCreateUserDto.getRelationToPatient())
+
                 .build();
 
         List<Long> profIds = authCreateUserDto.getProfessionalIds();
@@ -129,6 +136,9 @@ public class PatientService {
                 .insuranceName(patientModel.getInsuranceName())
                 .school(patientModel.getSchool())
                 //     .paymentType(patientModel.getPaymentType())
+                .address(patientModel.getAddress())
+                .tutorName(patientModel.getTutorName())
+                .relationToPatient(patientModel.getRelationToPatient())
                 .professionalIds(
                         patientModel.getProfessionals().stream()
                                 .map(ProfessionalModel::getId)
@@ -190,7 +200,10 @@ public class PatientService {
                             .email(userOptional.map(UserModel::getEmail).orElse(null))
                             .hasInsurance(patient.isHasInsurance())
                             .insuranceName(patient.getInsuranceName())
-                            .school(patient.getSchool());
+                            .school(patient.getSchool())
+                            .address(patient.getAddress())
+                            .tutorName(patient.getTutorName())
+                            .relationToPatient(patient.getRelationToPatient());
                     //  .paymentType(patient.getPaymentType());
 
                     if (patient.getProfessionals() != null) {
@@ -230,13 +243,16 @@ public class PatientService {
                 .phoneNumber(person.getPhoneNumber())
                 //  .country(person.getCountry())
                 //  .photoUrl(person.getPhotoUrl())
-                  .birthDate(patient.getBirthDate())
+                .birthDate(patient.getBirthDate())
                 .dni(person.getDni())
                 .email(user != null ? user.getEmail() : null)
                 .insuranceName(patient.getInsuranceName())
                 .hasInsurance(patient.getInsuranceName() != null && !patient.getInsuranceName().isBlank())
                 .school(patient.getSchool())
               //  .paymentType(patient.getPaymentType()) //02/05/2025 campo que se pide eliminar
+                .address(patient.getAddress())
+                .tutorName(patient.getTutorName())
+                .relationToPatient(patient.getRelationToPatient())
                 .build();
     }
 
@@ -261,7 +277,9 @@ public class PatientService {
         patient.setSchool(requestDto.getSchool());
         patient.setBirthDate(requestDto.getBirthDate());
         // patient.setPaymentType(requestDto.getPaymentType()); //02/05/2025 campo que se pide eliminar
-
+        patient.setAddress(requestDto.getAddress());
+        patient.setTutorName(requestDto.getTutorName());
+        patient.setRelationToPatient(requestDto.getRelationToPatient());
         // Actualizar solo el email en la tabla usuario
         var user = userRepository.findByPerson(person)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado para el paciente con ID: " + id));
@@ -279,13 +297,16 @@ public class PatientService {
                 .phoneNumber(person.getPhoneNumber())
                 // .country(person.getCountry())
                 // .photoUrl(person.getPhotoUrl())
-                 .birthDate(patient.getBirthDate())
+                .birthDate(patient.getBirthDate())
                 .dni(person.getDni())
                 .email(user.getEmail())
                 .insuranceName(patient.getInsuranceName())
                 .hasInsurance(patient.getInsuranceName() != null && !patient.getInsuranceName().isBlank())
                 .school(patient.getSchool())
                // .paymentType(patient.getPaymentType()) // campo que se pide eliminar 02/05/2025
+                .address(patient.getAddress())
+                .tutorName(patient.getTutorName())
+                .relationToPatient(patient.getRelationToPatient())
                 .build();
     }
 
@@ -299,8 +320,8 @@ public class PatientService {
         // Elimina relaciones con profesionales
         patientRepository.deletePatientProfessionalRelation(patientId);
 
-        // Elimina registros médicos asociados (si corresponde)
-        medicalRecordsRepository.deleteByPatientId(personId);
+        // Elimina registros médicos asociados
+       // medicalRecordsRepository.deleteByPatientId(personId);
 
         // Elimina usuario y sus roles si existen
         Optional<UserModel> userOpt = userRepository.findByPersonId(personId);
@@ -336,6 +357,9 @@ public class PatientService {
                 .hasInsurance(patient.getInsuranceName() != null && !patient.getInsuranceName().isBlank())
                 .school(patient.getSchool())
               //  .paymentType(patient.getPaymentType())
+                .address(patient.getAddress())
+                .tutorName(patient.getTutorName())
+                .relationToPatient(patient.getRelationToPatient())
                 .build();
     }
 
@@ -365,6 +389,9 @@ public class PatientService {
                     .hasInsurance(patient.getInsuranceName() != null && !patient.getInsuranceName().isBlank())
                     .school(patient.getSchool())
                     //   .paymentType(patient.getPaymentType())
+                    .address(patient.getAddress())
+                    .tutorName(patient.getTutorName())
+                    .relationToPatient(patient.getRelationToPatient())
                     .build();
         }).toList();
     }

@@ -38,6 +38,12 @@ public class PatientModel {
 
     //private String paymentType; //campo quitado a pedido de Axel, ux (Tomas) y analista Funcional dieron el ok
 
+    private String address;
+
+    private String tutorName;
+
+    private String relationToPatient;
+
     @ManyToMany(targetEntity = ProfessionalModel.class, fetch = FetchType.LAZY)
     @JoinTable(
             name = "professional_patient",
