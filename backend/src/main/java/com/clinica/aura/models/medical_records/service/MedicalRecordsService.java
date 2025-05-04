@@ -111,6 +111,8 @@ public class MedicalRecordsService {
         MedicalRecordsSummaryDto dto = new MedicalRecordsSummaryDto();
         dto.setId(record.getId());
         dto.setPatientId(record.getPatients().getId());
+        dto.setNotes(record.getNotes());
+        dto.setPreviousConditions(record.getPreviousConditions());
         dto.setCreatedById(record.getCreatedBy().getId());
         dto.setUpdatedById(record.getUpdatedBy().getId());
         dto.setCreatedAt(record.getCreatedAt());
