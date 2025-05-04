@@ -28,10 +28,10 @@ public class MedicalRecordsRequestDto {
     @Schema(description = "Notas médicas del paciente", example = "Paciente con antecedentes de hipertensión.")
     private String notes;
 
-    @Pattern(regexp = "^$|\\S+(?: \\S+)*$", message = "El campo no puede contener solo espacios")
-    @Size(max = 500, message = "Las alergias no pueden tener más de 500 caracter")
-    @Schema(description = "Alergias del paciente", example = "Alergia a la penicilina")
-    private String allergies;
+//    @Pattern(regexp = "^$|\\S+(?: \\S+)*$", message = "El campo no puede contener solo espacios")
+//    @Size(max = 500, message = "Las alergias no pueden tener más de 500 caracter")
+//    @Schema(description = "Alergias del paciente", example = "Alergia a la penicilina")
+//    private String allergies;
 
     @Pattern(regexp = "^$|\\S+(?: \\S+)*$", message = "El campo no puede contener solo espacios")
     @Size(max = 500, message = "Las condiciones previas no pueden tener más de 500 caracteres")

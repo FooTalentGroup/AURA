@@ -35,6 +35,10 @@ public class MedicalRecordsController {
     public ResponseEntity<?> findById(@PathVariable Long id) {
         return ResponseEntity.ok(service.findById(id));
     }
+    @GetMapping("/patient/{idPatient}")
+    public ResponseEntity<?> findByIPatients(@PathVariable Long idPatient){
+        return ResponseEntity.ok(service.findByPatientsId(idPatient));
+    }
 
     /*
     @GetMapping

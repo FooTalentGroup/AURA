@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Optional;
+
 public interface MedicalRecordsRepository extends JpaRepository<MedicalRecordsModel,Long> {
     @Modifying
     @Query("DELETE FROM MedicalRecordsModel m WHERE m.patients.id = :patientId")
@@ -13,4 +15,7 @@ public interface MedicalRecordsRepository extends JpaRepository<MedicalRecordsMo
 
     @Query("SELECT COUNT(m) > 0 FROM MedicalRecordsModel m WHERE m.patients.id = :patientId")
     boolean existsByPatientId(Long patientId);
+
+    Optional<MedicalRecordsModel> findByPatientsId(Long patientId);
+
 }

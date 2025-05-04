@@ -18,8 +18,8 @@ public class MedicalRecordsResponseInfoDto {
     @Schema(description = "Notas médicas del paciente", example = "Paciente con diabetes tipo 2")
     private String notes;
 
-    @Schema(description = "Alergias del paciente", example = "Alergia al polen")
-    private String allergies;
+//    @Schema(description = "Alergias del paciente", example = "Alergia al polen")
+//    private String allergies;
 
     @Schema(description = "Condiciones médicas previas", example = "Hipotiroidismo")
     private String previousConditions;
