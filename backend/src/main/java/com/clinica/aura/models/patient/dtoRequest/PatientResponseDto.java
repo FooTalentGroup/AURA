@@ -24,6 +24,9 @@ public class PatientResponseDto {
     private String insuranceName;
     private String school;
 //    private String paymentType; // campo que se pide eliminar 02/05/2025
+    private String address;
+    private String tutorName;
+    private String relationToPatient;
     private List<Long> professionalIds;
 
 
