@@ -50,14 +50,14 @@ export interface RegisterReceptionistPayload {
   phoneNumber: string;
   country: string;
   photoUrl: string;
-  birthDate: string; // ISO YYYY-MM-DD
+  birthDate: string; 
 }
 
 export interface AuthResponseRegisterDto {
-  userId: number;      // ID del nuevo usuario
-  username: string;    // p.ej. su email
-  message: string;     // mensaje de confirmación
-  status: boolean;     // indica éxito o no
+  userId: number;     
+  username: string;    
+  message: string;     
+  status: boolean;     
 }
 
 export interface UserResponse {

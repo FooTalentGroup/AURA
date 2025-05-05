@@ -1,38 +1,38 @@
 import { api } from "../../../core/services/api";
-import { Patient, PatientPayload  } from "../types/patient.types";
+import { Patient, PatientPayload } from "../types/patient.types";
 
-/**
- * Servicio unificado para gestión de pacientes,
- * usando el cliente genérico `api` basado en fetch + request<T>.
- */
 export const patientService = {
-  /** Obtiene un listado de pacientes con paginación opcional */
-  list: async (from: number = 0, to: number = 9): Promise<Patient[]> => {
-    return api.listPatients(from, to);
+  /**
+   * Obtiene un listado de pacientes paginado.
+   * @param page número de página (0-based)
+   * @param size tamaño de página
+   */
+  list: async (page: number = 0, size: number = 10): Promise<Patient[]> => {
+    const paginated = await api.listPatientsPaginated(page, size);
+    return paginated.content;
   },
 
   /** Obtiene un paciente por su ID */
-  getById: async (id: number): Promise<Patient> => {
-    return api.getPatientById(id);
-  },
+  getById: (id: number): Promise<Patient> =>
+    api.getPatientById(id),
 
   /** Crea un nuevo paciente */
-  create: async (data: PatientPayload): Promise<Patient> => {
-    return api.createPatient(data);
-  },
+  create: (data: PatientPayload): Promise<Patient> =>
+    api.createPatient(data),
 
   /** Actualiza un paciente existente */
-  update: async (id: number, data: PatientPayload): Promise<Patient> => {
-    return api.updatePatient(id, data);
-  },
+  update: (id: number, data: PatientPayload): Promise<Patient> =>
+    api.updatePatient(id, data),
 
   /** Elimina un paciente */
-  delete: async (id: number): Promise<void> => {
-    return api.deletePatient(id);
-  },
+  delete: (id: number): Promise<void> =>
+    api.deletePatient(id),
 
-  /** Busca un paciente por DNI */
-  searchByDni: async (dni: string): Promise<Patient> => {
-    return api.searchPatientByDni(dni);
-  }
+  /** Busca pacientes por DNI */
+  searchByDni: (dni: string): Promise<Patient> =>
+    api.searchPatientByDni(dni),
+
+  /** Busca pacientes por nombre (fuzzy) */
+  searchByName: (name: string): Promise<Patient[]> =>
+    api.searchPatientByName(name),
 };

@@ -1,33 +1,43 @@
-import React from 'react';
-import { Patient } from '../../../types/patient.ts';
+import { Patient } from "../../../features/patients/types/patient.types";
 
 interface Props {
-    patient: Patient;
-    onView: (id: string) => void;
-  }
-  
-  export const PatientRow: React.FC<Props> = ({ patient, onView }) => (
-    <div className="grid grid-cols-[2fr_1fr_1fr_1fr_2fr_1fr] items-center bg-white border border-gray-200 rounded-2xl px-4 py-4 mb-4">
+  patient: Patient;
+  onView: (id: number) => void;
+}
+
+export const PatientRow = ({ patient, onView }: Props) => {
+  const getInitial = (name: string) => name.charAt(0).toUpperCase();
+
+  // aquí podrías darle formato a las fechas con date-fns o dayjs
+  const nextS = patient.nextSession || '—';
+  const lastS = patient.lastSession || '—';
+
+  return (
+    <div className="grid grid-cols-[2fr_1fr_1fr_1fr_2fr_1fr] items-center bg-white rounded-xl shadow-sm px-4 py-3 mb-3">
       <div className="flex items-center space-x-4">
-        <img
-          src={patient.avatarUrl}
-          alt={patient.name}
-          className="w-12 h-12 rounded-full bg-gray-100"
-        />
-        <div className="text-sm">
-          <p className="font-medium text-gray-800">{patient.name}</p>
-          <p className="text-gray-500">{patient.age} años</p>
+        <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold">
+          {getInitial(patient.name)}
+        </div>
+        <div>
+          <div className="font-medium text-gray-800">{patient.name} {patient.lastName}</div>
+          <div className="text-xs text-gray-400">
+            { /* calcula edad a partir de birthDate */ }
+            {new Date().getFullYear() - new Date(patient.birthDate).getFullYear()} años
+          </div>
         </div>
       </div>
-      <span className="text-center text-sm text-gray-600">{patient.dni}</span>
-      <span className="text-center text-sm text-gray-600">{patient.nextSession}</span>
-      <span className="text-center text-sm text-gray-600">{patient.lastSession}</span>
-      <span className="text-center text-sm text-gray-600">{patient.contact}</span>
-      <button
-        onClick={() => onView(patient.id)}
-        className="mx-auto text-[#65558F] border border-[#65558F] rounded-full px-4 py-1 text-sm hover:bg-[#65558F] hover:text-white transition"
-      >
-        Ver paciente
-      </button>
+      <span className="text-gray-700">{patient.dni}</span>
+      <span className="text-gray-700">{nextS}</span>
+      <span className="text-gray-700">{lastS}</span>
+      <span className="text-gray-700">{patient.phoneNumber}</span>
+      <div className="flex justify-end">
+        <button
+          onClick={() => onView(patient.id)}
+          className="text-[#0072C3] border border-[#0072C3] rounded-full px-4 py-1 text-sm font-medium hover:bg-[#0072C3] hover:text-white transition"
+        >
+          Ver Paciente
+        </button>
+      </div>
     </div>
   );
+};

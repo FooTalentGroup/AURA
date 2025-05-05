@@ -3,15 +3,16 @@ export interface Patient {
   name: string;
   lastName: string;
   phoneNumber: string;
-  country: string;
-  photoUrl: string;
   birthDate: string;
   dni: string;
   email: string;
   hasInsurance: boolean;
   insuranceName: string;
   school: string;
-  paymentType: string;
+  address: string;
+  tutorName: string;
+  relationToPatient: string;
+  professionalId: [];
 }
 
 export interface PatientPayload {
@@ -20,11 +21,11 @@ export interface PatientPayload {
   name: string;
   lastName: string;
   phoneNumber: string;
-  country: string;
-  photoUrl: string;
   birthDate: string;
   hasInsurance: boolean;
   insuranceName: string;
   school: string;
-  paymentType: string;
-}
+  address: string;
+  tutorName: string;
+  relationToPatient: string;
+  professionalId: number[]}
