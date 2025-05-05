@@ -11,11 +11,13 @@ import DashboardPage from "../pages/dashboard/DashboardPage";
 import PatientsPage from "../pages/patients/PatientsPage";
 import AppointmentsPage from "../pages/appointments/AppointmentsPage";
 import NotFoundPage from "../pages/NotFoundPage";
+import ForgotPasswordForm from "../pages/auth/ForgotPasswordForm";
 
 const AppRoutes = () => {
   return (
     <Routes>
       <Route element={<PublicRoutes />}>
+        <Route path="/forgot-password" element={<ForgotPasswordForm />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
       </Route>
