@@ -25,6 +25,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.*;
 
 import org.springframework.data.domain.Page;
@@ -53,7 +54,7 @@ public class ProfessionalService {
         String phoneNumber = authCreateUserDto.getPhoneNumber();
         //String country = authCreateUserDto.getCountry(); // campo que se pide eliminar 02/05/2025
        // String photoUrl = authCreateUserDto.getPhotoUrl(); // campo que se pide eliminar 02/05/2025
-       // LocalDate birthDate = authCreateUserDto.getBirthDate(); // campo que se pide eliminar 02/05/2025 y que solo este solo en paciente
+        LocalDate birthDate = authCreateUserDto.getBirthDate(); // campo que se pide eliminar 02/05/2025 y que solo este solo en paciente
 
         UserModel emailExists = userRepository.findByEmail(email).orElse(null);
         if (emailExists != null) {
@@ -74,7 +75,7 @@ public class ProfessionalService {
                 .lastName(lastName)
                 .phoneNumber(phoneNumber)
                // .country(country) // campo que se pide eliminar 02/05/2025
-               // .birthDate(birthDate) // campo que se pide eliminar 02/05/2025 y que este solo en paciente
+                .birthDate(birthDate) // campo que se pide eliminar 02/05/2025 y que este solo en paciente
                // .photoUrl(photoUrl) // campo que se pide eliminar 02/05/2025
                 .build();
 
