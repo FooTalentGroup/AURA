@@ -18,7 +18,9 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -52,18 +54,15 @@ public class AuthController {
 
         AuthResponseDto response = this.userDetailsService.loginUser(authDto);
 
-        // Configurar cookie
-        Cookie jwtCookie = new Cookie("jwt_token", response.getToken());
-        jwtCookie.setHttpOnly(true);
-        jwtCookie.setSecure(true);
-        jwtCookie.setPath("/");
-        jwtCookie.setMaxAge(jwtUtils.getExpirationTime());
+        ResponseCookie cookie = ResponseCookie.from("jwt_token", response.getToken())
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .maxAge(jwtUtils.getExpirationTime())
+                .sameSite("Strict")
+                .build();
 
-        // Añadir política SameSite
-        String cookieHeader = String.format("jwt_token=%s; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=%d",
-                response.getToken(),
-                jwtUtils.getExpirationTime());
-        servletResponse.addHeader("Set-Cookie", cookieHeader);
+        servletResponse.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 
         return ResponseEntity.ok()
                 .header("user-id", response.getId().toString())
@@ -80,22 +79,20 @@ public class AuthController {
 
         AuthResponseRegisterDto response = professionalService.createUser(authCreateUserDto);
 
-        // 3. Configurar cookie con el token
-        Cookie jwtCookie = new Cookie("jwt_token", response.getToken());
-        jwtCookie.setHttpOnly(true);
-        jwtCookie.setSecure(true);
-        jwtCookie.setPath("/");
-        jwtCookie.setMaxAge(jwtUtils.getExpirationTime());
+       ResponseCookie cookie = ResponseCookie.from("jwt_token", response.getToken())
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .maxAge(jwtUtils.getExpirationTime())
+                .sameSite("Strict")
+                .build();
 
-        // 4. Añadir política SameSite
-        String cookieHeader = String.format(
-                "jwt_token=%s; Path=/; HttpOnly; SameSite=Lax; Max-Age=%d",
-                response.getToken(),
-                jwtUtils.getExpirationTime()
-        );
-        servletResponse.addHeader("Set-Cookie", cookieHeader);
+        servletResponse.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                .header("user-id", response.getUserId().toString())
+                .body(response);
     }
 
     @Operation(summary = "Registrar nuevo recepcionista", description = """
@@ -108,26 +105,24 @@ public class AuthController {
 
         AuthResponseRegisterDto response = receptionistService.createUser(authCreateUserDto);
 
-        // 3. Configurar cookie con el token
-        Cookie jwtCookie = new Cookie("jwt_token", response.getToken());
-        jwtCookie.setHttpOnly(true);
-        jwtCookie.setSecure(true);
-        jwtCookie.setPath("/");
-        jwtCookie.setMaxAge(jwtUtils.getExpirationTime());
+        ResponseCookie cookie = ResponseCookie.from("jwt_token", response.getToken())
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .maxAge(jwtUtils.getExpirationTime())
+                .sameSite("Strict")
+                .build();
 
-        // 4. Añadir política SameSite
-        String cookieHeader = String.format(
-                "jwt_token=%s; Path=/; HttpOnly; SameSite=Lax; Max-Age=%d",
-                response.getToken(),
-                jwtUtils.getExpirationTime()
-        );
-        servletResponse.addHeader("Set-Cookie", cookieHeader);
+        servletResponse.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                .header("user-id", response.getUserId().toString())
+                .body(response);
     }
 
     @Operation(summary = "Obtener el usuario actual", description = """
-            Obtiene el usuario actual, que es el que ha iniciado sesión.
+            Retorna los datos del usuario autenticado.
             """)
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/me")
