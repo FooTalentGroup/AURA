@@ -1,4 +1,4 @@
-import { useState, FormEvent } from "react";
+import { useState, FormEvent,  } from "react";
 import { useNavigate } from "react-router-dom";
 import { useContextAuth } from "../hooks/useContextAuth";
 
@@ -10,11 +10,12 @@ const LoginForm = () => {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    await login(email, password);
-
-    if (state.isAuthenticated) {
+    const ok = await login(email, password);
+    if (ok) {
+      // redirige inmediatamente tras el login exitoso
       navigate("/dashboard");
     }
+    // en caso de error, state.error ya mostrará el mensaje
   };
 
   return (
@@ -34,50 +35,42 @@ const LoginForm = () => {
         )}
 
         <div className="mb-4">
-          <label
-            className="block text-gray-700 text-sm font-bold mb-2"
-            htmlFor="email"
-          >
+          <label htmlFor="email" className="block text-gray-700 text-sm font-bold mb-2">
             Email
           </label>
           <input
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             id="email"
             type="email"
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
+            className="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline"
           />
         </div>
 
         <div className="mb-6">
-          <label
-            className="block text-gray-700 text-sm font-bold mb-2"
-            htmlFor="password"
-          >
+          <label htmlFor="password" className="block text-gray-700 text-sm font-bold mb-2">
             Contraseña
           </label>
           <input
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             id="password"
             type="password"
             placeholder="******************"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
+            className="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline"
           />
         </div>
 
-        <div className="flex items-center justify-between">
-          <button
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full cursor-pointer"
-            type="submit"
-            disabled={state.isLoading}
-          >
-            {state.isLoading ? "Cargando..." : "Ingresar"}
-          </button>
-        </div>
+        <button
+          type="submit"
+          disabled={state.isLoading}
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full focus:outline-none focus:shadow-outline disabled:opacity-50"
+        >
+          {state.isLoading ? "Cargando..." : "Ingresar"}
+        </button>
       </form>
     </div>
   );

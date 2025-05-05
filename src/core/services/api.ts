@@ -1,91 +1,290 @@
+import { AuthResponseRegisterDto,
+  RegisterProfessionalPayload,
+  UserResponse,  } from "../../features/auth/types/auth.types.ts";
+import { PatientPayload } from "../../features/patients/types/patient.types.ts";
+import { Patient } from "../../features/patients/types/patient.types.ts";
+
+// --- Payload y modelos ---
+export interface SuspendRequestDto {
+  duration: number;
+  unit: 'HOURS' | 'DAYS' | 'WEEKS' | 'MONTHS';
+}
+
+export interface ReceptionistRequestDto {
+  email: string;
+  password: string;
+  dni: string;
+  name: string;
+  lastName: string;
+  phoneNumber: string;
+}
+
+export interface ReceptionistUpdateDto {
+  email?: string;
+  dni?: string;
+  name?: string;
+  lastName?: string;
+  phoneNumber?: string;
+}
+
+export interface Receptionist {
+  id: number;
+  dni: string;
+  name: string;
+  lastName: string;
+  phoneNumber: string;
+  country: string;
+  photoUrl: string;
+  birthDate: string;
+}
+
+export interface MedicalRecord {
+  id: number;
+  notes: string;
+  allergies: string;
+  previousConditions: string;
+  patientId: number;
+}
+
+export interface MedicalRecordPayload {
+  patientId: number;
+  notes: string;
+  allergies: string;
+  previousConditions: string;
+}
+
+export interface Professional {
+  id: number;
+  dni: string;
+  name: string;
+  lastName: string;
+  phoneNumber: string;
+  country: string;
+  photoUrl: string;
+  birthDate: string;
+  licenseNumber: string;
+  specialty: string;
+  patientIds?: number[];
+}
+
+export interface ProfessionalPayload {
+  email: string;
+  password: string;
+  dni: string;
+  name: string;
+  lastName: string;
+  phoneNumber: string;
+  licenseNumber: string;
+  specialty: string;
+}
+
+
+
+export interface Paginated<T> {
+  content: T[];
+  currentPage: number;
+  pageSize: number;
+  totalPages: number;
+  totalElements: number;
+}
+
+// --- Configuración base ---
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
+// Función genérica de fetch con JSON headers y cookies
+export async function request<T>(
+  endpoint: string,
+  options: RequestInit = {}
+): Promise<T> {
+  const headers = new Headers({
+    "Content-Type": "application/json",
+    ...(options.headers as Record<string, string>),
+  });
+
+  const response = await fetch(`${BASE_URL}${endpoint}`, {
+    mode: 'cors',
+    credentials: 'include',
+    ...options,
+    headers,
+  })
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    const message = errorData.message || response.statusText;
+    throw new Error(message);
+  }
+
+  if (response.status === 204) {
+    return undefined as unknown as T;
+  }
+
+  return response.json() as Promise<T>;
+}
+
+
+
+
+// --- Endpoints exportados ---
 export const api = {
-  get: async <T>(endpoint: string, token?: string): Promise<T> => {
-    const headers: HeadersInit = {
-      "Content-Type": "application/json",
-    };
-
-    if (token) {
-      headers["Authorization"] = `Bearer ${token}`;
-    }
-
-    const response = await fetch(`${BASE_URL}${endpoint}`, {
-      method: "GET",
-      headers,
-    });
-
-    if (!response.ok) {
-      throw new Error(`Error: ${response.status}`);
-    }
-
-    return response.json();
-  },
-
-  post: async <T, D>(endpoint: string, data: D, token?: string): Promise<T> => {
-    const headers: HeadersInit = {
-      "Content-Type": "application/json",
-    };
-
-    if (token) {
-      headers["Authorization"] = `Bearer ${token}`;
-    }
-
-    const response = await fetch(`${BASE_URL}${endpoint}`, {
+  // --- Autenticación ---
+  suspendUser: (userId: number, data: SuspendRequestDto) =>
+    request<void>(`/auth/${userId}/suspend`, {
       method: "POST",
-      headers,
       body: JSON.stringify(data),
-    });
+    }),
 
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.message || `Error: ${response.status}`);
-    }
+  activateUser: (userId: number) =>
+    request<void>(`/auth/${userId}/activate`, {
+      method: "POST",
+    }),
 
-    return response.json();
-  },
+  registerReceptionist: (data: ReceptionistRequestDto) =>
+    request<AuthResponseRegisterDto>(`/auth/receptionist/register`, {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
 
-  put: async <T, D>(endpoint: string, data: D, token?: string): Promise<T> => {
-    const headers: HeadersInit = {
-      "Content-Type": "application/json",
-    };
+  registerProfessional: (data: RegisterProfessionalPayload) =>
+    request<AuthResponseRegisterDto>(`/auth/professional/register`, {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
 
-    if (token) {
-      headers["Authorization"] = `Bearer ${token}`;
-    }
 
-    const response = await fetch(`${BASE_URL}${endpoint}`, {
+
+  getCurrentUser: () =>
+    request<UserResponse>(`/auth/me`, {
+      method: "GET",
+    }),
+
+  // --- Pacientes ---
+  getPatientById: (id: number) =>
+    request<Patient>(`/patients/${id}`, { method: "GET" }),
+
+  createPatient: (data: PatientPayload) =>
+    request<Patient>(`/patients/register`, {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+
+  updatePatient: (id: number, data: PatientPayload) =>
+    request<Patient>(`/patients/${id}`, {
       method: "PUT",
-      headers,
       body: JSON.stringify(data),
-    });
+    }),
 
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.message || `Error: ${response.status}`);
-    }
+  deletePatient: (id: number) =>
+    request<void>(`/patients/${id}`, { method: "DELETE" }),
 
-    return response.json();
-  },
+  listPatientsPaginated: (page: number = 0, size: number = 10) =>
+    request<Paginated<Patient>>(
+      `/patients?page=${page}&size=${size}`,
+      { method: "GET" }
+    ),
 
-  delete: async <T>(endpoint: string, token?: string): Promise<T> => {
-    const headers: HeadersInit = {
-      "Content-Type": "application/json",
-    };
+  searchPatientByName: (nombre: string) =>
+    request<Patient[]>(
+      `/patients/buscar/nombre?nombre=${encodeURIComponent(nombre)}`,
+      { method: "GET" }
+    ),
 
-    if (token) {
-      headers["Authorization"] = `Bearer ${token}`;
-    }
+  searchPatientByDni: (dni: string) =>
+    request<Patient>(
+      `/patients/buscar/dni?dni=${encodeURIComponent(dni)}`,
+      { method: "GET" }
+    ),
 
-    const response = await fetch(`${BASE_URL}${endpoint}`, {
-      method: "DELETE",
-      headers,
-    });
+  // --- Historial médico ---
+  getMedicalRecordById: (id: number) =>
+    request<MedicalRecord>(`/medical-records/${id}`, { method: "GET" }),
 
-    if (!response.ok) {
-      throw new Error(`Error: ${response.status}`);
-    }
+  createMedicalRecord: (data: MedicalRecordPayload) =>
+    request<MedicalRecord>(`/medical-records/create`, {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
 
-    return response.json();
-  },
+  updateMedicalRecord: (id: number, data: MedicalRecordPayload) =>
+    request<void>(`/medical-records/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(data),
+    }),
+
+  deleteMedicalRecord: (id: number) =>
+    request<void>(`/medical-records/${id}`, { method: "DELETE" }),
+
+  listMedicalRecordsPaginated: (
+    page: number = 0,
+    size: number = 10
+  ) =>
+    request<Paginated<MedicalRecord>>(
+      `/medical-records?page=${page}&size=${size}`,
+      { method: "GET" }
+    ),
+
+  // --- Recepcionistas ---
+  getReceptionistById: (id: number) =>
+    request<Receptionist>(`/receptionist/${id}`, { method: "GET" }),
+
+  updateReceptionist: (
+    id: number,
+    data: ReceptionistUpdateDto
+  ) =>
+    request<Receptionist>(`/receptionist/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify(data),
+    }),
+
+  deleteReceptionist: (id: number) =>
+    request<void>(`/receptionist/${id}`, { method: "DELETE" }),
+
+  listReceptionistsPaginated: (
+    page: number = 0,
+    size: number = 10
+  ) =>
+    request<Paginated<Receptionist>>(
+      `/receptionist?page=${page}&size=${size}`,
+      { method: "GET" }
+    ),
+
+  // --- Usuarios ---
+  getUserById: (id: number) =>
+    request<UserResponse>(`/user/${id}`, { method: "GET" }),
+
+  // --- Profesionales ---
+  getProfessionalById: (id: number) =>
+    request<Professional>(`/professionals/${id}`, { method: "GET" }),
+
+  updateProfessional: (
+    id: number,
+    data: ProfessionalPayload
+  ) =>
+    request<Professional>(`/professionals/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(data),
+    }),
+
+  deleteProfessional: (id: number) =>
+    request<void>(`/professionals/${id}`, { method: "DELETE" }),
+
+  listProfessionalsPaginated: (
+    page: number = 0,
+    size: number = 10
+  ) =>
+    request<Paginated<Professional>>(
+      `/professionals?page=${page}&size=${size}`,
+      { method: "GET" }
+    ),
+
+  searchProfessionals: (keyword: string) =>
+    request<Professional[]>(
+      `/professionals/search?keyword=${encodeURIComponent(keyword)}`,
+      { method: "GET" }
+    ),
+
+  getPatientsByProfessional: (professionalId: number) =>
+    request<Patient[]>(
+      `/professionals/${professionalId}/patients`,
+      { method: "GET" }
+    ),
 };
