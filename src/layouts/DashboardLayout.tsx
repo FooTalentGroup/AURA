@@ -6,7 +6,6 @@ import {
   FiChevronDown,
 } from "react-icons/fi";
 
-
 interface DashboardLayoutProps {
   children: ReactNode;
 }
@@ -92,15 +91,20 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
             <div
               className={`${
                 isModalOpen ? "block" : "hidden"
-              } absolute z-[1] -bottom-27 right-0 bg-neutral-200 rounded-md p-4`}
+              } absolute z-[1] top-15 right-0 bg-neutral-200 rounded-md p-4`}
             >
               <nav>
-                <ul className="flex flex-col gap-3">
-                  <li className="font-medium">{state.user?.email}</li>
+                <ul className="font-medium flex flex-col gap-3">
+                  <li>{state.user?.email}</li>
+                  <li>
+                    <Link className="hover:text-blue-600" to="/profile">
+                      Perfil
+                    </Link>
+                  </li>
                   <li>
                     <button
                       onClick={handleLogout}
-                      className="font-semibold cursor-pointer hover:text-blue-600"
+                      className="cursor-pointer hover:text-blue-600"
                     >
                       Cerrar Sesión
                     </button>

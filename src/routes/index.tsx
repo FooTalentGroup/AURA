@@ -12,6 +12,7 @@ import PatientsPage from "../pages/patients/PatientsPage";
 import AppointmentsPage from "../pages/appointments/AppointmentsPage";
 import NotFoundPage from "../pages/NotFoundPage";
 import ForgotPasswordForm from "../pages/auth/ForgotPasswordForm";
+import ProfilePage from "../pages/profile/ProfilePage";
 
 const AppRoutes = () => {
   return (
@@ -24,7 +25,7 @@ const AppRoutes = () => {
 
       <Route element={<PrivateRoutes />}>
         <Route path="/dashboard" element={<DashboardPage />} />
-        {/* <Route path="/dashboard" element={<ProfilePage />} /> */}
+        <Route path="/profile" element={<ProfilePage />} />
         <Route path="/patients" element={<PatientsPage />} />
         <Route path="/appointments" element={<AppointmentsPage />} />
       </Route>
