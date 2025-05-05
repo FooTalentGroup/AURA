@@ -7,6 +7,8 @@ package com.clinica.aura.models.person.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
+
 @Entity
 @Setter
 @Getter
@@ -22,9 +24,11 @@ public class PersonModel {
     private String dni;
     private String name;
     private String lastName;
-    // private String photoUrl;
-    // private LocalDate birthDate;
+    private String address;
+    private LocalDate birthDate;
     private String phoneNumber;
+    private String locality;
+    private String cuil;
     // private String country;
 
     /* los campos comentandos son los que pidio Axel que saquemos, Ux y Analista estaban en la

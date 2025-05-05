@@ -14,15 +14,19 @@ public class ReceptionistResponseDto {
 
     private String dni;
 
+    private String email;
+
     private String name;
 
     private String lastName;
 
     private String phoneNumber;
 
-    private String country;
+    private String address;
 
-    private String photoUrl;
+    private String locality;
+
+    private String cuil;
 
     private LocalDate birthDate;
 }

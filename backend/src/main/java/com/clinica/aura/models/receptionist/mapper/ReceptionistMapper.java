@@ -32,9 +32,11 @@ public class ReceptionistMapper {
                 .lastName(person.getLastName())
                 .dni(person.getDni())
                 .phoneNumber(person.getPhoneNumber())
-               // .country(person.getCountry())     // campo que se pide eliminar 02/05/2025
-             //   .birthDate(person.getBirthDate()) // campo que se pide eliminar 02/05/2025 y que este solo en paciente
-              //  .photoUrl(person.getPhotoUrl())  // campo que se pide eliminar 02/05/2025
+                .email(userRepository.findByPerson(person).orElseThrow(() -> new UserNotFoundException("No se encontro el usuario")).getEmail())
+                .address(person.getAddress())
+                .locality(person.getLocality())
+                .cuil(person.getCuil())
+                .birthDate(person.getBirthDate())
                 .build();
     }
 
@@ -54,15 +56,18 @@ public class ReceptionistMapper {
         if (dto.getPhoneNumber() != null) {
             person.setPhoneNumber(dto.getPhoneNumber());
         }
-//        if (dto.getCountry() != null) { // campo que se pide eliminar 02/05/2025
-//            person.setCountry(dto.getCountry());
-//        }
-//        if (dto.getPhotoUrl() != null) {
-//            person.setPhotoUrl(dto.getPhotoUrl()); // campo que se pide eliminar 02/05/2025
-//        }
-//        if (dto.getBirthDate() != null) {
-//            person.setBirthDate(dto.getBirthDate()); // campo que se pide eliminar 02/05/2025
-//        }
+        if (dto.getAddress() != null) {
+            person.setAddress(dto.getAddress());
+        }
+        if (dto.getLocality() != null) {
+            person.setLocality(dto.getLocality());
+        }
+        if (dto.getCuil() != null) {
+            person.setCuil(dto.getCuil());
+        }
+        if (dto.getBirthDate() != null) {
+            person.setBirthDate(dto.getBirthDate());
+        }
         if (dto.getEmail() != null) {
             UserModel user = userRepository.findByPersonId(receptionist.getPerson().getId())
                     .orElseThrow(() -> new UserNotFoundException("No se encontró usuario para esta persona."));

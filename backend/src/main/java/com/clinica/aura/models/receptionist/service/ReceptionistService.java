@@ -31,6 +31,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -57,9 +58,10 @@ public class ReceptionistService {
         String lastName = authCreateUserDto.getLastName();
         String dni = authCreateUserDto.getDni();
         String phoneNumber = authCreateUserDto.getPhoneNumber();
-//        String country = authCreateUserDto.getCountry(); // campo que se pide eliminar 02/05/2025
-//        String photoUrl = authCreateUserDto.getPhotoUrl();// campo que se pide eliminar 02/05/2025
-//        LocalDate birthDate = authCreateUserDto.getBirthDate();// campo que se pide eliminar 02/05/2025
+        String address = authCreateUserDto.getAddress();
+        String locality = authCreateUserDto.getLocality();
+        String cuil = authCreateUserDto.getCuil();
+        LocalDate birthDate = authCreateUserDto.getBirthDate();
 
         UserModel emailExists = userRepository.findByEmail(email).orElse(null);
         if (emailExists != null) {
@@ -73,15 +75,15 @@ public class ReceptionistService {
 
         Set<RoleModel> roleEntities = Set.of(professionalRole.get());
 
-        // Crea la persona (aún no se guarda explícitamente)
         PersonModel personEntity = PersonModel.builder()
                 .dni(dni)
                 .name(username)
                 .lastName(lastName)
                 .phoneNumber(phoneNumber)
-                //.country(country) // campo que se pide eliminar 02/05/2025
-               // .birthDate(birthDate) // campo que se pide eliminar 02/05/2025 y que este solo en paciente
-              //  .photoUrl(photoUrl)  /// campo que se pide eliminar 02/05/2025
+                .address(address)
+                .locality(locality)
+                .birthDate(birthDate)
+                .cuil(cuil)
                 .build();
 
 
@@ -167,8 +169,5 @@ public class ReceptionistService {
                 .orElseThrow(() -> new ReceptionistNotFoundException("Recepcionista no encontrado con ID: " + id));
         receptionistRepository.delete(receptionistModel);
     }
-
-
-
 
 }
