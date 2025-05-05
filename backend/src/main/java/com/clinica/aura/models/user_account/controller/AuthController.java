@@ -84,7 +84,7 @@ public class AuthController {
                 .secure(true)
                 .path("/")
                 .maxAge(jwtUtils.getExpirationTime())
-                .sameSite("Strict")
+                .sameSite("None")
                 .build();
 
         servletResponse.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
@@ -110,7 +110,7 @@ public class AuthController {
                 .secure(true)
                 .path("/")
                 .maxAge(jwtUtils.getExpirationTime())
-                .sameSite("Strict")
+                .sameSite("None")
                 .build();
 
         servletResponse.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
@@ -138,16 +138,15 @@ public class AuthController {
     @PostMapping("/logout")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> logout(HttpServletResponse servletResponse) {
-        Cookie jwtCookie = new Cookie("jwt_token", null);
-        jwtCookie.setHttpOnly(true);
-        jwtCookie.setSecure(true);
-        jwtCookie.setPath("/");
-        jwtCookie.setMaxAge(0); // Elimina la cookie
-
-
-        servletResponse.addCookie(jwtCookie);
-
-        return ResponseEntity.ok().body("Logout exitoso");
+        ResponseCookie cookie = ResponseCookie.from("jwt_token", "")
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .maxAge(0)
+                .sameSite("None")
+                .build();
+        servletResponse.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+        return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "Suspender un usuario", description = """
