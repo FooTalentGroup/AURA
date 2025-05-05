@@ -1,35 +1,38 @@
 import { api } from "../../../core/services/api";
-import { Patient, PatientFormData } from "../types/patient.types";
+import { Patient, PatientPayload  } from "../types/patient.types";
 
+/**
+ * Servicio unificado para gestión de pacientes,
+ * usando el cliente genérico `api` basado en fetch + request<T>.
+ */
 export const patientService = {
-  getPatients: async (token: string): Promise<Patient[]> => {
-    return api.get<Patient[]>("/patients", token);
+  /** Obtiene un listado de pacientes con paginación opcional */
+  list: async (from: number = 0, to: number = 9): Promise<Patient[]> => {
+    return api.listPatients(from, to);
   },
 
-  getPatientById: async (id: number, token: string): Promise<Patient> => {
-    return api.get<Patient>(`/patients/${id}`, token);
+  /** Obtiene un paciente por su ID */
+  getById: async (id: number): Promise<Patient> => {
+    return api.getPatientById(id);
   },
 
-  createPatient: async (
-    patientData: PatientFormData,
-    token: string
-  ): Promise<Patient> => {
-    return api.post<Patient, PatientFormData>("/patients", patientData, token);
+  /** Crea un nuevo paciente */
+  create: async (data: PatientPayload): Promise<Patient> => {
+    return api.createPatient(data);
   },
 
-  updatePatient: async (
-    id: number,
-    patientData: PatientFormData,
-    token: string
-  ): Promise<Patient> => {
-    return api.put<Patient, PatientFormData>(
-      `/patients/${id}`,
-      patientData,
-      token
-    );
+  /** Actualiza un paciente existente */
+  update: async (id: number, data: PatientPayload): Promise<Patient> => {
+    return api.updatePatient(id, data);
   },
 
-  deletePatient: async (id: number, token: string): Promise<void> => {
-    return api.delete<void>(`/patients/${id}`, token);
+  /** Elimina un paciente */
+  delete: async (id: number): Promise<void> => {
+    return api.deletePatient(id);
   },
+
+  /** Busca un paciente por DNI */
+  searchByDni: async (dni: string): Promise<Patient> => {
+    return api.searchPatientByDni(dni);
+  }
 };

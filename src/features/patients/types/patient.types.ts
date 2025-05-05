@@ -1,22 +1,30 @@
 export interface Patient {
   id: number;
-  firstName: string;
+  name: string;
   lastName: string;
+  phoneNumber: string;
+  country: string;
+  photoUrl: string;
+  birthDate: string;
   dni: string;
-  email?: string;
-  phone?: string;
-  birthDate?: string;
-  address?: string;
-  createdAt: string;
-  updatedAt: string;
+  email: string;
+  hasInsurance: boolean;
+  insuranceName: string;
+  school: string;
+  paymentType: string;
 }
 
-export interface PatientFormData {
-  firstName: string;
-  lastName: string;
+export interface PatientPayload {
+  email: string;
   dni: string;
-  email?: string;
-  phone?: string;
-  birthDate?: string;
-  address?: string;
+  name: string;
+  lastName: string;
+  phoneNumber: string;
+  country: string;
+  photoUrl: string;
+  birthDate: string;
+  hasInsurance: boolean;
+  insuranceName: string;
+  school: string;
+  paymentType: string;
 }

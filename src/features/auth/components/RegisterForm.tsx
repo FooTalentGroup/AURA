@@ -7,7 +7,7 @@ const RegisterForm = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordError, setPasswordError] = useState("");
-  const { register, state } = useContextAuth();
+  const { registerProfessional: register, registerReceptionist:registers, state } = useContextAuth();
   const navigate = useNavigate();
 
   const validatePasswords = () => {
@@ -27,6 +27,8 @@ const RegisterForm = () => {
     }
 
     await register(email, password);
+    await registers(email, password);
+    // Aquí puedes agregar la lógica para determinar si es un profesional o un recepcionista
 
     if (state.isAuthenticated) {
       navigate("/dashboard");
