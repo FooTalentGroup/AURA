@@ -59,7 +59,7 @@ public class AuthController {
                 .secure(true)
                 .path("/")
                 .maxAge(jwtUtils.getExpirationTime())
-                .sameSite("Strict")
+                .sameSite("None")
                 .build();
 
         servletResponse.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
