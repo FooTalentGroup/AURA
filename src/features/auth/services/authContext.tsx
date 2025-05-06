@@ -30,6 +30,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           id: res.id,
           username: res.email || "",
           email: res.email || "",
+          roles: res.roles,  
         };
         dispatch({ type: "LOGIN_SUCCESS", payload: user });
       })
@@ -69,7 +70,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   const clearError = () => dispatch({ type: "CLEAR_ERROR" });
-
+  const isAdmin = !!state.user?.roles?.includes("ADMIN");
   return (
     <AuthContext.Provider
       value={{
@@ -82,7 +83,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         },
         registerProfessional: async (data: RegisterProfessionalPayload) => {
           await authApi.registerProfessional(data);
-        },
+        },  isAdmin,        
       }}
     >
       {children}
