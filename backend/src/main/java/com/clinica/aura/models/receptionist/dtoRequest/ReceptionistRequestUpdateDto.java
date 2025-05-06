@@ -1,10 +1,7 @@
 package com.clinica.aura.models.receptionist.dtoRequest;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Past;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,7 +26,8 @@ public class ReceptionistRequestUpdateDto {
 
     // Datos de la persona
     @NotBlank(message = "El DNI es obligatorio")
-    @Schema(description = "DNI del recepcionista", requiredMode = Schema.RequiredMode.REQUIRED, example = "12345678A")
+    @Pattern(regexp = "^\\d{8}$", message = "El DNI debe tener exactamente 8 dígitos numéricos")
+    @Schema(description = "DNI del recepcionista", requiredMode = Schema.RequiredMode.REQUIRED, example = "12345678")
     private String dni;
 
     @NotBlank(message = "El nombre es obligatorio")
@@ -63,6 +61,7 @@ public class ReceptionistRequestUpdateDto {
     private LocalDate birthDate;
 
     @NotBlank(message = "El cuil es obligatorio")
-    @Schema(description = "Cuil del recepcionista", example = "12", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Pattern(regexp = "^(20|23|24|27|30|33|34)-?\\d{8}-?\\d$", message = "CUIL inválido. Debe tener el formato XX-XXXXXXXX-X o 11 dígitos")
+    @Schema(description = "Cuil del recepcionista", example = "20-12345678-9", requiredMode = Schema.RequiredMode.REQUIRED)
     private String cuil;
 }
