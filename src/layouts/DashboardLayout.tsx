@@ -9,6 +9,7 @@ import {
   MessageSquareIcon,
   PatientsIcon,
 } from "../components/shared/ui/Icons";
+import AURALogo from "../../public/aura-icon.png";
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -18,6 +19,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const { logout, state } = useContextAuth();
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -28,12 +30,20 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     setIsModalOpen(!isModalOpen);
   };
 
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
       <header className="bg-white shadow-sm">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center gap-8">
-            <button className="cursor-pointer" title="Menú">
+            <button
+              onClick={toggleSidebar}
+              className="cursor-pointer"
+              title="Menú"
+            >
               <MenuIcon />
             </button>
             <h1 className="font-bold text-xl text-blue-500">AURA</h1>
@@ -96,7 +106,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
         <aside className="flex-grow flex justify-center items-center max-w-24">
           <nav className="px-1">
             <ul className="text-gray-800 flex flex-col gap-4 h-full text-center [&>li>a]:flex-col [&>li>a]:hover:text-blue-700 [&>li>a]:hover:bg-sky-200/60">
-              <li className="">
+              <li>
                 <Link
                   to="/dashboard"
                   className="p-2 flex items-center rounded-2xl"
@@ -105,7 +115,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                   Home
                 </Link>
               </li>
-              <li className="">
+              <li>
                 <Link
                   to="/patients"
                   className="p-2 flex items-center rounded-2xl"
@@ -114,7 +124,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                   Pacientes
                 </Link>
               </li>
-              <li className="">
+              <li>
                 <Link
                   to="/appointments"
                   className="p-2 flex items-center rounded-2xl"
@@ -134,6 +144,64 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
           &copy; {new Date().getFullYear()} AURA. Todos los derechos reservados.
         </div>
       </footer>
+
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/30 z-30"
+          onClick={toggleSidebar}
+        />
+      )}
+
+      <aside
+        className={`fixed top-0 left-0 h-full bg-gray-800 w-64 transform transition-transform duration-300 ease-in-out z-40 ${
+          sidebarOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
+        <div className="p-4 flex gap-4 items-center border-b border-gray-700">
+          <button
+            className="text-gray-300 hover:text-white cursor-pointer"
+            onClick={toggleSidebar}
+          >
+            <MenuIcon />
+          </button>
+          <div className="flex items-center">
+            {/* TODO reemplazar imagen por logo real de AURA */}
+            <img className="w-6 bg-white rounded-full" src={AURALogo} alt="" />
+            <h2 className="ml-2 text-white text-lg font-semibold">AURA</h2>
+          </div>
+        </div>
+        <nav className="p-4">
+          <ul className="space-y-3 [&>li]:font-semibold [&>li]:text-lg">
+            <li>
+              <Link
+                to="/dashboard"
+                className="flex items-center gap-4 text-gray-300 hover:text-white p-2 rounded hover:bg-gray-700"
+              >
+                <HomeIcon />
+                Home
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/patients"
+                className="flex items-center gap-4 text-gray-300 hover:text-white p-2 rounded hover:bg-gray-700"
+              >
+                <PatientsIcon />
+                Pacientes
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/appointments"
+                className="flex items-center gap-4 text-gray-300 hover:text-white p-2 rounded hover:bg-gray-700"
+              >
+                <CalendarRangeIcon />
+                Agenda
+              </Link>
+            </li>
+          </ul>
+        </nav>
+      </aside>
     </div>
   );
 };
