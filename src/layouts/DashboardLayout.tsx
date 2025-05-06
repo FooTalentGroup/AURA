@@ -9,7 +9,7 @@ import {
   MessageSquareIcon,
   PatientsIcon,
 } from "../components/shared/ui/Icons";
-import AURALogo from "../../public/aura-icon.png";
+import AURALogo from "../assets/aura-icon.png";
 
 interface DashboardLayoutProps {
   children: ReactNode;
