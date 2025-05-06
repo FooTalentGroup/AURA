@@ -11,8 +11,7 @@ import java.util.Date;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class FollowUpEntriesUpdateDto {
+public class FollowUpEntriesDtoRequestUpdate {
 
     @NotNull(message = "La fecha es obligatoria")
     @PastOrPresent(message = "La fecha no puede ser futura")
