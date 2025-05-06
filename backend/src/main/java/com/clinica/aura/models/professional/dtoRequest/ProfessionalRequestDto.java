@@ -3,10 +3,14 @@ package com.clinica.aura.models.professional.dtoRequest;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.time.LocalDate;
 
 @Getter
 @Setter
@@ -14,16 +18,17 @@ import lombok.Setter;
 @NoArgsConstructor
 public class ProfessionalRequestDto {
     @NotBlank(message = "El email es obligatorio")
+    @Email(message = "Formato de email inválido")
     @Schema(description = "Correo del usuario", requiredMode = Schema.RequiredMode.REQUIRED, example = "admin1@example.com")
-    @Email
     private String email;
 
     @NotBlank(message = "La contraseña es obligatoria")
-    @Schema(description = "Contraseña del usuario",requiredMode = Schema.RequiredMode.REQUIRED, example = "admin123")
+    @Schema(description = "Contraseña del usuario", requiredMode = Schema.RequiredMode.REQUIRED, example = "admin123")
     private String password;
 
     @NotBlank(message = "El DNI es obligatorio")
-    @Schema(description = "DNI del profesional", requiredMode = Schema.RequiredMode.REQUIRED, example = "12345678A")
+    @Pattern(regexp = "^\\d{8}$", message = "El DNI debe tener exactamente 8 dígitos numéricos")
+    @Schema(description = "DNI del profesional", requiredMode = Schema.RequiredMode.REQUIRED, example = "12345678")
     private String dni;
 
     @NotBlank(message = "El nombre es obligatorio")
@@ -34,22 +39,29 @@ public class ProfessionalRequestDto {
     @Schema(description = "Apellido del profesional", requiredMode = Schema.RequiredMode.REQUIRED, example = "Doe")
     private String lastName;
 
-    @NotBlank(message = "El telefono es obligatorio")
-    @Schema(description = "Telefono del profesional", requiredMode = Schema.RequiredMode.REQUIRED, example = "123456789")
+    @NotBlank(message = "El teléfono es obligatorio")
+    @Schema(description = "Teléfono del profesional", requiredMode = Schema.RequiredMode.REQUIRED, example = "123456789")
     private String phoneNumber;
 
-//    @NotBlank(message = "El pais es obligatorio")
-//    @Schema(description = "Pais del profesional", requiredMode = Schema.RequiredMode.REQUIRED, example = "Spain")
-//    private String country; // campo que se pide eliminar 02/05/2025
-//
-//    @Schema(description = "URL de la foto del profesional", example = "https://example.com/photo.jpg")
-//    private String photoUrl; // campo que se pide eliminar 02/05/2025
-//
-//    @Schema(description = "Fecha de nacimiento del profesional", example = "1990-01-01")
-//    private LocalDate birthDate; // campo que se pide eliminar 02/05/2025
+    @NotBlank(message = "La dirección es obligatoria")
+    @Schema(description = "Dirección del profesional", requiredMode = Schema.RequiredMode.REQUIRED, example = "Av. Siempre Viva 742")
+    private String address;
 
-    @NotBlank(message = "El numero de licencia es obligatorio")
-    @Schema(description = "Numero de licencia del profesional", requiredMode = Schema.RequiredMode.REQUIRED, example = "12345678")
+    @NotNull(message = "La fecha de nacimiento es obligatoria")
+    @Schema(description = "Fecha de nacimiento del profesional", requiredMode = Schema.RequiredMode.REQUIRED, example = "1990-01-01")
+    private LocalDate birthDate;
+
+    @NotBlank(message = "La localidad es obligatoria")
+    @Schema(description = "Localidad del profesional", requiredMode = Schema.RequiredMode.REQUIRED, example = "Tandil")
+    private String locality;
+
+    @NotBlank(message = "El CUIL es obligatorio")
+    @Pattern(regexp = "^(20|23|24|27|30|33|34)-?\\d{8}-?\\d$", message = "CUIL inválido. Debe tener el formato XX-XXXXXXXX-X o 11 dígitos")
+    @Schema(description = "CUIL del profesional", requiredMode = Schema.RequiredMode.REQUIRED, example = "20-12345678-9")
+    private String cuil;
+
+    @NotBlank(message = "La matrícula es obligatorio")
+    @Schema(description = "Número de matrícula del profesional", requiredMode = Schema.RequiredMode.REQUIRED, example = "12345678")
     private String licenseNumber;
 
     @NotBlank(message = "La especialidad es obligatoria")
