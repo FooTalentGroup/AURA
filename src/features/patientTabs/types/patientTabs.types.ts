@@ -11,14 +11,14 @@ export interface TabItem {
 }
 
 export interface PatientData {
-  nombre: string;
-  fechaNacimiento: string;
+  name: string;
+  dateBirth: string;
   dni: string;
-  edad: number;
-  sexo: string;
-  obraSocial: {
-    nombre: string;
+  age: number;
+  genre: string;
+  socialSecurity: {
+    name: string;
     plan: string;
-    numeroAfiliado: string;
+    membershipNumber: string;
   };
 }
