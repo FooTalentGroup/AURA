@@ -14,17 +14,21 @@ export const LoginForm: React.FC = () => {
   const { login, state } = useContextAuth();
   const navigate = useNavigate();
 
+  const trimmedEmail = email.trim();
+  const hasSpaces = email !== trimmedEmail;
+  const emailFormatInvalid = touchedEmail && !validateEmail(trimmedEmail);
+  const emailSpaceError = touchedEmail && hasSpaces;
+  const canSubmit = !hasSpaces && validateEmail(trimmedEmail) && password.trim() !== '';
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setTouchedEmail(true);
 
-    if (!validateEmail(email) || password.trim() === '') return;
+    if (!canSubmit) return;
 
-    const success = await login(email, password);
+    const success = await login(trimmedEmail, password);
     if (success) navigate('/dashboard');
   };
-
-  const emailError = touchedEmail && !validateEmail(email);
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
@@ -45,17 +49,24 @@ export const LoginForm: React.FC = () => {
         </label>
         <input
           id="email"
-          type="email"
+          type="text"
+          inputMode="email"
+          pattern="^\S+@\S+\.\S+$"
           placeholder="ejemplo@gmail.com"
           value={email}
           onChange={e => setEmail(e.target.value)}
           onBlur={() => setTouchedEmail(true)}
           required
           className={`w-full h-12 border rounded-lg px-4 placeholder-gray-400 focus:outline-none focus:border-blue-600 ${
-            emailError ? 'border-red-500' : 'border-gray-300'
+            (emailFormatInvalid || emailSpaceError) ? 'border-red-500' : 'border-gray-300'
           }`}
         />
-        {emailError && (
+        {emailSpaceError && (
+          <p className="text-xs text-red-600 mt-1">
+            No se permiten espacios antes o después del correo
+          </p>
+        )}
+        {!emailSpaceError && emailFormatInvalid && (
           <p className="text-xs text-red-600 mt-1">
             Por favor, ingresa un correo válido
           </p>
@@ -73,6 +84,7 @@ export const LoginForm: React.FC = () => {
           placeholder="********"
           value={password}
           onChange={e => setPassword(e.target.value)}
+          onBlur={() => setTouchedEmail(true)}
           required
           className="w-full h-12 border border-gray-300 rounded-lg px-4 pr-12 placeholder-gray-400 focus:outline-none focus:border-blue-600"
         />
@@ -93,7 +105,7 @@ export const LoginForm: React.FC = () => {
 
       <button
         type="submit"
-        disabled={state.isLoading}
+        disabled={!canSubmit || state.isLoading}
         className="w-full h-12 flex items-center justify-center font-semibold rounded-full bg-blue-600 hover:bg-blue-700 text-white transition disabled:opacity-50"
       >
         {state.isLoading ? 'Cargando...' : 'Iniciar sesión'}
