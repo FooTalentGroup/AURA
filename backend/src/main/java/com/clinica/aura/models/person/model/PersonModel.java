@@ -31,7 +31,5 @@ public class PersonModel {
     private String cuil;
     // private String country;
 
-    /* los campos comentandos son los que pidio Axel que saquemos, Ux y Analista estaban en la
-     * reunión y dieron el okey también.
-     * La fecha de nacimiento solo estará en Paciente por pedidos de los mismos integrantes*/
+
 }

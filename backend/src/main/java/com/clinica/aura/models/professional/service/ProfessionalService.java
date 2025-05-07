@@ -1,5 +1,5 @@
 package com.clinica.aura.models.professional.service;
-import com.clinica.aura.models.patient.dtoRequest.PatientResponseDto;
+import com.clinica.aura.models.patient.dto.PatientResponseDto;
 import com.clinica.aura.models.patient.model.PatientModel;
 import com.clinica.aura.models.patient.repository.PatientRepository;
 import com.clinica.aura.models.user_account.service.impl.UserDetailsServiceImpl;
@@ -160,21 +160,21 @@ public class ProfessionalService {
                 .toList()
                 : Collections.emptyList();
 
-        return new ProfessionalResponseDto(
-                professional.getId(),
-
-                person != null ? person.getDni() : null,
-                person != null ? person.getName() : null,
-                person != null ? person.getLastName() : null,
-                person != null ? person.getPhoneNumber() : null,
-                person != null ? person.getAddress() : null,
-                person != null ? person.getBirthDate() : null,
-                person != null ? person.getLocality() : null,
-                person != null ? person.getCuil() : null,
-                professional.getLicenseNumber(),
-                professional.getSpecialty(),
-                patientIds
-        );
+        return ProfessionalResponseDto.builder()
+                .id(professional.getId())
+                .email(userRepository.findByPersonId(person.getId()).get().getEmail())
+                .dni(person.getDni())
+                .name(person.getName())
+                .lastName(person.getLastName())
+                .phoneNumber(person.getPhoneNumber())
+                .address(person.getAddress())
+                .birthDate(person.getBirthDate())
+                .locality(person.getLocality())
+                .cuil(person.getCuil())
+                .licenseNumber(professional.getLicenseNumber())
+                .specialty(professional.getSpecialty())
+                .patientIds(patientIds)
+                .build();
     }
 
 
@@ -242,14 +242,18 @@ public class ProfessionalService {
                     .lastName(person != null ? person.getLastName() : null)
                     .dni(person != null ? person.getDni() : null)
                     .phoneNumber(person != null ? person.getPhoneNumber() : null)
-                   // .country(person != null ? person.getCountry() : null) //cambio sugerido a eliminar  02/05/2025
-                  //  .photoUrl(person != null ? person.getPhotoUrl() : null) //cambio sugerido a eliminar  02/05/2025
-                  //  .birthDate(person != null ? person.getBirthDate() : null) //cambio sugerido a eliminar, que solo este en paciente  02/05/2025
-                    .email(null) //
+                    // .country(person != null ? person.getCountry() : null) //cambio sugerido a eliminar  02/05/2025
+                    //  .photoUrl(person != null ? person.getPhotoUrl() : null) //cambio sugerido a eliminar  02/05/2025
+                    .birthDate(person != null ? person.getBirthDate() : null)
+                    .email(null) // lo dejás en null porque no tenés el usuario
                     .hasInsurance(patient.isHasInsurance())
                     .insuranceName(patient.getInsuranceName())
-                    .school(patient.getSchool())
-                   // .paymentType(patient.getPaymentType()) //cambio sugerido a eliminar  02/05/2025
+                    .address(patient.getAddress())
+                    .tutorName(patient.getTutorName())
+                    .relationToPatient(patient.getRelationToPatient())
+                    .level(patient.getLevel())
+                    .shift(patient.getShift())
+                    .schoolId(patient.getSchoolModel().getId())
                     .professionalIds(patient.getProfessionals() != null
                             ? patient.getProfessionals().stream()
                             .map(ProfessionalModel::getId)

@@ -2,6 +2,7 @@ package com.clinica.aura.models.professional.dtoResponse;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -13,13 +14,14 @@ import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class ProfessionalResponseDto {
 
     @Schema(description = "ID del profesional", example = "1")
     private Long id;
 
-  //  @Schema(description = "Correo del usuario", example = "profesional@example.com")
-  //  private String email;
+    @Schema(description = "Correo del usuario", example = "profesional@example.com")
+    private String email;
 
     @Schema(description = "DNI del profesional", example = "12345678")
     private String dni;

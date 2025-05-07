@@ -1,5 +1,6 @@
-package com.clinica.aura.models.patient.dtoRequest;
+package com.clinica.aura.models.patient.dto;
 
+import com.clinica.aura.models.school.model.SchoolModel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,20 +16,18 @@ public class PatientResponseDto {
     private String name;
     private String lastName;
     private String phoneNumber;
-//    private String country;  // campo que se pide eliminar 02/05/2025
-//    private String photoUrl; // campo que se pide eliminar 02/05/2025
-    private LocalDate birthDate; //solo debe estar en paciente 02/05/2025
+    private LocalDate birthDate;
     private String dni;
     private String email;
     private boolean hasInsurance;
     private String insuranceName;
-    private String school;
-//    private String paymentType; // campo que se pide eliminar 02/05/2025
+//    private String school;  05/05/2025 es una entidad ahora
     private String address;
     private String tutorName;
     private String relationToPatient;
     private List<Long> professionalIds;
-
-
+    private String level;//level y shift eran de escuela y ahora son de paciente
+    private String shift;
+    private Long schoolId;
 
 }

@@ -1,7 +1,9 @@
 package com.clinica.aura.models.patient.model;
 
+
 import com.clinica.aura.models.person.model.PersonModel;
 import com.clinica.aura.models.professional.model.ProfessionalModel;
+import com.clinica.aura.models.school.model.SchoolModel;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -32,17 +34,15 @@ public class PatientModel {
 
     private String insuranceName;
 
-    private String school;
-
-    private LocalDate birthDate; //se agrega la fecha aca en paciente, a pedidos de los mismos 02/05/2025
-
-    //private String paymentType; //campo quitado a pedido de Axel, ux (Tomas) y analista Funcional dieron el ok
-
-    private String address;
+     private String address;
 
     private String tutorName;
 
     private String relationToPatient;
+
+    private String level;  //estaba en escuela y lo pase aca
+
+    private String shift;   //estaba en escuela y lo pase aca
 
     @ManyToMany(targetEntity = ProfessionalModel.class, fetch = FetchType.LAZY)
     @JoinTable(
@@ -58,5 +58,8 @@ public class PatientModel {
 
     @CreationTimestamp
     private LocalDateTime updatedAt;
+
+    @ManyToOne(targetEntity = SchoolModel.class)
+    private SchoolModel  schoolModel;
 
 }
