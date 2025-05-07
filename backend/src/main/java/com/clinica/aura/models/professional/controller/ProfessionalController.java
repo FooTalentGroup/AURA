@@ -1,6 +1,6 @@
 package com.clinica.aura.models.professional.controller;
 
-import com.clinica.aura.models.patient.dtoRequest.PatientResponseDto;
+import com.clinica.aura.models.patient.dto.PatientResponseDto;
 import com.clinica.aura.models.professional.dtoResponse.ProfessionalResponseDto;
 import com.clinica.aura.models.professional.service.ProfessionalService;
 import io.swagger.v3.oas.annotations.Operation;

@@ -1,5 +1,6 @@
-package com.clinica.aura.models.patient.dtoRequest;
+package com.clinica.aura.models.patient.dto;
 
+import com.clinica.aura.models.school.model.SchoolModel;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 import lombok.*;
@@ -35,36 +36,21 @@ public class PatientRequestDto {
     @Schema(description = "Apellido del paciente", example = "Pérez", requiredMode = Schema.RequiredMode.REQUIRED)
     private String lastName;
 
-
-    @Schema(description = "Número de teléfono del paciente", example = "+541155448833")
+    @Schema(description = "Teléfono del tutor del paciente. El teléfono esta pensado en modo argentino, se permite el mínimo de 8 números en caso de no agregar el 011 ", example = "02320484070, 1155150791, 01144697500", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Pattern(regexp = "^\\d{8,11}$", message = "El teléfono del tutor debe tener entre 8 y 11 dígitos numéricos")
+    @NotBlank(message = "El teléfono del tutor es obligatorio")
     private String phoneNumber;
 
-//    @Pattern(regexp = "^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$", message = "El país solo debe contener letras")
-//    @Schema(description = "País de residencia del paciente", example = "Costa Rica")
-//    private String country; //02/05/25 campo quitado a partir de la reunion de hoy con Axel, ux y pm dando ok
-
-//    @Schema(description = "URL de la foto del paciente", example = "https://example.com/foto.jpg")
-//    private String photoUrl; //campo quitado a partir de la reunion de hoy 2/5/2025
-
-
+    @Past
+    @Schema(description = "Fecha de nacimiento del paciente", example = "2015-05-20")
+    private LocalDate birthDate;
 
     // Datos específicos del paciente
     @Schema(description = "Indica si el paciente tiene seguro médico", example = "true")
     private boolean hasInsurance;
 
-    @Schema(description = "Nombre del seguro médico (si aplica)", example = "Sanitas EPS")
+    @Schema(description = "Nombre de la obra social (si tiene)", example = "Sanitas EPS")
     private String insuranceName;
-
-    @Schema(description = "Nombre del colegio o institución educativa", example = "Colegio San Juan")
-    private String school;
-
-//    @Pattern(regexp = "^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$", message = "El método de pago solo debe tener letras")
-//    @Schema(description = "Tipo de pago preferido", example = "Efectivo")
-//    private String paymentType; //02/05/2025 campo que piden que sea eliminado
-
-    @Past //cambie la fecha aca que ahora es un campo de paciente 02/05/25
-    @Schema(description = "Fecha de nacimiento del paciente", example = "2015-05-20")
-    private LocalDate birthDate;
 
     @Schema(description = "Dirección del paciente", example = "Av. Libertador 1925, CABA")
     @NotBlank(message = "La dirección es obligatoria")
@@ -75,12 +61,28 @@ public class PatientRequestDto {
     @NotBlank(message = "El nombre del tutor es obligatoria")
     private String tutorName;
 
-    @Schema(description = "Vinculo del tutor con el paciente", example = "Madre/padre/tutor")
-    @Pattern(regexp = "^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$", message = "El vinculo solo debe contener letras")
+    @Schema(description = "Vinculo del tutor con el paciente. Madre, padre y/o tutor.No acepta otras palabras solo esas 3", example = "Madre, padre y/o tutor.")
+    @Pattern(regexp = "^(?i)(madre|padre|tutor)$", message = "El vínculo debe ser 'madre', 'padre' o 'tutor'")
     @NotBlank(message = "La relación  del tutor con el paciente es obligatoria")
     private String relationToPatient;
 
     @Schema(description = "Los IDs de los Profesionales asignados al paciente", example = "[1, 2, 3]")
     private List<Long> professionalIds;
+
+    @Schema(description = "Grado en el que esta el  paciente está actualmente", example ="Primaria - 2° Grado", requiredMode = Schema.RequiredMode.REQUIRED)
+    @NotBlank(message = "El nivel es obligatorio")
+    private String level;
+
+    @Pattern(regexp = "^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$", message = "El turno solo debe contener letras")
+    @Schema(description = "Turno en el que el paciente asiste a la escuela", example = "Turno mañana", requiredMode = Schema.RequiredMode.REQUIRED)
+    @NotBlank(message = "El turno es obligatorio")
+    private String shift;
+
+    @Schema(description = "ID de la escuela. Este campo no es obligatio considerando que los pacientes tienen entre 3 y 13 años inclusive por lo cual, " +
+            "si el menor si tiene 3 años podría no estar escolarizado. En caso de estar escolarizado, primero debe crearse la escuela " +
+            "y luego añadir acá el Id de la escuela", example = "1")
+   // @NotNull(message = "El ID de la escuela es obligatorio")
+    private Long schoolId;
+
 
 }

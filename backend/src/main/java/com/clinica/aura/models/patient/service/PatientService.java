@@ -2,14 +2,16 @@ package com.clinica.aura.models.patient.service;
 
 import com.clinica.aura.config.jwt.JwtUtils;
 import com.clinica.aura.models.medical_records.repository.MedicalRecordsRepository;
-import com.clinica.aura.models.patient.dtoRequest.PatientRequestDto;
-import com.clinica.aura.models.patient.dtoRequest.PatientResponseDto;
+import com.clinica.aura.models.patient.dto.PatientRequestDto;
+import com.clinica.aura.models.patient.dto.PatientResponseDto;
 import com.clinica.aura.models.patient.model.PatientModel;
 import com.clinica.aura.models.patient.repository.PatientRepository;
 import com.clinica.aura.models.person.model.PersonModel;
 import com.clinica.aura.models.person.repository.PersonRepository;
 import com.clinica.aura.models.professional.model.ProfessionalModel;
 import com.clinica.aura.models.professional.repository.ProfessionalRepository;
+import com.clinica.aura.models.school.model.SchoolModel;
+import com.clinica.aura.models.school.repository.SchoolRepository;
 import com.clinica.aura.models.user_account.Enum.EnumRole;
 import com.clinica.aura.models.user_account.models.RoleModel;
 import com.clinica.aura.models.user_account.models.UserModel;
@@ -21,12 +23,14 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.PersistenceContext;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.Optional;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -48,6 +52,10 @@ public class PatientService {
     @PersistenceContext
     private EntityManager entityManager;
 
+    @Autowired
+    private SchoolRepository schoolRepository;
+
+
     @Transactional
     public PatientResponseDto createUser(@Valid PatientRequestDto authCreateUserDto) {
 
@@ -56,12 +64,12 @@ public class PatientService {
         String lastName = authCreateUserDto.getLastName();
         String dni = authCreateUserDto.getDni();
         String phoneNumber = authCreateUserDto.getPhoneNumber();
-        // String country = authCreateUserDto.getCountry(); //02/05/2025 campo que se pide eliminar
-        //  String photoUrl = authCreateUserDto.getPhotoUrl(); //02/05/2025 campo que se pide eliminar
         LocalDate birthDate = authCreateUserDto.getBirthDate();
         String address = authCreateUserDto.getAddress();
-        String tutorName =authCreateUserDto.getTutorName();
-        String relationToPatient=authCreateUserDto.getRelationToPatient();
+        String tutorName = authCreateUserDto.getTutorName();
+        String relationToPatient = authCreateUserDto.getRelationToPatient();
+        String level = authCreateUserDto.getLevel();
+        String shift=authCreateUserDto.getShift();
 
         Optional<RoleModel> professionalRole = roleRepository.findByEnumRole(EnumRole.PATIENT);
         if (professionalRole.isEmpty()) {
@@ -70,35 +78,28 @@ public class PatientService {
 
         Set<RoleModel> roleEntities = Set.of(professionalRole.get());
 
-
         PersonModel personEntity = PersonModel.builder()
                 .dni(dni)
                 .name(username)
                 .lastName(lastName)
                 .phoneNumber(phoneNumber)
-//                .country(country)  //02/05/2025 campo que se pide eliminar
-//                .birthDate(birthDate) //02/05/2025 campo que se pide eliminar
-//                .photoUrl(photoUrl) //02/05/2025 campo que se pide eliminar
+                .birthDate(birthDate)
                 .build();
 
         PatientModel patientModel = PatientModel.builder()
                 .person(personEntity)
                 .hasInsurance(authCreateUserDto.isHasInsurance())
                 .insuranceName(authCreateUserDto.getInsuranceName())
-                .school(authCreateUserDto.getSchool())
-                .birthDate(authCreateUserDto.getBirthDate())
-                //  .paymentType(authCreateUserDto.getPaymentType()) 02/05/2025
                 .address(authCreateUserDto.getAddress())
                 .tutorName(authCreateUserDto.getTutorName())
                 .relationToPatient(authCreateUserDto.getRelationToPatient())
-
+                .level(authCreateUserDto.getLevel())
+                .shift(authCreateUserDto.getShift())
                 .build();
 
         List<Long> profIds = authCreateUserDto.getProfessionalIds();
         if (profIds != null && !profIds.isEmpty()) {
             List<ProfessionalModel> professionals = professionalRepository.findAllById(profIds);
-
-
 
             List<Long> existingProfIds = professionals.stream().map(ProfessionalModel::getId).toList();
             List<Long> nonExistingProfIds = new ArrayList<>(profIds);
@@ -107,9 +108,16 @@ public class PatientService {
                 throw new EntityNotFoundException("Los siguientes profesionales no fueron encontrados: " + nonExistingProfIds);
             }
             patientModel.setProfessionals(professionals);
-        }else {
+        } else {
             patientModel.setProfessionals(new ArrayList<>());
         }
+
+        // asignar escuela usando solo el ID y validar existencia
+        SchoolModel school = entityManager.find(SchoolModel.class, authCreateUserDto.getSchoolId());
+        if (school == null) {
+            throw new EntityNotFoundException("La escuela con ID " + authCreateUserDto.getSchoolId() + " no fue encontrada.");
+        }
+        patientModel.setSchoolModel(school);
 
         patientRepository.save(patientModel);
 
@@ -128,55 +136,24 @@ public class PatientService {
                 .name(personEntity.getName())
                 .lastName(personEntity.getLastName())
                 .phoneNumber(personEntity.getPhoneNumber())
-                //    .country(personEntity.getCountry()) //02/05/2025  pide quitar este campo pm, ux y analista dan okey
-                //    .photoUrl(personEntity.getPhotoUrl())  //02/05/2025  pide quitar este campo
-                .birthDate(patientModel.getBirthDate()) //02/05/25 se pide que fecha solo este en paciente
+                .birthDate(personEntity.getBirthDate())
                 .dni(personEntity.getDni())
                 .hasInsurance(patientModel.getInsuranceName() != null && !patientModel.getInsuranceName().isBlank())
                 .insuranceName(patientModel.getInsuranceName())
-                .school(patientModel.getSchool())
-                //     .paymentType(patientModel.getPaymentType())
                 .address(patientModel.getAddress())
                 .tutorName(patientModel.getTutorName())
                 .relationToPatient(patientModel.getRelationToPatient())
+                .level(patientModel.getLevel())
+                .shift(patientModel.getShift())
                 .professionalIds(
-                        patientModel.getProfessionals().stream()
-                                .map(ProfessionalModel::getId)
-                                .toList()
+                        patientModel.getProfessionals() != null
+                                ? patientModel.getProfessionals().stream().map(ProfessionalModel::getId).toList()
+                                : Collections.emptyList()
                 )
+                .schoolId(patientModel.getSchoolModel().getId())
                 .build();
     }
 
-//    //listado de pacientes //esto es viejo se puede borrar si se requiere
-//    public List<PatientResponseDto> getPatientsByRange(int from, int to) {
-//        List<PatientModel> patients = patientRepository.findAll();
-//
-//        // Validamos el rango
-//        if (from < 0) from = 0;
-//        if (to >= patients.size()) to = patients.size() - 1;
-//        if (from > to) return List.of();
-//
-//        return patients.subList(from, to + 1).stream().map(patient -> {
-//            var person = patient.getPerson();
-//            Optional<UserModel> userOptional = userRepository.findByPerson(person);
-//
-//            return PatientResponseDto.builder()
-//                    .id(patient.getId())
-//                    .name(person.getName())
-//                    .lastName(person.getLastName())
-//                    .phoneNumber(person.getPhoneNumber())
-//                    .country(person.getCountry())
-//                    .photoUrl(person.getPhotoUrl())
-//                    .birthDate(person.getBirthDate())
-//                    .dni(person.getDni())
-//                    .email(userOptional.map(UserModel::getEmail).orElse(null))
-//                    .insuranceName(patient.getInsuranceName())
-//                    .hasInsurance(patient.getInsuranceName() != null && !patient.getInsuranceName().isBlank())
-//                    .school(patient.getSchool())
-//                    .paymentType(patient.getPaymentType())
-//                    .build();
-//        }).toList();
-//    }
 
     //LISTADO DE PACIENTES NUEVO
     public PaginatedResponse<PatientResponseDto> getAllPatients(int page, int size) {
@@ -193,18 +170,18 @@ public class PatientService {
                             .name(person.getName())
                             .lastName(person.getLastName())
                             .phoneNumber(person.getPhoneNumber())
-                            //  .country(person.getCountry()) // 02/05/2025 pide los mencionados anteriormente que se quite
-                            //  .photoUrl(person.getPhotoUrl()) // 02/05/2025 pide los mencionados anteriormente que se quite
-                            .birthDate(patient.getBirthDate()) //02/05/2025 a pedido de los mencionados
+                            .birthDate(person.getBirthDate())
                             .dni(person.getDni())
                             .email(userOptional.map(UserModel::getEmail).orElse(null))
                             .hasInsurance(patient.isHasInsurance())
                             .insuranceName(patient.getInsuranceName())
-                            .school(patient.getSchool())
                             .address(patient.getAddress())
                             .tutorName(patient.getTutorName())
-                            .relationToPatient(patient.getRelationToPatient());
-                    //  .paymentType(patient.getPaymentType());
+                            .relationToPatient(patient.getRelationToPatient())
+                            .level(patient.getLevel())
+                            .shift(patient.getShift())
+                            .schoolId(patient.getSchoolModel().getId());
+
 
                     if (patient.getProfessionals() != null) {
                         List<Long> professionalIds = patient.getProfessionals().stream()
@@ -212,6 +189,7 @@ public class PatientService {
                                 .toList();
                         dtoBuilder.professionalIds(professionalIds);
                     }
+
 
                     return dtoBuilder.build();
                 })
@@ -233,56 +211,69 @@ public class PatientService {
 
         var person = patient.getPerson();
 
-        // Buscamos el UserModel a partir del person
+        // busca el usuario a partir de la persona
         var user = userRepository.findByPerson(person).orElse(null);
+
+        List<Long> professionalIds = null;
+        if (patient.getProfessionals() != null) {
+            professionalIds = patient.getProfessionals().stream()
+                    .map(prof -> prof.getId())
+                    .toList();
+        }
 
         return PatientResponseDto.builder()
                 .id(person.getId())
                 .name(person.getName())
                 .lastName(person.getLastName())
                 .phoneNumber(person.getPhoneNumber())
-                //  .country(person.getCountry())
-                //  .photoUrl(person.getPhotoUrl())
-                .birthDate(patient.getBirthDate())
+                .birthDate(person.getBirthDate())
                 .dni(person.getDni())
                 .email(user != null ? user.getEmail() : null)
                 .insuranceName(patient.getInsuranceName())
                 .hasInsurance(patient.getInsuranceName() != null && !patient.getInsuranceName().isBlank())
-                .school(patient.getSchool())
-              //  .paymentType(patient.getPaymentType()) //02/05/2025 campo que se pide eliminar
                 .address(patient.getAddress())
                 .tutorName(patient.getTutorName())
                 .relationToPatient(patient.getRelationToPatient())
+                .professionalIds(professionalIds)
+                .level(patient.getLevel())
+                .shift(patient.getShift())
+                .schoolId(patient.getSchoolModel().getId())
                 .build();
     }
 
-    //editar paciente
+    //editar paciente por id
     public PatientResponseDto updatePatient(Long id, PatientRequestDto requestDto) {
         var patient = patientRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Paciente no encontrado con ID: " + id));
 
         var person = patient.getPerson();
 
-        // actualizar datos de la persona
+        // se actualizan datos de la persona
         person.setName(requestDto.getName());
         person.setLastName(requestDto.getLastName());
         person.setPhoneNumber(requestDto.getPhoneNumber());
-        //  person.setCountry(requestDto.getCountry()); //02/05/2025 campo que se pide eliminar
-        //  person.setPhotoUrl(requestDto.getPhotoUrl()); //02/05/2025 campo que se pide eliminar
         person.setDni(requestDto.getDni());
+        person.setBirthDate(requestDto.getBirthDate());
 
-        // Actualizar datos del paciente
+        //se  actualizan datos del paciente
         patient.setInsuranceName(requestDto.getInsuranceName());
         patient.setHasInsurance(requestDto.isHasInsurance());
-        patient.setSchool(requestDto.getSchool());
-        patient.setBirthDate(requestDto.getBirthDate());
-        // patient.setPaymentType(requestDto.getPaymentType()); //02/05/2025 campo que se pide eliminar
         patient.setAddress(requestDto.getAddress());
         patient.setTutorName(requestDto.getTutorName());
         patient.setRelationToPatient(requestDto.getRelationToPatient());
+        patient.setLevel(requestDto.getLevel());
+        patient.setShift(requestDto.getShift());
+
+        //busca la escuela por ID y asignarla
+        SchoolModel school = schoolRepository.findById(requestDto.getSchoolId())
+                .orElseThrow(() -> new RuntimeException("Escuela no encontrada con ID: " + requestDto.getSchoolId()));
+        patient.setSchoolModel(school);
+
+
+
         // Actualizar solo el email en la tabla usuario
-        var user = userRepository.findByPerson(person)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado para el paciente con ID: " + id));
+        Optional<UserModel> optionalUser = userRepository.findByPerson(person);
+        UserModel user = optionalUser.orElseThrow(() -> new RuntimeException("Usuario no encontrado para el paciente con ID: " + id));
 
         user.setEmail(requestDto.getEmail());
 
@@ -290,26 +281,35 @@ public class PatientService {
         patientRepository.save(patient);
         userRepository.save(user); // importante guardar el user también
 
+        // traer los ids de los profesionales
+        List<Long> professionalIds = null;
+        if (patient.getProfessionals() != null) {
+            professionalIds = patient.getProfessionals().stream()
+                    .map(prof -> prof.getId())
+                    .toList();
+        }
+
         return PatientResponseDto.builder()
                 .id(person.getId())
                 .name(person.getName())
                 .lastName(person.getLastName())
                 .phoneNumber(person.getPhoneNumber())
-                // .country(person.getCountry())
-                // .photoUrl(person.getPhotoUrl())
-                .birthDate(patient.getBirthDate())
+                .birthDate(person.getBirthDate())
                 .dni(person.getDni())
                 .email(user.getEmail())
                 .insuranceName(patient.getInsuranceName())
                 .hasInsurance(patient.getInsuranceName() != null && !patient.getInsuranceName().isBlank())
-                .school(patient.getSchool())
-               // .paymentType(patient.getPaymentType()) // campo que se pide eliminar 02/05/2025
                 .address(patient.getAddress())
                 .tutorName(patient.getTutorName())
                 .relationToPatient(patient.getRelationToPatient())
+                .professionalIds(professionalIds)
+                .level(patient.getLevel())
+                .shift(patient.getShift())
+                .schoolId(patient.getSchoolModel().getId())
                 .build();
     }
 
+    //eliminar paciente por id
     @Transactional
     public void deletePatientById(Long patientId) {
         PatientModel patient = patientRepository.findById(patientId)
@@ -317,13 +317,10 @@ public class PatientService {
 
         Long personId = patient.getId();
 
-        // Elimina relaciones con profesionales
+        // Elimina la relacion con profesionales
         patientRepository.deletePatientProfessionalRelation(patientId);
 
-        // Elimina registros médicos asociados
-       // medicalRecordsRepository.deleteByPatientId(personId);
-
-        // Elimina usuario y sus roles si existen
+        // Elimina el usuario y sus roles
         Optional<UserModel> userOpt = userRepository.findByPersonId(personId);
         userOpt.ifPresent(user -> {
             patientRepository.deleteUserRolesByUserId(user.getId());
@@ -343,29 +340,36 @@ public class PatientService {
         var person = patient.getPerson();
         var user = userRepository.findByPerson(person).orElse(null);
 
+        List<Long> professionalIds = null;
+        if (patient.getProfessionals() != null) {
+            professionalIds = patient.getProfessionals().stream()
+                    .map(prof -> prof.getId())
+                    .toList();
+        }
+
         return PatientResponseDto.builder()
                 .id(patient.getId())
                 .name(person.getName())
                 .lastName(person.getLastName())
                 .phoneNumber(person.getPhoneNumber())
-              //  .country(person.getCountry()) // campo que se pide eliminar 02/05/2025
-              //  .photoUrl(person.getPhotoUrl()) // campo que se pide eliminar 02/05/2025
-                .birthDate(patient.getBirthDate()) //cambio sugerido que solo este en paciente 02/05/2025
+                .birthDate(person.getBirthDate())
                 .dni(person.getDni())
                 .email(user != null ? user.getEmail() : null)
                 .insuranceName(patient.getInsuranceName())
                 .hasInsurance(patient.getInsuranceName() != null && !patient.getInsuranceName().isBlank())
-                .school(patient.getSchool())
-              //  .paymentType(patient.getPaymentType())
                 .address(patient.getAddress())
                 .tutorName(patient.getTutorName())
                 .relationToPatient(patient.getRelationToPatient())
+                .professionalIds(professionalIds)
+                .level(patient.getLevel())
+                .shift(patient.getShift())
+                .schoolId(patient.getSchoolModel().getId())
                 .build();
     }
 
     //buscar paciente por nombre
-    public List<PatientResponseDto> getPatientsByName(String name) {
-        List<PatientModel> patients = patientRepository.findByPerson_NameContainingIgnoreCase(name);
+    public List<PatientResponseDto> getPatientsByName(String name, String sureName) {
+        List<PatientModel> patients = patientRepository.searchByFullName(name, sureName);
 
         if (patients.isEmpty()) {
             throw new RuntimeException("No se encontraron pacientes con el nombre: " + name);
@@ -375,23 +379,30 @@ public class PatientService {
             PersonModel person = patient.getPerson();
             var user = userRepository.findByPerson(person).orElse(null);
 
+            List<Long> professionalIds = null;
+            if (patient.getProfessionals() != null) {
+                professionalIds = patient.getProfessionals().stream()
+                        .map(prof -> prof.getId())
+                        .toList();
+            }
+
             return PatientResponseDto.builder()
                     .id(patient.getId())
                     .name(person.getName())
                     .lastName(person.getLastName())
                     .phoneNumber(person.getPhoneNumber())
-                    //   .country(person.getCountry()) // campo que se pide eliminar 02/05/2025
-                    //   .photoUrl(person.getPhotoUrl()) // campo que se pide eliminar 02/05/2025
-                       .birthDate(patient.getBirthDate())
+                    .birthDate(person.getBirthDate())
                     .dni(person.getDni())
                     .email(user != null ? user.getEmail() : null)
                     .insuranceName(patient.getInsuranceName())
                     .hasInsurance(patient.getInsuranceName() != null && !patient.getInsuranceName().isBlank())
-                    .school(patient.getSchool())
-                    //   .paymentType(patient.getPaymentType())
                     .address(patient.getAddress())
                     .tutorName(patient.getTutorName())
                     .relationToPatient(patient.getRelationToPatient())
+                    .professionalIds(professionalIds)
+                    .level(patient.getLevel())
+                    .shift(patient.getShift())
+                    .schoolId(patient.getSchoolModel().getId())
                     .build();
         }).toList();
     }

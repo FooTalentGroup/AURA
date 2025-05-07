@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Getter
@@ -36,8 +37,8 @@ public class ProfessionalResponseDto {
 //    @Schema(description = "URL de la foto del profesional", example = "https://example.com/photo.jpg")
 //    private String photoUrl;// campo que se pide eliminar 02/05/2025
 //
-//    @Schema(description = "Fecha de nacimiento del profesional", example = "1990-01-01")
-//    private LocalDate birthDate;// campo que se pide eliminar 02/05/2025
+    @Schema(description = "Fecha de nacimiento del profesional", example = "1990-01-01")
+    private LocalDate birthDate;
 
     @Schema(description = "Número de licencia del profesional", example = "12345678")
     private String licenseNumber;

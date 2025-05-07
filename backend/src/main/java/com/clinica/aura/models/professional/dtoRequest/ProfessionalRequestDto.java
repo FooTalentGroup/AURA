@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -45,8 +47,8 @@ public class ProfessionalRequestDto {
 //    @Schema(description = "URL de la foto del profesional", example = "https://example.com/photo.jpg")
 //    private String photoUrl; // campo que se pide eliminar 02/05/2025
 //
-//    @Schema(description = "Fecha de nacimiento del profesional", example = "1990-01-01")
-//    private LocalDate birthDate; // campo que se pide eliminar 02/05/2025
+    @Schema(description = "Fecha de nacimiento del profesional", example = "1990-01-01")
+    private LocalDate birthDate;
 
     @NotBlank(message = "El numero de licencia es obligatorio")
     @Schema(description = "Numero de licencia del profesional", requiredMode = Schema.RequiredMode.REQUIRED, example = "12345678")

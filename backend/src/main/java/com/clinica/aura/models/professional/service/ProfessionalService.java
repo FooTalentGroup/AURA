@@ -1,5 +1,5 @@
 package com.clinica.aura.models.professional.service;
-import com.clinica.aura.models.patient.dtoRequest.PatientResponseDto;
+import com.clinica.aura.models.patient.dto.PatientResponseDto;
 import com.clinica.aura.models.patient.model.PatientModel;
 import com.clinica.aura.models.user_account.service.impl.UserDetailsServiceImpl;
 import jakarta.persistence.EntityNotFoundException;
@@ -25,6 +25,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.*;
 
 import org.springframework.data.domain.Page;
@@ -53,8 +54,7 @@ public class ProfessionalService {
         String phoneNumber = authCreateUserDto.getPhoneNumber();
         //String country = authCreateUserDto.getCountry(); // campo que se pide eliminar 02/05/2025
        // String photoUrl = authCreateUserDto.getPhotoUrl(); // campo que se pide eliminar 02/05/2025
-       // LocalDate birthDate = authCreateUserDto.getBirthDate(); // campo que se pide eliminar 02/05/2025 y que solo este solo en paciente
-
+        LocalDate birthDate = authCreateUserDto.getBirthDate();
         UserModel emailExists = userRepository.findByEmail(email).orElse(null);
         if (emailExists != null) {
             throw new EmailAlreadyExistsException("El correo " + email + " ya existe en la base de datos.");
@@ -74,7 +74,7 @@ public class ProfessionalService {
                 .lastName(lastName)
                 .phoneNumber(phoneNumber)
                // .country(country) // campo que se pide eliminar 02/05/2025
-               // .birthDate(birthDate) // campo que se pide eliminar 02/05/2025 y que este solo en paciente
+                .birthDate(birthDate)
                // .photoUrl(photoUrl) // campo que se pide eliminar 02/05/2025
                 .build();
 
@@ -180,7 +180,7 @@ public class ProfessionalService {
                 person != null ? person.getPhoneNumber() : null,
                // person != null ? person.getCountry() : null, // campo que se pide eliminar 02/05/2025
                // person != null ? person.getPhotoUrl() : null, // campo que se pide eliminar 02/05/2025
-               // person != null ? person.getBirthDate() : null, // campo que se pide eliminar, y que solo este en paciente 02/05/2025
+                person != null ? person.getBirthDate() : null,
                 professional.getLicenseNumber(),
                 professional.getSpecialty(),
                 patientIds // ahora solo devuelvo los IDs de los pacientes
@@ -198,7 +198,7 @@ public class ProfessionalService {
         existing.getPerson().setDni(dto.getDni());
         existing.getPerson().setPhoneNumber(dto.getPhoneNumber());
         //existing.getPerson().setCountry(dto.getCountry());   //cambio sugerido a eliminar  02/05/2025
-       // existing.getPerson().setBirthDate(dto.getBirthDate()); /cambio sugerido que solo este en paciente 02/05/2025
+        existing.getPerson().setBirthDate(dto.getBirthDate());
       //  existing.getPerson().setPhotoUrl(dto.getPhotoUrl()); //cambio sugerido a eliminar 02/05/2025
 
         existing.setLicenseNumber(dto.getLicenseNumber());
@@ -242,12 +242,16 @@ public class ProfessionalService {
                     .phoneNumber(person != null ? person.getPhoneNumber() : null)
                    // .country(person != null ? person.getCountry() : null) //cambio sugerido a eliminar  02/05/2025
                   //  .photoUrl(person != null ? person.getPhotoUrl() : null) //cambio sugerido a eliminar  02/05/2025
-                  //  .birthDate(person != null ? person.getBirthDate() : null) //cambio sugerido a eliminar, que solo este en paciente  02/05/2025
+                    .birthDate(person != null ? person.getBirthDate() : null)
                     .email(null) // lo dejás en null porque no tenés el usuario
                     .hasInsurance(patient.isHasInsurance())
                     .insuranceName(patient.getInsuranceName())
-                    .school(patient.getSchool())
-                   // .paymentType(patient.getPaymentType()) //cambio sugerido a eliminar  02/05/2025
+                    .address(patient.getAddress())
+                    .tutorName(patient.getTutorName())
+                    .relationToPatient(patient.getRelationToPatient())
+                    .level(patient.getLevel())
+                    .shift(patient.getShift())
+                    .schoolId(patient.getSchoolModel().getId())
                     .professionalIds(patient.getProfessionals() != null
                             ? patient.getProfessionals().stream()
                             .map(ProfessionalModel::getId)
