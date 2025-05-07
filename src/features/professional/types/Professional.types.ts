@@ -4,13 +4,14 @@ export interface Professional {
     name: string;
     lastName: string;
     phoneNumber: string;
-    country: string;
-    photoUrl: string;
+    address: string;
     birthDate: string;
+    locality: string;
+    cuil: string;
     licenseNumber: string;
     specialty: string;
     patientIds?: number[];
-    email: string;
+    email?: string;
   }
   
   export interface ProfessionalPayload {

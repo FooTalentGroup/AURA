@@ -4,11 +4,11 @@ import { Professional } from '../types/Professional.types';
 interface Props {
   professional: Professional;
   onView: (id: number) => void; 
-  onViewUser: (id: number) => void; 
+  onViewUser?: (id: number) => void; 
   onViewSchedule: (id: number) => void; 
 }
 
-export const ProfessionalRow: React.FC<Props> = ({ professional, onViewUser, onViewSchedule }) => {
+export const ProfessionalRow: React.FC<Props> = ({ professional, onViewSchedule, onView }) => {
   const getInitial = (name: string) => name.charAt(0).toUpperCase();
 
   return (
@@ -38,7 +38,7 @@ export const ProfessionalRow: React.FC<Props> = ({ professional, onViewUser, onV
           Ver Horario
         </button>
         <button
-          onClick={() => onViewUser(professional.id)}
+          onClick={() =>  onView(professional.id)}
           className="text-[#0072C3] border border-[#0072C3] rounded-full px-3 py-1 text-sm font-medium hover:bg-[#0072C3] hover:text-white transition"
         >
           Ver Usuario
