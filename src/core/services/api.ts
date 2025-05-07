@@ -3,6 +3,7 @@ import { AuthResponseRegisterDto,
   UserResponse,  } from "../../features/auth/types/auth.types.ts";
 import { PatientPayload } from "../../features/patients/types/patient.types.ts";
 import { Patient } from "../../features/patients/types/patient.types.ts";
+import { Professional } from "../../features/professional/types/Professional.types.ts";
 
 // --- Payload y modelos ---
 export interface SuspendRequestDto {
@@ -53,30 +54,6 @@ export interface MedicalRecordPayload {
   previousConditions: string;
 }
 
-export interface Professional {
-  id: number;
-  dni: string;
-  name: string;
-  lastName: string;
-  phoneNumber: string;
-  country: string;
-  photoUrl: string;
-  birthDate: string;
-  licenseNumber: string;
-  specialty: string;
-  patientIds?: number[];
-}
-
-export interface ProfessionalPayload {
-  email: string;
-  password: string;
-  dni: string;
-  name: string;
-  lastName: string;
-  phoneNumber: string;
-  licenseNumber: string;
-  specialty: string;
-}
 
 
 
@@ -252,20 +229,8 @@ export const api = {
     request<UserResponse>(`/user/${id}`, { method: "GET" }),
 
   // --- Profesionales ---
-  getProfessionalById: (id: number) =>
-    request<Professional>(`/professionals/${id}`, { method: "GET" }),
+  
 
-  updateProfessional: (
-    id: number,
-    data: ProfessionalPayload
-  ) =>
-    request<Professional>(`/professionals/${id}`, {
-      method: "PUT",
-      body: JSON.stringify(data),
-    }),
-
-  deleteProfessional: (id: number) =>
-    request<void>(`/professionals/${id}`, { method: "DELETE" }),
 
   listProfessionalsPaginated: (
     page: number = 0,

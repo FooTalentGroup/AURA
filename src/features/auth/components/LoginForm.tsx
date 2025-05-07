@@ -22,7 +22,7 @@ const LoginForm: React.FC = () => {
   const navigate = useNavigate();
 
   // <-- Aquí pones el/los email(s) que quieres eximir de la regla de mayúscula
-  const exemptUsers = ['admin@example.com'];
+  const exemptUsers = ['admin@example.com', "Dario@example.com", "secretarias@example.com"];
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();

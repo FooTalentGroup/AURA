@@ -7,6 +7,8 @@ export interface AuthContextType {
   clearError: () => void;
   registerReceptionist: (data: RegisterReceptionistPayload) => Promise<void>;
   registerProfessional: (data: RegisterProfessionalPayload) => Promise<void>;
+  isAdmin: boolean;
+
 }
 export interface AuthPayload {
   email: string;
@@ -24,6 +26,7 @@ export interface CurrentUser {
   id: number;
   username: string;
   email: string;
+  roles?: string[];
 }
 
 
