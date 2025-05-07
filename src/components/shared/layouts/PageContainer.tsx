@@ -1,6 +1,7 @@
 import React from "react";
 import { FiSearch, FiUserPlus } from "react-icons/fi";
 import DashboardLayout from "../../../layouts/DashboardLayout";
+import { useContextAuth } from "../../../features/auth/hooks/useContextAuth";
 
 interface PageContainerProps {
   title: string;
@@ -12,11 +13,15 @@ interface PageContainerProps {
   children: React.ReactNode;
 }
 
+
+
 /**
  * PageContainer envuelve el contenido en un layout centrado.
  * Usa la clase `container` de Tailwind para centrar el ancho.
  */
-export const PageContainer: React.FC<PageContainerProps> = ({
+export const PageContainer:
+
+React.FC<PageContainerProps> = ({
   title,
   query,
   description,
@@ -24,8 +29,11 @@ export const PageContainer: React.FC<PageContainerProps> = ({
   onAdd,
   addLabel,
   children
-}) => (
-  <DashboardLayout>
+}) => {
+  const { isAdmin, isReceptionist} = useContextAuth();
+  return (
+    
+    <DashboardLayout>
     <div className="container mx-auto px-4 py-8 bg-gray-50">
       {/* Header */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-6">
@@ -40,16 +48,16 @@ export const PageContainer: React.FC<PageContainerProps> = ({
               onChange={onQueryChange}
               placeholder={`Buscar ${description.toLowerCase()}...`}
               className="h-12 w-full rounded-full border border-gray-300 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-[#0072C3]"
-            />
+              />
             <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-lg" />
           </div>
-          <button
+          {isAdmin || isReceptionist  ? (<button
             onClick={onAdd}
             className="h-12 bg-[#0072C3] hover:bg-[#005A9E] text-white px-5 rounded-full flex items-center space-x-2 transition"
-          >
+            >
             <FiUserPlus className="text-xl" />
             <span>{addLabel}</span>
-          </button>
+          </button> ) : null}
         </div>
       </div>
 
@@ -58,3 +66,4 @@ export const PageContainer: React.FC<PageContainerProps> = ({
     </div>
   </DashboardLayout>
 );
+};

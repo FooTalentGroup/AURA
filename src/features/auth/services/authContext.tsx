@@ -71,6 +71,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const clearError = () => dispatch({ type: "CLEAR_ERROR" });
   const isAdmin = !!state.user?.roles?.includes("ADMIN");
+  const isProfessional = !!state.user?.roles?.includes("PROFESSIONAL");
+  const isReceptionist = !!state.user?.roles?.includes("RECEPTIONIST");
   return (
     <AuthContext.Provider
       value={{
@@ -83,7 +85,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         },
         registerProfessional: async (data: RegisterProfessionalPayload) => {
           await authApi.registerProfessional(data);
-        },  isAdmin,        
+        },  isAdmin,  
+        isProfessional,
+        isReceptionist,      
       }}
     >
       {children}

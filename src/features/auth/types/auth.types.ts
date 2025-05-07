@@ -8,6 +8,8 @@ export interface AuthContextType {
   registerReceptionist: (data: RegisterReceptionistPayload) => Promise<void>;
   registerProfessional: (data: RegisterProfessionalPayload) => Promise<void>;
   isAdmin: boolean;
+  isProfessional: boolean;
+  isReceptionist: boolean;
 
 }
 export interface AuthPayload {
