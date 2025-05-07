@@ -229,37 +229,38 @@ public class ProfessionalService {
     }
 
     //metodo para listar los pacientes de un profesional por su id
-    @Transactional(readOnly = true)
-    public List<PatientResponseDto> getPatientsByProfessionalId(Long professionalId) {
-        List<PatientModel> patients = professionalRepository.findPatientsByProfessionalId(professionalId);
+        @Transactional(readOnly = true)
+        public List<PatientResponseDto> getPatientsByProfessionalId(Long professionalId) {
+            List<PatientModel> patients = professionalRepository.findPatientsByProfessionalId(professionalId);
 
-        return patients.stream().map(patient -> {
-            PersonModel person = patient.getPerson(); // extraigo la persona
 
-            return PatientResponseDto.builder()
-                    .id(patient.getId())
-                    .name(person != null ? person.getName() : null)
-                    .lastName(person != null ? person.getLastName() : null)
-                    .dni(person != null ? person.getDni() : null)
-                    .phoneNumber(person != null ? person.getPhoneNumber() : null)
-                    // .country(person != null ? person.getCountry() : null) //cambio sugerido a eliminar  02/05/2025
-                    //  .photoUrl(person != null ? person.getPhotoUrl() : null) //cambio sugerido a eliminar  02/05/2025
-                    .birthDate(person != null ? person.getBirthDate() : null)
-                    .email(null) // lo dejás en null porque no tenés el usuario
-                    .hasInsurance(patient.isHasInsurance())
-                    .insuranceName(patient.getInsuranceName())
-                    .address(patient.getAddress())
-                    .tutorName(patient.getTutorName())
-                    .relationToPatient(patient.getRelationToPatient())
-                    .level(patient.getLevel())
-                    .shift(patient.getShift())
-                    .schoolId(patient.getSchoolModel().getId())
-                    .professionalIds(patient.getProfessionals() != null
-                            ? patient.getProfessionals().stream()
-                            .map(ProfessionalModel::getId)
-                            .toList()
-                            : Collections.emptyList())
-                    .build();
-        }).toList();
-    }
+            return patients.stream().map(patient -> {
+                PersonModel person = patient.getPerson(); // extraigo la persona
+
+                return PatientResponseDto.builder()
+                        .id(patient.getId())
+                        .name(person != null ? person.getName() : null)
+                        .lastName(person != null ? person.getLastName() : null)
+                        .dni(person != null ? person.getDni() : null)
+                        .phoneNumber(person != null ? person.getPhoneNumber() : null)
+                        // .country(person != null ? person.getCountry() : null) //cambio sugerido a eliminar  02/05/2025
+                        //  .photoUrl(person != null ? person.getPhotoUrl() : null) //cambio sugerido a eliminar  02/05/2025
+                        .birthDate(person != null ? person.getBirthDate() : null)
+                        .email(null) // lo dejás en null porque no tenés el usuario
+                        .hasInsurance(patient.isHasInsurance())
+                        .insuranceName(patient.getInsuranceName())
+                        .address(patient.getAddress())
+                        .tutorName(patient.getTutorName())
+                        .relationToPatient(patient.getRelationToPatient())
+                        .level(patient.getLevel())
+                        .shift(patient.getShift())
+                        .schoolId(patient.getSchoolModel() != null ? patient.getSchoolModel().getId() : null)
+                        .professionalIds(patient.getProfessionals() != null
+                                ? patient.getProfessionals().stream()
+                                .map(ProfessionalModel::getId)
+                                .toList()
+                                : Collections.emptyList())
+                        .build();
+            }).toList();
+        }
 }
