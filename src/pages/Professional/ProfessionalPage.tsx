@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-// import { useProfessionals } from "";
-// import { ProfessionalRow } from "";
+import { useProfessionals } from "../../features/professional/hooks/useProfessionals";
+import { ProfessionalRow } from "../../features/professional/components/ProfessionalRow";
 import { PageContainer } from "../../components/shared/layouts/PageContainer";
 
 const ProfessionalPage: React.FC = () => {
