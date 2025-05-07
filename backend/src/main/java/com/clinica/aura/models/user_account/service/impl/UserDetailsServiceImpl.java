@@ -79,7 +79,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
 
         String token = jwtUtils.generateJwtToken(authentication);
-        return new AuthResponseDto(id, email, "Usuario logeado exitosamente", token, true);
+        return new AuthResponseDto(id, email, "Autenticación exitosa", token, true);
 
 
     }
