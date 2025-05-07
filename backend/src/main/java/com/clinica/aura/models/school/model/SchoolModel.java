@@ -4,15 +4,13 @@ import com.clinica.aura.models.patient.model.PatientModel;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
 @Entity
-@Data //get and set
+@Getter
+@Setter//get and set
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
