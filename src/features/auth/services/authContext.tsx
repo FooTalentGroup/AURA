@@ -1,6 +1,7 @@
 import React, { createContext, ReactNode, useReducer, useEffect } from "react";
 import { authApi } from "./authApi";
 import { AuthState, authReducer } from "../../../store/authStore";
+import { useLocation } from "react-router-dom";
 import {
   AuthContextType,
   CurrentUser,
@@ -20,24 +21,34 @@ export const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, initialState);
+  const location = useLocation();
 
-  // Rehidrata sesión usando /auth/me en lugar de sessionStorage
   useEffect(() => {
+    const publicPaths = ["/login", "/register", "/forgot-password"];
+    // Iniciar carga de estado
     dispatch({ type: "INIT" });
+
+    // Si estamos en una ruta pública, no llamamos a /auth/me y marcamos como cargado
+    if (publicPaths.includes(location.pathname)) {
+      dispatch({ type: "LOGOUT" });
+      return;
+    }
+
+    // En rutas privadas, rehidratar sesión desde backend
     authApi.me()
       .then((res: UserResponse) => {
         const user: CurrentUser = {
           id: res.id,
           username: res.email || "",
           email: res.email || "",
-          roles: res.roles,  
+          roles: res.roles || [],
         };
         dispatch({ type: "LOGIN_SUCCESS", payload: user });
       })
       .catch(() => {
         dispatch({ type: "LOGOUT" });
       });
-  }, []);
+  }, [location.pathname]);
 
   const login = async (
     email: string,
@@ -70,9 +81,11 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   const clearError = () => dispatch({ type: "CLEAR_ERROR" });
+
   const isAdmin = !!state.user?.roles?.includes("ADMIN");
   const isProfessional = !!state.user?.roles?.includes("PROFESSIONAL");
   const isReceptionist = !!state.user?.roles?.includes("RECEPTIONIST");
+
   return (
     <AuthContext.Provider
       value={{
@@ -85,9 +98,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         },
         registerProfessional: async (data: RegisterProfessionalPayload) => {
           await authApi.registerProfessional(data);
-        },  isAdmin,  
+        },
+        isAdmin,
         isProfessional,
-        isReceptionist,      
+        isReceptionist,
       }}
     >
       {children}

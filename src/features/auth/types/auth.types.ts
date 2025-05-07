@@ -22,6 +22,7 @@ export interface AuthResponseDto {
   email: string;
   message: string;
   success: boolean;
+  
 }
 
 export interface CurrentUser {
