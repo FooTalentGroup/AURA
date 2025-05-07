@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { usePatients } from "../../features/patients/hooks/usePatients";
-import { PatientRow } from "../../core/components/patients/PatientRow";
+import { PatientRow } from "../../features/patients/components/PatientRow";
 import { PageContainer } from "../../components/shared/layouts/PageContainer";
 
 const PatientsPage: React.FC = () => {
