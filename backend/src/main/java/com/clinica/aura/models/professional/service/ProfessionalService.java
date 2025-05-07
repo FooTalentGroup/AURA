@@ -1,6 +1,7 @@
 package com.clinica.aura.models.professional.service;
 import com.clinica.aura.models.patient.dtoRequest.PatientResponseDto;
 import com.clinica.aura.models.patient.model.PatientModel;
+import com.clinica.aura.models.patient.repository.PatientRepository;
 import com.clinica.aura.models.user_account.service.impl.UserDetailsServiceImpl;
 import jakarta.persistence.EntityNotFoundException;
 import com.clinica.aura.exceptions.*;
@@ -41,6 +42,7 @@ public class ProfessionalService {
     private final RoleRepository roleRepository;
     private final ProfessionalRepository professionalRepository;
     private final UserDetailsServiceImpl userDetailsService;
+    private final PatientRepository patientRepository;
 
     @Transactional
     public AuthResponseRegisterDto createUser(@Valid ProfessionalRequestDto authCreateUserDto) {
@@ -196,6 +198,13 @@ public class ProfessionalService {
 
         existing.setLicenseNumber(dto.getLicenseNumber());
         existing.setSpecialty(dto.getSpecialty());
+
+        // Setear pacientes
+        List<PatientModel> patients = dto.getPatientIds() != null
+                ? patientRepository.findAllById(dto.getPatientIds())
+                : Collections.emptyList();
+
+        existing.setPatients(patients);
 
         ProfessionalModel updated = professionalRepository.save(existing);
         return mapToDto(updated);
