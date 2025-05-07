@@ -202,7 +202,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                     stroke="currentColor"
                     stroke-width="2"
                     stroke-linecap="round"
-                    stroke-linejoin="round"
+                    stroke-nejoin="round"
                     className="size-5 lucide lucide-calendar-range-icon lucide-calendar-range"
                   >
                     <rect width="18" height="18" x="3" y="4" rx="2" />
