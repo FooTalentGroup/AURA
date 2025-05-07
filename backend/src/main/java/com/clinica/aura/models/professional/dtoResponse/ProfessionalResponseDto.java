@@ -51,5 +51,9 @@ public class ProfessionalResponseDto {
     @Schema(description = "Especialidad del profesional", example = "Fonoudiología")
     private String specialty;
 
+    @Schema(
+            description = "Lista de IDs de los pacientes asignados al profesional",
+            example = "[1, 2, 3]"
+    )
     private List<Long> patientIds;
 }

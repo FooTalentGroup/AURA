@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Getter
 @Setter
@@ -67,4 +68,11 @@ public class ProfessionalRequestDto {
     @NotBlank(message = "La especialidad es obligatoria")
     @Schema(description = "Especialidad del profesional", requiredMode = Schema.RequiredMode.REQUIRED, example = "Medicina")
     private String specialty;
+
+    @Schema(
+            description = "Lista de IDs de los pacientes asignados al profesional",
+            requiredMode = Schema.RequiredMode.NOT_REQUIRED,
+            example = "[1, 2, 3]"
+    )
+    private List<Long> patientIds;
 }
