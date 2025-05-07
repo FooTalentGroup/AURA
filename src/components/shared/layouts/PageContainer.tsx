@@ -4,6 +4,7 @@ import DashboardLayout from "../../../layouts/DashboardLayout";
 
 interface PageContainerProps {
   title: string;
+  description: string;
   query: string;
   onQueryChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onAdd: () => void;
@@ -11,16 +12,21 @@ interface PageContainerProps {
   children: React.ReactNode;
 }
 
+/**
+ * PageContainer envuelve el contenido en un layout centrado.
+ * Usa la clase `container` de Tailwind para centrar el ancho.
+ */
 export const PageContainer: React.FC<PageContainerProps> = ({
   title,
   query,
+  description,
   onQueryChange,
   onAdd,
   addLabel,
   children
 }) => (
   <DashboardLayout>
-    <div className="max-w-[100rem] mx-auto px-2 py-8 bg-gray-50">
+    <div className="container mx-auto px-4 py-8 bg-gray-50">
       {/* Header */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-6">
         <h1 className="text-2xl font-semibold text-gray-800 mb-4 md:mb-0">
@@ -32,7 +38,7 @@ export const PageContainer: React.FC<PageContainerProps> = ({
               type="text"
               value={query}
               onChange={onQueryChange}
-              placeholder={`Buscar ${title.toLowerCase()}...`}
+              placeholder={`Buscar ${description.toLowerCase()}...`}
               className="h-12 w-full rounded-full border border-gray-300 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-[#0072C3]"
             />
             <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-lg" />

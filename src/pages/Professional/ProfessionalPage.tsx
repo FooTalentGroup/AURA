@@ -25,6 +25,7 @@ const ProfessionalPage: React.FC = () => {
   return (
     <PageContainer
       title="Personal del centro"
+      description="Nombre o Especialidad"
       query={query}
       onQueryChange={handleSearchChange}
       onAdd={handleAdd}
