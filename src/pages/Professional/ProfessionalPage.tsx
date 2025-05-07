@@ -5,13 +5,16 @@ import { PageContainer } from "../../components/shared/layouts/PageContainer";
 
 const ProfessionalPage: React.FC = () => {
   const [query, setQuery] = useState("");
-  const { professionals, loading, error, reload } = useProfessionals(0, 20);
+  const { professionals, loading, error } = useProfessionals(
+    0,
+    20,
+    query
+  );
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const q = e.target.value;
-    setQuery(q);
-    reload(q.trim());
+    setQuery(e.target.value);
   };
+
 
   const handleAdd = () => {
     // lógica para crear usuario
@@ -19,7 +22,7 @@ const ProfessionalPage: React.FC = () => {
 
   const handleView = (id: number) => {
     console.log('Ver paciente', id);
-    // aquí harías un navigate(`/patients/${id}`)
+    //  un navigate(`/patients/${id}`)
   };
 
   return (
@@ -52,7 +55,7 @@ const ProfessionalPage: React.FC = () => {
         <p className="text-center text-gray-600">No se encontraron usuarios</p>
       ) : (
         professionals.map((u) => (
-          <ProfessionalRow key={u.id} professional={u} onView={handleView} />
+          <ProfessionalRow key={u.id} professional={u} onView={handleView}  onViewSchedule={() => console.log('Ver horario', u.id)} />
         ))
       )}
     </PageContainer>
