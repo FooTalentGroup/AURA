@@ -1,6 +1,7 @@
 package com.clinica.aura.models.patient.service;
 
 import com.clinica.aura.config.jwt.JwtUtils;
+import com.clinica.aura.exceptions.EmailAlreadyExistsException;
 import com.clinica.aura.models.medical_records.repository.MedicalRecordsRepository;
 import com.clinica.aura.models.patient.dto.PatientRequestDto;
 import com.clinica.aura.models.patient.dto.PatientResponseDto;
@@ -69,13 +70,16 @@ public class PatientService {
         String tutorName = authCreateUserDto.getTutorName();
         String relationToPatient = authCreateUserDto.getRelationToPatient();
         String level = authCreateUserDto.getLevel();
-        String shift=authCreateUserDto.getShift();
+        String shift = authCreateUserDto.getShift();
+
+        if (userRepository.findByEmail(email).isPresent()) {
+            throw new EmailAlreadyExistsException("El correo " + email + " ya existe en la base de datos.");
+        }
 
         Optional<RoleModel> professionalRole = roleRepository.findByEnumRole(EnumRole.PATIENT);
         if (professionalRole.isEmpty()) {
             throw new IllegalArgumentException("El rol especificado no está configurado en la base de datos.");
         }
-
         Set<RoleModel> roleEntities = Set.of(professionalRole.get());
 
         PersonModel personEntity = PersonModel.builder()
@@ -90,17 +94,16 @@ public class PatientService {
                 .person(personEntity)
                 .hasInsurance(authCreateUserDto.isHasInsurance())
                 .insuranceName(authCreateUserDto.getInsuranceName())
-                .address(authCreateUserDto.getAddress())
-                .tutorName(authCreateUserDto.getTutorName())
-                .relationToPatient(authCreateUserDto.getRelationToPatient())
-                .level(authCreateUserDto.getLevel())
-                .shift(authCreateUserDto.getShift())
+                .address(address)
+                .tutorName(tutorName)
+                .relationToPatient(relationToPatient)
+                .level(level)
+                .shift(shift)
                 .build();
 
         List<Long> profIds = authCreateUserDto.getProfessionalIds();
         if (profIds != null && !profIds.isEmpty()) {
             List<ProfessionalModel> professionals = professionalRepository.findAllById(profIds);
-
             List<Long> existingProfIds = professionals.stream().map(ProfessionalModel::getId).toList();
             List<Long> nonExistingProfIds = new ArrayList<>(profIds);
             nonExistingProfIds.removeAll(existingProfIds);
@@ -112,10 +115,14 @@ public class PatientService {
             patientModel.setProfessionals(new ArrayList<>());
         }
 
-        // asignar escuela usando solo el ID y validar existencia
-        SchoolModel school = entityManager.find(SchoolModel.class, authCreateUserDto.getSchoolId());
+        Long schoolId = authCreateUserDto.getSchoolId();
+        if (schoolId == null) {
+            throw new IllegalArgumentException("El ID de la escuela es obligatorio.");
+        }
+
+        SchoolModel school = entityManager.find(SchoolModel.class, schoolId);
         if (school == null) {
-            throw new EntityNotFoundException("La escuela con ID " + authCreateUserDto.getSchoolId() + " no fue encontrada.");
+            throw new EntityNotFoundException("La escuela con ID " + schoolId + " no fue encontrada.");
         }
         patientModel.setSchoolModel(school);
 
@@ -150,9 +157,10 @@ public class PatientService {
                                 ? patientModel.getProfessionals().stream().map(ProfessionalModel::getId).toList()
                                 : Collections.emptyList()
                 )
-                .schoolId(patientModel.getSchoolModel().getId())
+                .schoolId(school.getId())
                 .build();
     }
+
 
 
     //LISTADO DE PACIENTES NUEVO
@@ -179,17 +187,18 @@ public class PatientService {
                             .tutorName(patient.getTutorName())
                             .relationToPatient(patient.getRelationToPatient())
                             .level(patient.getLevel())
-                            .shift(patient.getShift())
-                            .schoolId(patient.getSchoolModel().getId());
+                            .shift(patient.getShift());
 
+                    if (patient.getSchoolModel() != null) {
+                        dtoBuilder.schoolId(patient.getSchoolModel().getId());
+                    }
 
                     if (patient.getProfessionals() != null) {
                         List<Long> professionalIds = patient.getProfessionals().stream()
-                                .map(prof -> prof.getId())
+                                .map(ProfessionalModel::getId)
                                 .toList();
                         dtoBuilder.professionalIds(professionalIds);
                     }
-
 
                     return dtoBuilder.build();
                 })
@@ -203,6 +212,7 @@ public class PatientService {
                 patientsPage.getTotalElements()
         );
     }
+
 
     //buscar pacientes por id
     public PatientResponseDto getPatientById(Long id) {
@@ -221,7 +231,7 @@ public class PatientService {
                     .toList();
         }
 
-        return PatientResponseDto.builder()
+        PatientResponseDto.PatientResponseDtoBuilder dtoBuilder = PatientResponseDto.builder()
                 .id(person.getId())
                 .name(person.getName())
                 .lastName(person.getLastName())
@@ -236,10 +246,15 @@ public class PatientService {
                 .relationToPatient(patient.getRelationToPatient())
                 .professionalIds(professionalIds)
                 .level(patient.getLevel())
-                .shift(patient.getShift())
-                .schoolId(patient.getSchoolModel().getId())
-                .build();
+                .shift(patient.getShift());
+
+        if (patient.getSchoolModel() != null) {
+            dtoBuilder.schoolId(patient.getSchoolModel().getId());
+        }
+
+        return dtoBuilder.build();
     }
+
 
     //editar paciente por id
     public PatientResponseDto updatePatient(Long id, PatientRequestDto requestDto) {
@@ -264,11 +279,27 @@ public class PatientService {
         patient.setLevel(requestDto.getLevel());
         patient.setShift(requestDto.getShift());
 
+        if (requestDto.getSchoolId() == null) {
+            throw new IllegalArgumentException("El ID de la escuela no puede ser null.");
+        }
         //busca la escuela por ID y asignarla
         SchoolModel school = schoolRepository.findById(requestDto.getSchoolId())
                 .orElseThrow(() -> new RuntimeException("Escuela no encontrada con ID: " + requestDto.getSchoolId()));
         patient.setSchoolModel(school);
 
+        List<Long> profIds = requestDto.getProfessionalIds();
+        if (profIds != null && !profIds.isEmpty()) {
+            List<ProfessionalModel> professionals = professionalRepository.findAllById(profIds);
+            List<Long> existingProfIds = professionals.stream().map(ProfessionalModel::getId).toList();
+            List<Long> nonExistingProfIds = new ArrayList<>(profIds);
+            nonExistingProfIds.removeAll(existingProfIds);
+            if (!nonExistingProfIds.isEmpty()) {
+                throw new EntityNotFoundException("Los siguientes profesionales no fueron encontrados: " + nonExistingProfIds);
+            }
+            patient.setProfessionals(professionals);
+        } else {
+            patient.setProfessionals(new ArrayList<>());
+        }
 
 
         // Actualizar solo el email en la tabla usuario
@@ -347,6 +378,8 @@ public class PatientService {
                     .toList();
         }
 
+        Long schoolId = patient.getSchoolModel() != null ? patient.getSchoolModel().getId() : null;
+
         return PatientResponseDto.builder()
                 .id(patient.getId())
                 .name(person.getName())
@@ -363,9 +396,10 @@ public class PatientService {
                 .professionalIds(professionalIds)
                 .level(patient.getLevel())
                 .shift(patient.getShift())
-                .schoolId(patient.getSchoolModel().getId())
+                .schoolId(schoolId)
                 .build();
     }
+
 
     //buscar paciente por nombre
     public List<PatientResponseDto> getPatientsByName(String name, String sureName) {
@@ -386,6 +420,8 @@ public class PatientService {
                         .toList();
             }
 
+            Long schoolId = patient.getSchoolModel() != null ? patient.getSchoolModel().getId() : null;
+
             return PatientResponseDto.builder()
                     .id(patient.getId())
                     .name(person.getName())
@@ -402,10 +438,11 @@ public class PatientService {
                     .professionalIds(professionalIds)
                     .level(patient.getLevel())
                     .shift(patient.getShift())
-                    .schoolId(patient.getSchoolModel().getId())
+                    .schoolId(schoolId)
                     .build();
         }).toList();
     }
+
 
 }
 

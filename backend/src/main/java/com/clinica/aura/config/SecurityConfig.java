@@ -32,7 +32,8 @@ import org.springframework.web.filter.CorsFilter;
 @EnableMethodSecurity(
         securedEnabled = true,
         jsr250Enabled = true)
-public class SecurityConfig {
+public class
+SecurityConfig {
 
     private final JwtUtils jwtUtils;
 

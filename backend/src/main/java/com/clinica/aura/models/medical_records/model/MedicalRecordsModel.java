@@ -22,7 +22,7 @@ public class MedicalRecordsModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(targetEntity = PatientModel.class)
+    @OneToOne(targetEntity = PatientModel.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "patient_id", nullable = false)
     private PatientModel patients;
 

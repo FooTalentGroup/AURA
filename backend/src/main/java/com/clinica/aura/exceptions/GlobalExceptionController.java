@@ -447,13 +447,13 @@ public class GlobalExceptionController {
 
         ErrorResponse errorResponse = ErrorResponse.builder()
                 .errorCode("RESOURCE-409")
-                .message("El correo electrónica ya existe")
+                .message("El correo electrónico ya existe")
                 .details(List.of(sanitizeErrorMessage(ex.getMessage())))
                 .timestamp(Instant.now())
                 .path(getSanitizedPath(request))
                 .build();
 
-        log.warn("El correo electrónica ya existe - Path: {} | IP: {} | Mensaje: {}",
+        log.warn("El correo electrónico ya existe - Path: {} | IP: {} | Mensaje: {}",
                 errorResponse.getPath(),
                 request.getHeader("X-Forwarded-For"),
                 ex.getMessage());

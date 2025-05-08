@@ -4,6 +4,8 @@ package com.clinica.aura.models.patient.model;
 import com.clinica.aura.models.person.model.PersonModel;
 import com.clinica.aura.models.professional.model.ProfessionalModel;
 import com.clinica.aura.models.school.model.SchoolModel;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -25,7 +27,7 @@ public class PatientModel {
     @Id
     private Long id;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)//cascade elimina paciente y persona
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)//cascade elimina paciente y persona
     @MapsId
     @JoinColumn(name = "id")
     private PersonModel person;
@@ -45,6 +47,7 @@ public class PatientModel {
     private String shift;   //estaba en escuela y lo pase aca
 
     @ManyToMany(targetEntity = ProfessionalModel.class, fetch = FetchType.LAZY)
+    @JsonManagedReference
     @JoinTable(
             name = "professional_patient",
             joinColumns = @JoinColumn(name = "patient_id"),
@@ -59,7 +62,7 @@ public class PatientModel {
     @CreationTimestamp
     private LocalDateTime updatedAt;
 
-    @ManyToOne(targetEntity = SchoolModel.class)
+    @ManyToOne(targetEntity = SchoolModel.class, fetch = FetchType.LAZY)
     private SchoolModel  schoolModel;
 
 }

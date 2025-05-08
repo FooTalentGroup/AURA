@@ -2,17 +2,16 @@ package com.clinica.aura.models.school.model;
 
 import com.clinica.aura.models.patient.model.PatientModel;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
 @Entity
-@Data //get and set
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -40,8 +39,9 @@ public class SchoolModel {
 
     //relacion 1 a n con pacientes
     //una escuela tiene n cantidad des pacientes
-    @OneToMany(targetEntity = PatientModel.class, fetch = FetchType.LAZY, mappedBy = "schoolModel")
-    private List<PatientModel> patients;
+//    @OneToMany(targetEntity = PatientModel.class, fetch = FetchType.LAZY, mappedBy = "schoolModel")
+//    @JsonManagedReference
+//    private List<PatientModel> patients;
 
     //ME TRAE LOS PACIENTES EN EL EXAMPLE
     //Poniendo hiden en la relacion no aparecen a la hora de editar

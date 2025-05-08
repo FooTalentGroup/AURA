@@ -175,7 +175,7 @@ public class MedicalRecordsService {
     }
 
     //paginacion medical records
-    public Page<MedicalRecordsResponseDto> getMedicalRecordsPage(int page, int size) {
+    public Page<MedicalRecordsResponseDto>  getMedicalRecordsPage(int page, int size) {
         Pageable pageable = PageRequest.of(page,size);
         return medicalRecordsRepository.findAll(pageable).map(this::mapToDto);
     }

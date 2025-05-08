@@ -2,6 +2,7 @@ package com.clinica.aura.models.professional.model;
 
 import com.clinica.aura.models.patient.model.PatientModel;
 import com.clinica.aura.models.person.model.PersonModel;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -24,7 +25,7 @@ public class ProfessionalModel {
     @Id
     private Long id;
 
-    @OneToOne(cascade = CascadeType.PERSIST)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @MapsId
     @JoinColumn(name = "id")
     private PersonModel person;
@@ -35,6 +36,7 @@ public class ProfessionalModel {
     private String specialty;
 
     @ManyToMany(targetEntity = PatientModel.class, mappedBy = "professionals", fetch = FetchType.LAZY)
+    @JsonBackReference
     private List<PatientModel> patients;
 
 

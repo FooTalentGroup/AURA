@@ -35,6 +35,12 @@ public class MedicalRecordsController {
     public ResponseEntity<?> findById(@PathVariable Long id) {
         return ResponseEntity.ok(service.findById(id));
     }
+
+    @Operation(
+            summary = "Obtener seguimientos por ID de paciente",
+            description = "Devuelve una lista de registros de seguimiento vinculados al paciente con el ID especificado. "
+                    + "Este endpoint permite consultar todos los seguimientos registrados para un paciente en particular."
+    )
     @GetMapping("/patient/{idPatient}")
     public ResponseEntity<?> findByIPatients(@PathVariable Long idPatient){
         return ResponseEntity.ok(service.findByPatientsId(idPatient));

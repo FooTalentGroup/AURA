@@ -1,6 +1,7 @@
 package com.clinica.aura.models.professional.service;
 import com.clinica.aura.models.patient.dto.PatientResponseDto;
 import com.clinica.aura.models.patient.model.PatientModel;
+import com.clinica.aura.models.patient.repository.PatientRepository;
 import com.clinica.aura.models.user_account.service.impl.UserDetailsServiceImpl;
 import jakarta.persistence.EntityNotFoundException;
 import com.clinica.aura.exceptions.*;
@@ -25,7 +26,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.*;
 
 import org.springframework.data.domain.Page;
@@ -42,54 +42,46 @@ public class ProfessionalService {
     private final RoleRepository roleRepository;
     private final ProfessionalRepository professionalRepository;
     private final UserDetailsServiceImpl userDetailsService;
+    private final PatientRepository patientRepository;
 
     @Transactional
     public AuthResponseRegisterDto createUser(@Valid ProfessionalRequestDto authCreateUserDto) {
 
         String email = authCreateUserDto.getEmail();
         String password = authCreateUserDto.getPassword();
-        String username = authCreateUserDto.getName();
-        String lastName = authCreateUserDto.getLastName();
-        String dni = authCreateUserDto.getDni();
-        String phoneNumber = authCreateUserDto.getPhoneNumber();
-        //String country = authCreateUserDto.getCountry(); // campo que se pide eliminar 02/05/2025
-       // String photoUrl = authCreateUserDto.getPhotoUrl(); // campo que se pide eliminar 02/05/2025
-        LocalDate birthDate = authCreateUserDto.getBirthDate();
-        UserModel emailExists = userRepository.findByEmail(email).orElse(null);
-        if (emailExists != null) {
+
+        if (userRepository.findByEmail(email).isPresent()) {
             throw new EmailAlreadyExistsException("El correo " + email + " ya existe en la base de datos.");
         }
 
-        Optional<RoleModel> professionalRole = roleRepository.findByEnumRole(EnumRole.PROFESSIONAL);
-        if (professionalRole.isEmpty()) {
-            throw new IllegalArgumentException("El rol especificado no está configurado en la base de datos.");
-        }
+        RoleModel professionalRole = roleRepository.findByEnumRole(EnumRole.PROFESSIONAL)
+                .orElseThrow(() -> new IllegalArgumentException("El rol especificado no está configurado en la base de datos."));
+        Set<RoleModel> roleEntities = Set.of(professionalRole);
 
-        Set<RoleModel> roleEntities = Set.of(professionalRole.get());
-
-        // Crea la persona (aún no se guarda explícitamente)
+        // Crea la persona con todos los campos nuevos
         PersonModel personEntity = PersonModel.builder()
-                .dni(dni)
-                .name(username)
-                .lastName(lastName)
-                .phoneNumber(phoneNumber)
-               // .country(country) // campo que se pide eliminar 02/05/2025
-                .birthDate(birthDate)
-               // .photoUrl(photoUrl) // campo que se pide eliminar 02/05/2025
+                .dni(authCreateUserDto.getDni())
+                .name(authCreateUserDto.getName())
+                .lastName(authCreateUserDto.getLastName())
+                .phoneNumber(authCreateUserDto.getPhoneNumber())
+                .address(authCreateUserDto.getAddress())
+                .birthDate(authCreateUserDto.getBirthDate())
+                .locality(authCreateUserDto.getLocality())
+                .cuil(authCreateUserDto.getCuil())
                 .build();
 
-        // Crea el profesional con la persona
+        // Crea el profesional
         ProfessionalModel professionalEntity = ProfessionalModel.builder()
                 .person(personEntity)
                 .licenseNumber(authCreateUserDto.getLicenseNumber())
                 .specialty(authCreateUserDto.getSpecialty())
-                .deleted(false) //  Asegura que no se guarde como null
+                .deleted(false)
                 .build();
 
-        // Guarda el profesional (esto también guarda la persona gracias a cascade = PERSIST)
+        // Guarda el profesional (y con cascade, también guarda la persona)
         professionalRepository.save(professionalEntity);
 
-        // Crea el usuario con la persona ya persistida
+        // Crea el usuario vinculado a la persona
         UserModel userEntity = UserModel.builder()
                 .email(email)
                 .password(passwordEncoder.encode(password))
@@ -99,32 +91,28 @@ public class ProfessionalService {
 
         UserModel userCreated = userRepository.save(userEntity);
 
+        // Autoridades para JWT
         List<SimpleGrantedAuthority> authoritiesList = new ArrayList<>();
-
-        userCreated.getRoles().forEach(role ->
-                authoritiesList.add(new SimpleGrantedAuthority("ROLE_".concat(role.getEnumRole().name())))
-        );
-
-        userCreated.getRoles().stream()
-                .flatMap(role -> role.getPermissions().stream())
-                .forEach(permission -> authoritiesList.add(new SimpleGrantedAuthority(permission.getName())));
+        userCreated.getRoles().forEach(role -> {
+            authoritiesList.add(new SimpleGrantedAuthority("ROLE_" + role.getEnumRole().name()));
+            role.getPermissions().forEach(permission ->
+                    authoritiesList.add(new SimpleGrantedAuthority(permission.getName())));
+        });
 
         UserDetails userDetails = userDetailsService.loadUserByUsername(userCreated.getEmail());
         Authentication authentication = new UsernamePasswordAuthenticationToken(
-                userDetails,
-                userCreated.getPassword(),
-                authoritiesList
-        );
+                userDetails, userCreated.getPassword(), authoritiesList);
         String accessToken = jwtUtils.generateJwtToken(authentication);
 
         return new AuthResponseRegisterDto(
                 userCreated.getId(),
-                username,
+                authCreateUserDto.getName(),
                 "Usuario registrado exitosamente",
                 accessToken,
                 true
         );
     }
+
 
 //    //listar todos los profesionales
 //    public List<ProfessionalResponseDto> getAllProfessionals() {
@@ -172,20 +160,23 @@ public class ProfessionalService {
                 .toList()
                 : Collections.emptyList();
 
-        return new ProfessionalResponseDto(
-                professional.getId(),
-                person != null ? person.getDni() : null,
-                person != null ? person.getName() : null,
-                person != null ? person.getLastName() : null,
-                person != null ? person.getPhoneNumber() : null,
-               // person != null ? person.getCountry() : null, // campo que se pide eliminar 02/05/2025
-               // person != null ? person.getPhotoUrl() : null, // campo que se pide eliminar 02/05/2025
-                person != null ? person.getBirthDate() : null,
-                professional.getLicenseNumber(),
-                professional.getSpecialty(),
-                patientIds // ahora solo devuelvo los IDs de los pacientes
-        );
+        return ProfessionalResponseDto.builder()
+                .id(professional.getId())
+                .email(userRepository.findByPersonId(person.getId()).get().getEmail())
+                .dni(person.getDni())
+                .name(person.getName())
+                .lastName(person.getLastName())
+                .phoneNumber(person.getPhoneNumber())
+                .address(person.getAddress())
+                .birthDate(person.getBirthDate())
+                .locality(person.getLocality())
+                .cuil(person.getCuil())
+                .licenseNumber(professional.getLicenseNumber())
+                .specialty(professional.getSpecialty())
+                .patientIds(patientIds)
+                .build();
     }
+
 
 
     //metodo para hacer update a profesional
@@ -193,16 +184,27 @@ public class ProfessionalService {
         ProfessionalModel existing = professionalRepository.findById(id)
                 .orElseThrow(() -> new ProfessionalNotFoundException("Profesional no encontrado con ID: " + id));
 
-        existing.getPerson().setName(dto.getName());
-        existing.getPerson().setLastName(dto.getLastName());
-        existing.getPerson().setDni(dto.getDni());
-        existing.getPerson().setPhoneNumber(dto.getPhoneNumber());
-        //existing.getPerson().setCountry(dto.getCountry());   //cambio sugerido a eliminar  02/05/2025
-        existing.getPerson().setBirthDate(dto.getBirthDate());
-      //  existing.getPerson().setPhotoUrl(dto.getPhotoUrl()); //cambio sugerido a eliminar 02/05/2025
+        PersonModel person = existing.getPerson();
+
+
+        person.setDni(dto.getDni());
+        person.setName(dto.getName());
+        person.setLastName(dto.getLastName());
+        person.setPhoneNumber(dto.getPhoneNumber());
+        person.setAddress(dto.getAddress());
+        person.setBirthDate(dto.getBirthDate());
+        person.setLocality(dto.getLocality());
+        person.setCuil(dto.getCuil());
 
         existing.setLicenseNumber(dto.getLicenseNumber());
         existing.setSpecialty(dto.getSpecialty());
+
+        // Setear pacientes
+        List<PatientModel> patients = dto.getPatientIds() != null
+                ? patientRepository.findAllById(dto.getPatientIds())
+                : Collections.emptyList();
+
+        existing.setPatients(patients);
 
         ProfessionalModel updated = professionalRepository.save(existing);
         return mapToDto(updated);
@@ -227,37 +229,38 @@ public class ProfessionalService {
     }
 
     //metodo para listar los pacientes de un profesional por su id
-    @Transactional(readOnly = true)
-    public List<PatientResponseDto> getPatientsByProfessionalId(Long professionalId) {
-        List<PatientModel> patients = professionalRepository.findPatientsByProfessionalId(professionalId);
+        @Transactional(readOnly = true)
+        public List<PatientResponseDto> getPatientsByProfessionalId(Long professionalId) {
+            List<PatientModel> patients = professionalRepository.findPatientsByProfessionalId(professionalId);
 
-        return patients.stream().map(patient -> {
-            PersonModel person = patient.getPerson(); // extraigo la persona
 
-            return PatientResponseDto.builder()
-                    .id(patient.getId())
-                    .name(person != null ? person.getName() : null)
-                    .lastName(person != null ? person.getLastName() : null)
-                    .dni(person != null ? person.getDni() : null)
-                    .phoneNumber(person != null ? person.getPhoneNumber() : null)
-                   // .country(person != null ? person.getCountry() : null) //cambio sugerido a eliminar  02/05/2025
-                  //  .photoUrl(person != null ? person.getPhotoUrl() : null) //cambio sugerido a eliminar  02/05/2025
-                    .birthDate(person != null ? person.getBirthDate() : null)
-                    .email(null) // lo dejás en null porque no tenés el usuario
-                    .hasInsurance(patient.isHasInsurance())
-                    .insuranceName(patient.getInsuranceName())
-                    .address(patient.getAddress())
-                    .tutorName(patient.getTutorName())
-                    .relationToPatient(patient.getRelationToPatient())
-                    .level(patient.getLevel())
-                    .shift(patient.getShift())
-                    .schoolId(patient.getSchoolModel().getId())
-                    .professionalIds(patient.getProfessionals() != null
-                            ? patient.getProfessionals().stream()
-                            .map(ProfessionalModel::getId)
-                            .toList()
-                            : Collections.emptyList())
-                    .build();
-        }).toList();
-    }
+            return patients.stream().map(patient -> {
+                PersonModel person = patient.getPerson(); // extraigo la persona
+
+                return PatientResponseDto.builder()
+                        .id(patient.getId())
+                        .name(person != null ? person.getName() : null)
+                        .lastName(person != null ? person.getLastName() : null)
+                        .dni(person != null ? person.getDni() : null)
+                        .phoneNumber(person != null ? person.getPhoneNumber() : null)
+                        // .country(person != null ? person.getCountry() : null) //cambio sugerido a eliminar  02/05/2025
+                        //  .photoUrl(person != null ? person.getPhotoUrl() : null) //cambio sugerido a eliminar  02/05/2025
+                        .birthDate(person != null ? person.getBirthDate() : null)
+                        .email(null) // lo dejás en null porque no tenés el usuario
+                        .hasInsurance(patient.isHasInsurance())
+                        .insuranceName(patient.getInsuranceName())
+                        .address(patient.getAddress())
+                        .tutorName(patient.getTutorName())
+                        .relationToPatient(patient.getRelationToPatient())
+                        .level(patient.getLevel())
+                        .shift(patient.getShift())
+                        .schoolId(patient.getSchoolModel() != null ? patient.getSchoolModel().getId() : null)
+                        .professionalIds(patient.getProfessionals() != null
+                                ? patient.getProfessionals().stream()
+                                .map(ProfessionalModel::getId)
+                                .toList()
+                                : Collections.emptyList())
+                        .build();
+            }).toList();
+        }
 }
