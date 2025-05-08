@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import PublicRoutes from "./PublicRoutes";
 import PrivateRoutes from "./PrivateRoutes";
+import AdminRoute from "./AdminRoutes";
 
 // Páginas públicas
 import LoginPage from "../pages/auth/LoginPage";
@@ -13,6 +14,8 @@ import AppointmentsPage from "../pages/appointments/AppointmentsPage";
 import NotFoundPage from "../pages/NotFoundPage";
 import ForgotPasswordForm from "../pages/auth/ForgotPasswordForm";
 import ProfilePage from "../pages/profile/ProfilePage";
+import AdminPage from "../pages/admin/AdminPage";
+import ProfessionalPage from "../pages/Professional/ProfessionalPage";
 import PatientTabs from "../pages/patientTabs/PatientTabsPage";
 
 const AppRoutes = () => {
@@ -30,6 +33,11 @@ const AppRoutes = () => {
         <Route path="/patients" element={<PatientsPage />} />
         <Route path="/patient" element={<PatientTabs />} />
         <Route path="/appointments" element={<AppointmentsPage />} />
+      </Route>
+
+      <Route element={<AdminRoute />}>
+        <Route path="admin" element={<AdminPage />} />
+        <Route path="/professionals" element={<ProfessionalPage />} />
       </Route>
 
       <Route path="/404" element={<NotFoundPage />} />
