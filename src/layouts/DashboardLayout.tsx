@@ -3,6 +3,13 @@ import { Link, useNavigate } from "react-router-dom";
 import { useContextAuth } from "../features/auth/hooks/useContextAuth";
 import { FiChevronDown } from "react-icons/fi";
 import { BsNutFill } from "react-icons/bs";
+import {
+  CalendarRangeIcon,
+  HomeIcon,
+  MenuIcon,
+  MessageSquareIcon,
+  PatientsIcon,
+} from "../components/shared/ui/Icons";
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -179,9 +186,9 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-nejoin="round"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                     className="size-5 lucide lucide-calendar-range-icon lucide-calendar-range"
                   >
                     <rect width="18" height="18" x="3" y="4" rx="2" />
@@ -244,7 +251,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
           </button>
           <div className="flex items-center">
             {/* TODO reemplazar imagen por logo real de AURA */}
-            <img className="w-6 bg-white rounded-full" src={AURALogo} alt="" />
+            {/* <img className="w-6 bg-white rounded-full" src={AURALogo} alt="" /> */}
             <h2 className="ml-2 text-white text-lg font-semibold">AURA</h2>
           </div>
         </div>

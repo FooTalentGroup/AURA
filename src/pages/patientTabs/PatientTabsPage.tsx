@@ -1,7 +1,8 @@
 import { useState } from "react";
 import DashboardLayout from "../../layouts/DashboardLayout";
 import {
-  PatientData,
+  // PatientData,
+  PatientDB,
   TabId,
   TabItem,
 } from "../../features/patientTabs/types/patientTabs.types";
@@ -23,102 +24,127 @@ const tabs: TabItem[] = [
   { id: "antecedentes", label: "Antecedentes" },
 ];
 
-const patientData: PatientData = {
-  name: "Olivia Curuchet",
-  dateBirth: "12 / 05 / 2016",
+// const patientData: PatientData = {
+//   id: 123,
+//   name: "Olivia",
+//   lastName: "Curuchet",
+//   birthDate: "12 / 05 / 2016",
+//   dni: "46.237.981",
+//   age: 8,
+//   genre: "Femenino",
+//   insuranceName: "OSDE",
+//   insurancePlan: "210",
+//   membershipNumber: "156150-06",
+// };
+
+// interface ContactData {
+//   name: string;
+//   relationship: string;
+//   phone: string;
+//   residence: string;
+//   email: string;
+//   school: {
+//     name: string;
+//     level: string;
+//     shift: string;
+//     director: string;
+//     email: string;
+//     phone: string;
+//   };
+// }
+
+// const contactData: ContactData = {
+//   name: "Paula Curuchet",
+//   relationship: "Madre",
+//   phone: "+54 11 6789 2345",
+//   residence: "Av. San Martín 3500, Quilmes, Buenos Aires",
+//   email: "paula.curuchet@gmail.com",
+//   school: {
+//     name: "Colegio San Gabriel",
+//     level: "Primario - 2° Grado",
+//     shift: "Mañana",
+//     director: "Laura Domínguez",
+//     email: "lucianagomez@gmail.com",
+//     phone: "+54 11 6789 2345",
+//   },
+// };
+
+// interface DiagnosticData {
+//   title: string;
+//   paragraphs: string[];
+//   treatmentPlan: {
+//     title: string;
+//     items: string[];
+//   };
+// }
+
+// const diagnosticData: DiagnosticData = {
+//   title: "Trastorno del lenguaje",
+//   paragraphs: [
+//     "Olivia Curuchet, de 7 años, presenta un cuadro de dificultades en la adquisición y organización del lenguaje, manifestadas principalmente en el área de la expresión oral y la comprensión de consignas complejas. A nivel fonológico, se observa alteración en la articulación de fonemas (particularmente en grupos consonánticos y sonidos fricativos), lo que impacta en la inteligibilidad de su discurso.",
+//     "Desde el área psicopedagógica, se detectan dificultades en procesos atencionales sostenidos y selectivos, así como desafíos en la conciencia fonológica y procesamiento secuencial de la información verbal. Estas dificultades inciden en el rendimiento académico, especialmente en actividades de lectoescritura y resolución de consignas múltiples.",
+//     "La evaluación interdisciplinaria respalda la hipótesis de un trastorno específico del lenguaje (TEL) de tipo expresivo y mixto, asociado a un trastorno de aprendizaje con alteración en la lectura y escritura (Dislexia - Disgrafía incipiente).",
+//   ],
+//   treatmentPlan: {
+//     title: "Plan de tratamiento sugerido:",
+//     items: [
+//       "Intervención fonoaudiológica específica para la rehabilitación articulatoria, estimulación de la comprensión verbal y enriquecimiento del vocabulario.",
+//       "Tratamiento psicopedagógico focalizado en estrategias de atención, memoria verbal de trabajo y programas de apoyo a la lectoescritura.",
+//       "Articulación con la escuela para la implementación de adaptaciones curriculares no significativas (tiempo extendido, consignas simples, uso de apoyos visuales).",
+//       "Revisión diagnóstica interdisciplinaria en seis meses para evaluar evolución y ajustar el plan terapéutico.",
+//     ],
+//   },
+// };
+
+// interface ClinicalHistoryData {
+//   observations: string;
+//   interventions: string[];
+//   indications: string[];
+// }
+
+// const clinicalHistoryData: ClinicalHistoryData = {
+//   observations:
+//     "Se trabajó conciencia fonológica (identificación de sílabas iniciales en palabras familiares). Olivia mostró mayor rapidez en la identificación de palabras monosílabas, aunque presentó dificultades en palabras compuestas. Se observó buena predisposición y participación activa durante la actividad de rimas.",
+//   interventions: [
+//     "Juegos de asociación sonora.",
+//     "Ejercicios de segmentación silábica con apoyo visual.",
+//   ],
+//   indications: [
+//     "Reforzar la construcción de frases simples utilizando imágenes.",
+//     "Incorporar ejercicios de discriminación auditiva.",
+//   ],
+// };
+
+const patientDB: PatientDB = {
+  id: 123,
+  name: "Olivia",
+  lastName: "Curuchet",
+  phoneNumber: "+54 11 6789 2345",
+  birthDate: "12 / 05 / 2016",
   dni: "46.237.981",
-  age: 8,
-  genre: "Femenino",
-  socialSecurity: {
-    name: "OSDE",
-    plan: "210",
-    membershipNumber: "156150-06",
-  },
-};
-
-interface ContactData {
-  name: string;
-  relationship: string;
-  phone: string;
-  residence: string;
-  email: string;
-  school: {
-    name: string;
-    level: string;
-    shift: string;
-    director: string;
-    email: string;
-    phone: string;
-  };
-}
-
-const contactData: ContactData = {
-  name: "Paula Curuchet",
-  relationship: "Madre",
-  phone: "+54 11 6789 2345",
-  residence: "Av. San Martín 3500, Quilmes, Buenos Aires",
   email: "paula.curuchet@gmail.com",
-  school: {
-    name: "Colegio San Gabriel",
-    level: "Primario - 2° Grado",
-    shift: "Mañana",
-    director: "Laura Domínguez",
-    email: "lucianagomez@gmail.com",
-    phone: "+54 11 6789 2345",
-  },
+  hasInsurance: true,
+  insuranceName: "OSDE",
+  address: "Av. San Martín 3500, Quilmes, Buenos Aires",
+  tutorName: "Paula Curuchet",
+  relationToPatient: "Madre",
+  professionalIds: [123123],
+  level: "Primario - 2° Grado",
+  shift: "Mañana",
+  schoolId: 544123,
+  // age: 8,
+  // genre: "Femenino",
+  // insurancePlan: "210",
+  // membershipNumber: "156150-06",
 };
 
-interface DiagnosticData {
-  title: string;
-  paragraphs: string[];
-  treatmentPlan: {
-    title: string;
-    items: string[];
-  };
+interface PatientTabsProps {
+  patient: PatientDB;
 }
-
-const diagnosticData: DiagnosticData = {
-  title: "Trastorno del lenguaje",
-  paragraphs: [
-    "Olivia Curuchet, de 7 años, presenta un cuadro de dificultades en la adquisición y organización del lenguaje, manifestadas principalmente en el área de la expresión oral y la comprensión de consignas complejas. A nivel fonológico, se observa alteración en la articulación de fonemas (particularmente en grupos consonánticos y sonidos fricativos), lo que impacta en la inteligibilidad de su discurso.",
-    "Desde el área psicopedagógica, se detectan dificultades en procesos atencionales sostenidos y selectivos, así como desafíos en la conciencia fonológica y procesamiento secuencial de la información verbal. Estas dificultades inciden en el rendimiento académico, especialmente en actividades de lectoescritura y resolución de consignas múltiples.",
-    "La evaluación interdisciplinaria respalda la hipótesis de un trastorno específico del lenguaje (TEL) de tipo expresivo y mixto, asociado a un trastorno de aprendizaje con alteración en la lectura y escritura (Dislexia - Disgrafía incipiente).",
-  ],
-  treatmentPlan: {
-    title: "Plan de tratamiento sugerido:",
-    items: [
-      "Intervención fonoaudiológica específica para la rehabilitación articulatoria, estimulación de la comprensión verbal y enriquecimiento del vocabulario.",
-      "Tratamiento psicopedagógico focalizado en estrategias de atención, memoria verbal de trabajo y programas de apoyo a la lectoescritura.",
-      "Articulación con la escuela para la implementación de adaptaciones curriculares no significativas (tiempo extendido, consignas simples, uso de apoyos visuales).",
-      "Revisión diagnóstica interdisciplinaria en seis meses para evaluar evolución y ajustar el plan terapéutico.",
-    ],
-  },
-};
-
-interface ClinicalHistoryData {
-  observations: string;
-  interventions: string[];
-  indications: string[];
-}
-
-const clinicalHistoryData: ClinicalHistoryData = {
-  observations:
-    "Se trabajó conciencia fonológica (identificación de sílabas iniciales en palabras familiares). Olivia mostró mayor rapidez en la identificación de palabras monosílabas, aunque presentó dificultades en palabras compuestas. Se observó buena predisposición y participación activa durante la actividad de rimas.",
-  interventions: [
-    "Juegos de asociación sonora.",
-    "Ejercicios de segmentación silábica con apoyo visual.",
-  ],
-  indications: [
-    "Reforzar la construcción de frases simples utilizando imágenes.",
-    "Incorporar ejercicios de discriminación auditiva.",
-  ],
-};
-
 // Componente principal
-export default function PatientTabs() {
+export default function PatientTabs({ patient = patientDB }: PatientTabsProps) {
   const [activeTab, setActiveTab] = useState<TabId>("paciente");
 
-  // Manejador para cambiar entre pestañas
   const handleTabChange = (tabId: TabId) => {
     setActiveTab(tabId);
   };
@@ -127,15 +153,15 @@ export default function PatientTabs() {
   const renderTabContent = () => {
     switch (activeTab) {
       case "paciente":
-        return <PatientInfoTab patientData={patientData} />;
+        return <PatientInfoTab patient={patient} />;
       case "contacto":
-        return <ContactTab contactData={contactData} />;
+        return <ContactTab patient={patient} />;
       case "diagnostico":
-        return <DiagnosticTab diagnosticData={diagnosticData} />;
+        return <DiagnosticTab patient={patient} />;
       case "historial":
-        return <ClinicalHistoryTab clinicalHistoryData={clinicalHistoryData} />;
+        return <ClinicalHistoryTab patient={patient} />;
       case "antecedentes":
-        return <MedicalBackgroundTab />;
+        return <MedicalBackgroundTab patient={patient} />;
       default:
         return null;
     }
@@ -193,7 +219,7 @@ export default function PatientTabs() {
   );
 }
 
-function PatientInfoTab({ patientData }: { patientData: PatientData }) {
+function PatientInfoTab({ patient }: PatientTabsProps) {
   return (
     <section className="grid grid-cols-3 gap-4 bg-gray-200/60 p-4 rounded-b-2xl rounded-tr-2xl">
       <article className="h-fit bg-white py-2 rounded-lg">
@@ -211,7 +237,7 @@ function PatientInfoTab({ patientData }: { patientData: PatientData }) {
               Nombre y Apellido
             </label>
             <p className="py-2 px-3 text-gray-600 bg-blue-50/80 rounded-md mt-2">
-              {patientData.name}
+              {patient.name} {patient.lastName}
             </p>
           </div>
           <div>
@@ -219,25 +245,25 @@ function PatientInfoTab({ patientData }: { patientData: PatientData }) {
               Fecha de nacimiento
             </label>
             <p className="py-2 px-3 text-gray-600 bg-blue-50/80 rounded-md mt-2">
-              {patientData.dateBirth}
+              {patient.birthDate}
             </p>
           </div>
           <div>
             <label className="font-semibold text-blue-600">Edad</label>
             <p className="py-2 px-3 text-gray-600 bg-blue-50/80 rounded-md mt-2">
-              {patientData.age}
+              {/* {patient.age} */}
             </p>
           </div>
           <div>
             <label className="font-semibold text-blue-600">DNI</label>
             <p className="py-2 px-3 text-gray-600 bg-blue-50/80 rounded-md mt-2">
-              {patientData.dni}
+              {patient.dni}
             </p>
           </div>
           <div>
             <label className="font-semibold text-blue-600">Sexo</label>
             <p className="py-2 px-3 text-gray-600 bg-blue-50/80 rounded-md mt-2">
-              {patientData.genre}
+              {/* {patient.genre} */}
             </p>
           </div>
         </form>
@@ -255,13 +281,13 @@ function PatientInfoTab({ patientData }: { patientData: PatientData }) {
           <div>
             <label className="font-semibold text-blue-600">Nombre</label>
             <p className="py-2 px-3 text-gray-600 bg-blue-50/80 rounded-md mt-2">
-              {patientData.socialSecurity.name}
+              {patient.insuranceName}
             </p>
           </div>
           <div>
             <label className="font-semibold text-blue-600">Plan</label>
             <p className="py-2 px-3 text-gray-600 bg-blue-50/80 rounded-md mt-2">
-              {patientData.socialSecurity.plan}
+              {/* {patient.insurancePlan} */}
             </p>
           </div>
           <div className="col-span-2">
@@ -269,7 +295,7 @@ function PatientInfoTab({ patientData }: { patientData: PatientData }) {
               Número de afiliado
             </label>
             <p className="py-2 px-3 text-gray-600 bg-blue-50/80 rounded-md mt-2">
-              {patientData.socialSecurity.membershipNumber}
+              {/* {patient.membershipNumber} */}
             </p>
           </div>
         </form>
@@ -283,7 +309,7 @@ function PatientInfoTab({ patientData }: { patientData: PatientData }) {
   );
 }
 
-function ContactTab({ contactData }: { contactData: ContactData }) {
+function ContactTab({ patient }: PatientTabsProps) {
   return (
     <section className="grid grid-cols-3 gap-4 bg-gray-200/60 p-4 rounded-b-2xl rounded-t-2xl">
       <article className="h-fit bg-white py-2 rounded-lg">
@@ -299,25 +325,25 @@ function ContactTab({ contactData }: { contactData: ContactData }) {
               Nombre y apellido
             </label>
             <p className="py-2 px-3 text-gray-600 bg-blue-50/80 rounded-md mt-2">
-              {contactData.name}
+              {patient.tutorName}
             </p>
           </div>
           <div>
             <label className="font-semibold text-blue-600">Relación</label>
             <p className="py-2 px-3 text-gray-600 bg-blue-50/80 rounded-md mt-2">
-              {contactData.relationship}
+              {patient.relationToPatient}
             </p>
           </div>
           <div>
             <label className="font-semibold text-blue-600">Teléfono</label>
             <p className="py-2 px-3 text-gray-600 bg-blue-50/80 rounded-md mt-2">
-              {contactData.phone}
+              {patient.phoneNumber}
             </p>
           </div>
           <div className="col-span-2">
             <label className="font-semibold text-blue-600">Domicilio</label>
             <p className="py-2 px-3 text-gray-600 bg-blue-50/80 rounded-md mt-2">
-              {contactData.residence}
+              {patient.address}
             </p>
           </div>
           <div className="col-span-2">
@@ -325,7 +351,7 @@ function ContactTab({ contactData }: { contactData: ContactData }) {
               Correo electrónico
             </label>
             <p className="py-2 px-3 text-gray-600 bg-blue-50/80 rounded-md mt-2">
-              {contactData.email}
+              {patient.email}
             </p>
           </div>
         </form>
@@ -343,19 +369,19 @@ function ContactTab({ contactData }: { contactData: ContactData }) {
           <div className="col-span-2">
             <label className="font-semibold text-blue-600">Institución</label>
             <p className="py-2 px-3 text-gray-600 bg-blue-50/80 rounded-md mt-2">
-              {contactData.school.name}
+              {/* {contactData.school.name} */}
             </p>
           </div>
           <div>
             <label className="font-semibold text-blue-600">Nivel</label>
             <p className="py-2 px-3 text-gray-600 bg-blue-50/80 rounded-md mt-2">
-              {contactData.school.level}
+              {patient.level}
             </p>
           </div>
           <div>
             <label className="font-semibold text-blue-600">Turno</label>
             <p className="py-2 px-3 text-gray-600 bg-blue-50/80 rounded-md mt-2">
-              {contactData.school.shift}
+              {patient.shift}
             </p>
           </div>
           <div className="col-span-2">
@@ -363,7 +389,7 @@ function ContactTab({ contactData }: { contactData: ContactData }) {
               Directivo de referencia
             </label>
             <p className="py-2 px-3 text-gray-600 bg-blue-50/80 rounded-md mt-2">
-              {contactData.school.director}
+              {/* {contactData.school.director} */}
             </p>
           </div>
           <div className="col-span-2">
@@ -371,13 +397,13 @@ function ContactTab({ contactData }: { contactData: ContactData }) {
               Correo electrónico
             </label>
             <p className="py-2 px-3 text-gray-600 bg-blue-50/80 rounded-md mt-2">
-              {contactData.school.email}
+              {/* {patient.email} */}
             </p>
           </div>
           <div className="col-span-2">
             <label className="font-semibold text-blue-600">Teléfono</label>
             <p className="py-2 px-3 text-gray-600 bg-blue-50/80 rounded-md mt-2">
-              {contactData.school.phone}
+              {/* {contactData.school.phone} */}
             </p>
           </div>
         </form>
@@ -390,7 +416,7 @@ function ContactTab({ contactData }: { contactData: ContactData }) {
   );
 }
 
-function DiagnosticTab({ diagnosticData }: { diagnosticData: DiagnosticData }) {
+function DiagnosticTab({ patient }: PatientTabsProps) {
   return (
     <section className="bg-gray-200/60 p-4 rounded-b-2xl rounded-t-2xl">
       <article className="h-fit w-4/6 bg-white py-2 rounded-lg">
@@ -404,31 +430,31 @@ function DiagnosticTab({ diagnosticData }: { diagnosticData: DiagnosticData }) {
           <div className="mb-4">
             <label className="font-semibold text-blue-600">Título</label>
             <p className="w-5/9 py-2 px-3 text-gray-600 bg-blue-50/80 rounded-md mt-2">
-              {diagnosticData.title}
+              {/* {diagnosticData.title} */}
             </p>
           </div>
 
           <div className="bg-blue-50/80 p-4 rounded-md">
             <div className="space-y-4 mb-6">
-              {diagnosticData.paragraphs.map((parrafo, index) => (
+              {/* {diagnosticData.paragraphs.map((parrafo, index) => (
                 <p key={index} className="text-gray-700">
                   {parrafo}
                 </p>
-              ))}
+              ))} */}
             </div>
 
             <div className="mb-2">
               <h4 className="font-medium text-gray-800">
-                {diagnosticData.treatmentPlan.title}
+                {/* {diagnosticData.treatmentPlan.title} */}
               </h4>
             </div>
 
             <ul className="list-disc pl-5 space-y-2">
-              {diagnosticData.treatmentPlan.items.map((item, index) => (
+              {/* {diagnosticData.treatmentPlan.items.map((item, index) => (
                 <li key={index} className="text-gray-700">
                   {item}
                 </li>
-              ))}
+              ))} */}
             </ul>
           </div>
         </form>
@@ -437,11 +463,7 @@ function DiagnosticTab({ diagnosticData }: { diagnosticData: DiagnosticData }) {
   );
 }
 
-function ClinicalHistoryTab({
-  clinicalHistoryData,
-}: {
-  clinicalHistoryData: ClinicalHistoryData;
-}) {
+function ClinicalHistoryTab({ patient }: PatientTabsProps) {
   return (
     <section className="bg-gray-200/60 flex p-4 rounded-b-2xl rounded-t-2xl">
       <article className="text-xs bg-white py-2 rounded-l-lg border-r border-gray-300/90">
@@ -506,18 +528,18 @@ function ClinicalHistoryTab({
             <div className="mb-6">
               <label className="font-semibold">Observaciones</label>
               <p className="text-gray-700 mt-2">
-                {clinicalHistoryData.observations}
+                {/* {clinicalHistoryData.observations} */}
               </p>
             </div>
 
             <div className="mb-6">
               <label className="font-semibold">Intervenciones realizadas</label>
               <div className="mt-2">
-                {clinicalHistoryData.interventions.map((parrafo, index) => (
+                {/* {clinicalHistoryData.interventions.map((parrafo, index) => (
                   <p key={index} className="text-gray-700">
                     {parrafo}
                   </p>
-                ))}
+                ))} */}
               </div>
             </div>
 
@@ -526,11 +548,11 @@ function ClinicalHistoryTab({
                 Indicaciones para la próxima sesión
               </label>
               <div className="mt-2">
-                {clinicalHistoryData.indications.map((parrafo, index) => (
+                {/* {clinicalHistoryData.indications.map((parrafo, index) => (
                   <p key={index} className="text-gray-700">
                     {parrafo}
                   </p>
-                ))}
+                ))} */}
               </div>
             </div>
           </div>
@@ -540,7 +562,7 @@ function ClinicalHistoryTab({
   );
 }
 
-function MedicalBackgroundTab() {
+function MedicalBackgroundTab({ patient }: PatientTabsProps) {
   return (
     <div className="grid grid-cols-3 gap-4 bg-gray-200/60 p-4 rounded-b-2xl rounded-t-2xl">
       <article className="h-fit bg-white py-2 rounded-lg">
@@ -556,25 +578,25 @@ function MedicalBackgroundTab() {
               Nombre y apellido
             </label>
             <p className="py-2 px-3 text-gray-600 bg-blue-50/80 rounded-md mt-2">
-              {contactData.name}
+              {patient.name}
             </p>
           </div>
           <div>
             <label className="font-semibold text-blue-600">Relación</label>
             <p className="py-2 px-3 text-gray-600 bg-blue-50/80 rounded-md mt-2">
-              {contactData.relationship}
+              {patient.relationToPatient}
             </p>
           </div>
           <div>
             <label className="font-semibold text-blue-600">Teléfono</label>
             <p className="py-2 px-3 text-gray-600 bg-blue-50/80 rounded-md mt-2">
-              {contactData.phone}
+              {patient.phoneNumber}
             </p>
           </div>
           <div className="col-span-2">
             <label className="font-semibold text-blue-600">Domicilio</label>
             <p className="py-2 px-3 text-gray-600 bg-blue-50/80 rounded-md mt-2">
-              {contactData.residence}
+              {patient.address}
             </p>
           </div>
           <div className="col-span-2">
@@ -582,7 +604,7 @@ function MedicalBackgroundTab() {
               Correo electrónico
             </label>
             <p className="py-2 px-3 text-gray-600 bg-blue-50/80 rounded-md mt-2">
-              {contactData.email}
+              {patient.email}
             </p>
           </div>
         </form>
@@ -600,19 +622,19 @@ function MedicalBackgroundTab() {
           <div className="col-span-2">
             <label className="font-semibold text-blue-600">Institución</label>
             <p className="py-2 px-3 text-gray-600 bg-blue-50/80 rounded-md mt-2">
-              {contactData.school.name}
+              {/* {contactData.school.name} */}
             </p>
           </div>
           <div>
             <label className="font-semibold text-blue-600">Nivel</label>
             <p className="py-2 px-3 text-gray-600 bg-blue-50/80 rounded-md mt-2">
-              {contactData.school.level}
+              {patient.level}
             </p>
           </div>
           <div>
             <label className="font-semibold text-blue-600">Turno</label>
             <p className="py-2 px-3 text-gray-600 bg-blue-50/80 rounded-md mt-2">
-              {contactData.school.shift}
+              {patient.shift}
             </p>
           </div>
           <div className="col-span-2">
@@ -620,7 +642,7 @@ function MedicalBackgroundTab() {
               Directivo de referencia
             </label>
             <p className="py-2 px-3 text-gray-600 bg-blue-50/80 rounded-md mt-2">
-              {contactData.school.director}
+              {/* {contactData.school.director} */}
             </p>
           </div>
           <div className="col-span-2">
@@ -628,13 +650,13 @@ function MedicalBackgroundTab() {
               Correo electrónico
             </label>
             <p className="py-2 px-3 text-gray-600 bg-blue-50/80 rounded-md mt-2">
-              {contactData.school.email}
+              {/* {contactData.school.email} */}
             </p>
           </div>
           <div className="col-span-2">
             <label className="font-semibold text-blue-600">Teléfono</label>
             <p className="py-2 px-3 text-gray-600 bg-blue-50/80 rounded-md mt-2">
-              {contactData.school.phone}
+              {/* {contactData.school.phone} */}
             </p>
           </div>
         </form>
