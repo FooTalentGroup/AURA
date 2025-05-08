@@ -246,7 +246,7 @@ function PatientInfoTab({ patientData }: { patientData: PatientData }) {
       <article className="bg-white py-2 h-fit rounded-lg">
         <header className="flex justify-between items-center border-b border-gray-300/90 pb-2 px-4">
           <h3 className="text-xl font-medium text-gray-800">Obra social</h3>
-          <button className="p-2 text-gray-600 hover:text-blue-600">
+          <button className="p-2 text-gray-600 hover:text-blue-600 cursor-pointer">
             <PencilIcon />
           </button>
         </header>
@@ -334,7 +334,7 @@ function ContactTab({ contactData }: { contactData: ContactData }) {
       <article className="bg-white py-2 h-fit rounded-lg">
         <header className="flex justify-between items-center border-b border-gray-300/90 pb-2 px-4">
           <h3 className="text-xl font-medium text-gray-800">Escuela</h3>
-          <button className="p-2 text-gray-600 hover:text-blue-600">
+          <button className="p-2 text-gray-600 hover:text-blue-600 cursor-pointer">
             <PencilIcon />
           </button>
         </header>
@@ -480,7 +480,10 @@ function ClinicalHistoryTab({
               <option value="">Terapia ocupacional</option>
             </select>
           </div>
-          <button title="Buscar">
+          <button
+            title="Buscar"
+            className="text-gray-600 hover:text-blue-600 cursor-pointer"
+          >
             <SearchIcon />
           </button>
         </header>
@@ -588,7 +591,7 @@ function MedicalBackgroundTab() {
       <article className="bg-white py-2 h-fit rounded-lg">
         <header className="flex justify-between items-center border-b border-gray-300/90 pb-2 px-4">
           <h3 className="text-xl font-medium text-gray-800">Escuela</h3>
-          <button className="p-2 text-gray-600 hover:text-blue-600">
+          <button className="p-2 text-gray-600 hover:text-blue-600 cursor-pointer">
             <PencilIcon />
           </button>
         </header>
@@ -636,7 +639,6 @@ function MedicalBackgroundTab() {
           </div>
         </form>
       </article>
-      <span></span>
     </div>
   );
 }
