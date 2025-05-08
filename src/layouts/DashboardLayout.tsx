@@ -2,10 +2,6 @@ import { ReactNode, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useContextAuth } from "../features/auth/hooks/useContextAuth";
 import { FiChevronDown } from "react-icons/fi";
-import {
-  // FiSearch,
-  FiChevronDown,
-} from "react-icons/fi";
 import { BsNutFill } from "react-icons/bs";
 
 interface DashboardLayoutProps {
