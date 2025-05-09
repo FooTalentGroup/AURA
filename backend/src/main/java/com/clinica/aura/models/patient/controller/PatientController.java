@@ -7,6 +7,7 @@ import com.clinica.aura.models.patient.dto.PatientResponseDto;
 import com.clinica.aura.models.patient.service.PatientService;
 import com.clinica.aura.util.PaginatedResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
@@ -98,6 +99,14 @@ public class PatientController {
         }
 
         return ResponseEntity.ok(patientService.getPatientsByName(name,sureName));
+    }
+
+    @PutMapping("/{patientId}/escuela/{schoolId}")
+    @Operation(summary = "Asignar escuela a paciente", description = "Asigna una escuela a un paciente")
+    public ResponseEntity<String> assignSchoolToPatient(@Schema(description = "ID del paciente", example = "1") @PathVariable Long patientId,
+                                                        @Schema(description = "ID de la escuela", example = "1", title = "ID de la escuela" ) @RequestBody Long schoolId) {
+        patientService.assignSchoolToPatient(patientId, schoolId);
+        return ResponseEntity.ok("Escuela asignada al paciente correctamente");
     }
 
 

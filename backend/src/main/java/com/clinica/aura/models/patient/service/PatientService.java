@@ -2,6 +2,8 @@ package com.clinica.aura.models.patient.service;
 
 import com.clinica.aura.config.jwt.JwtUtils;
 import com.clinica.aura.exceptions.EmailAlreadyExistsException;
+import com.clinica.aura.exceptions.PatientNotFoundException;
+import com.clinica.aura.exceptions.SchoolNotFoundException;
 import com.clinica.aura.models.medical_records.repository.MedicalRecordsRepository;
 import com.clinica.aura.models.patient.dto.PatientRequestDto;
 import com.clinica.aura.models.patient.dto.PatientResponseDto;
@@ -116,13 +118,13 @@ public class PatientService {
         }
 
         Long schoolId = authCreateUserDto.getSchoolId();
-        if (schoolId == null) {
-            throw new IllegalArgumentException("El ID de la escuela es obligatorio.");
-        }
+        SchoolModel school = null;
 
-        SchoolModel school = entityManager.find(SchoolModel.class, schoolId);
-        if (school == null) {
-            throw new EntityNotFoundException("La escuela con ID " + schoolId + " no fue encontrada.");
+        if (schoolId != null) {
+            school = entityManager.find(SchoolModel.class, schoolId);
+            if (school == null) {
+                throw new EntityNotFoundException("La escuela con ID " + schoolId + " no fue encontrada.");
+            }
         }
         patientModel.setSchoolModel(school);
 
@@ -157,8 +159,19 @@ public class PatientService {
                                 ? patientModel.getProfessionals().stream().map(ProfessionalModel::getId).toList()
                                 : Collections.emptyList()
                 )
-                .schoolId(school.getId())
+                .schoolId(patientModel.getSchoolModel() != null ? patientModel.getSchoolModel().getId() : null)
                 .build();
+    }
+
+    //Asignar en ael atributo schoolId de paciente el id de la escuela
+    public void assignSchoolToPatient(Long patientId, Long schoolId) {
+        PatientModel patient = patientRepository.findById(patientId).orElseThrow(() -> new PatientNotFoundException("Paciente no encontrado con ID: " + patientId));
+        SchoolModel school = entityManager.find(SchoolModel.class, schoolId);
+        if (school == null) {
+            throw new SchoolNotFoundException("La escuela con ID " + schoolId + " no fue encontrada.");
+        }
+        patient.setSchoolModel(school);
+        patientRepository.save(patient);
     }
 
 
@@ -279,13 +292,15 @@ public class PatientService {
         patient.setLevel(requestDto.getLevel());
         patient.setShift(requestDto.getShift());
 
-        if (requestDto.getSchoolId() == null) {
-            throw new IllegalArgumentException("El ID de la escuela no puede ser null.");
+        if (requestDto.getSchoolId() != null) {
+            SchoolModel school = schoolRepository.findById(requestDto.getSchoolId())
+                    .orElseThrow(() -> new RuntimeException("Escuela no encontrada con ID: " + requestDto.getSchoolId()));
+            patient.setSchoolModel(school);
+        }else{
+            patient.setSchoolModel(null);
         }
         //busca la escuela por ID y asignarla
-        SchoolModel school = schoolRepository.findById(requestDto.getSchoolId())
-                .orElseThrow(() -> new RuntimeException("Escuela no encontrada con ID: " + requestDto.getSchoolId()));
-        patient.setSchoolModel(school);
+
 
         List<Long> profIds = requestDto.getProfessionalIds();
         if (profIds != null && !profIds.isEmpty()) {
@@ -336,7 +351,7 @@ public class PatientService {
                 .professionalIds(professionalIds)
                 .level(patient.getLevel())
                 .shift(patient.getShift())
-                .schoolId(patient.getSchoolModel().getId())
+                .schoolId(patient.getSchoolModel() != null ? patient.getSchoolModel().getId() : null)
                 .build();
     }
 

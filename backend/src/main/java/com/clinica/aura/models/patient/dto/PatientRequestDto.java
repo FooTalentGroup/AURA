@@ -81,7 +81,7 @@ public class PatientRequestDto {
     @Schema(description = "ID de la escuela. Este campo no es obligatio considerando que los pacientes tienen entre 3 y 13 años inclusive por lo cual, " +
             "si el menor si tiene 3 años podría no estar escolarizado. En caso de estar escolarizado, primero debe crearse la escuela " +
             "y luego añadir acá el Id de la escuela", example = "1")
-   // @NotNull(message = "El ID de la escuela es obligatorio")
+
     private Long schoolId;
 
 
