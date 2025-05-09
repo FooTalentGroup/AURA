@@ -16,6 +16,10 @@ import java.time.LocalDate;
 public class ReceptionistRequestDto {
     @NotBlank(message = "El email es obligatorio")
     @Email(message = "El correo electrónica no es válido")
+    @Pattern(
+            regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}(\\.[A-Za-z]{2,})?$",
+            message = "El email debe tener un dominio válido, como .com o .com.ar"
+    )
     @Schema(description = "Correo electrónico del recepcionista", example = "juan.perez@example.com", requiredMode = Schema.RequiredMode.REQUIRED)
     private String email;
 

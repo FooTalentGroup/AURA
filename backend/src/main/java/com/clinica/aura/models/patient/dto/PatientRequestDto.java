@@ -15,8 +15,11 @@ import java.util.List;
 public class PatientRequestDto {
     // Datos del usuario
     @NotBlank
-    @Email(message = "El correo electrónica no es válido")
-    @Schema(description = "Correo electrónico del paciente", example = "juan.perez@example.com", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Email(message = "Formato de email inválido")
+    @Pattern(
+            regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}(\\.[A-Za-z]{2,})?$",
+            message = "El email debe tener un dominio válido, como .com o .com.ar"
+    )
     private String email;
 
     // Datos de la persona
