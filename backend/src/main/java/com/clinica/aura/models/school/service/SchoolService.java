@@ -1,5 +1,6 @@
 package com.clinica.aura.models.school.service;
 
+import com.clinica.aura.exceptions.EmailAlreadyExistsException;
 import com.clinica.aura.exceptions.SchoolNotFoundException;
 import com.clinica.aura.models.patient.dto.PatientResponseDto;
 import com.clinica.aura.models.patient.model.PatientModel;
@@ -11,6 +12,8 @@ import com.clinica.aura.models.school.dto.SchoolRequestDtoUpdate;
 import com.clinica.aura.models.school.dto.SchoolResponseDto;
 import com.clinica.aura.models.school.model.SchoolModel;
 import com.clinica.aura.models.school.repository.SchoolRepository;
+import com.clinica.aura.models.user_account.models.UserModel;
+import com.clinica.aura.models.user_account.repository.UserRepository;
 import com.clinica.aura.util.PaginatedResponse;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
@@ -33,33 +36,37 @@ public class SchoolService {
     @Autowired
     PatientRepository patientRepository;
 
+
+
     private final SchoolRepository schoolRepository;
 
     // Crear una nueva escuela
     @Transactional
-    public SchoolResponseDto createSchool(SchoolRequestDto request) {
-        // Convertir el DTO a entidad
+    public SchoolResponseDto createSchool(@Valid SchoolRequestDto request) {
+
+        String emailSchool = request.getEmailSchool();
+
+        // Valida si ya existe el email en la tabla de escuelas
+        if (schoolRepository.findByEmailSchool(emailSchool).isPresent()) {
+            throw new EmailAlreadyExistsException("El correo " + emailSchool + " ya existe en la base de datos de escuelas.");
+        }
+
         SchoolModel school = SchoolModel.builder()
                 .schoolName(request.getSchoolName())
-
-                .schoolRepresentative(request.getSchoolRepresentative())
-                .emailSchool(request.getEmailSchool())
+                .emailSchool(emailSchool)
                 .phoneSchool(request.getPhoneSchool())
                 .build();
 
-        // Guardar en base de datos
         SchoolModel savedSchool = schoolRepository.save(school);
 
-        // Devolver solo los datos de la escuela en la respuesta
         return SchoolResponseDto.builder()
                 .id(savedSchool.getId())
                 .schoolName(savedSchool.getSchoolName())
-
-                .schoolRepresentative(savedSchool.getSchoolRepresentative())
                 .emailSchool(savedSchool.getEmailSchool())
                 .phoneSchool(savedSchool.getPhoneSchool())
                 .build();
     }
+
 
     // Listar escuelas con paginación
     public PaginatedResponse<SchoolResponseDto> getAllSchools(int page, int size) {
@@ -70,7 +77,6 @@ public class SchoolService {
                 .map(school -> SchoolResponseDto.builder()
                         .id(school.getId())
                         .schoolName(school.getSchoolName())
-                        .schoolRepresentative(school.getSchoolRepresentative())
                         .emailSchool(school.getEmailSchool())
                         .phoneSchool(school.getPhoneSchool())
                         .build())
@@ -92,7 +98,6 @@ public class SchoolService {
                 .orElseThrow(() -> new SchoolNotFoundException("Escuela no encontrada con ID: " + id));
 
         school.setSchoolName(request.getSchoolName());
-        school.setSchoolRepresentative(request.getSchoolRepresentative());
         school.setEmailSchool(request.getEmailSchool());
         school.setPhoneSchool(request.getPhoneSchool());
 
@@ -101,12 +106,19 @@ public class SchoolService {
         return SchoolResponseDto.builder()
                 .id(updatedSchool.getId())
                 .schoolName(updatedSchool.getSchoolName())
-                .schoolRepresentative(updatedSchool.getSchoolRepresentative())
                 .emailSchool(updatedSchool.getEmailSchool())
                 .phoneSchool(updatedSchool.getPhoneSchool())
                 .build();
     }
 
+   //borrar escuela por id
+   @Transactional
+   public void deleteSchoolById(Long id) {
+       if (!schoolRepository.existsById(id)) {
+           throw new SchoolNotFoundException("No se encontró una escuela con el ID: " + id);
+       }
+       schoolRepository.deleteById(id);
+   }
 
 
 }

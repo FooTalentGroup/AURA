@@ -41,7 +41,7 @@ public interface PatientRepository extends JpaRepository<PatientModel, Long> {
     // se usa en el metodo buscar por dni
     Optional<PatientModel> findByPersonDni(String dni);
 
-    // Método para obtener pacientes por el ID de la escuela
+    // se usa para obtener pacientes por el ID de la escuela
     List<PatientModel> findBySchoolModelId(Long schoolId);
 
     //name o apellido o ambos

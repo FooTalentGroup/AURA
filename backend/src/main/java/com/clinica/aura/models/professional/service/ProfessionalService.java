@@ -252,8 +252,9 @@ public class ProfessionalService {
                         .address(patient.getAddress())
                         .tutorName(patient.getTutorName())
                         .relationToPatient(patient.getRelationToPatient())
-                        .level(patient.getLevel())
-                        .shift(patient.getShift())
+                        .genre(patient.getGenre())
+                        .memberShipNumer(patient.getMemberShipNumer())
+                        .insurancePlan(patient.getInsurancePlan())
                         .schoolId(patient.getSchoolModel() != null ? patient.getSchoolModel().getId() : null)
                         .professionalIds(patient.getProfessionals() != null
                                 ? patient.getProfessionals().stream()

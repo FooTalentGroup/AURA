@@ -49,6 +49,15 @@ public class SchoolController {
         return ResponseEntity.ok(updatedSchool);
     }
 
+    //borrar escuela por id
+    @DeleteMapping("/{id}")
+    @Operation(summary = "Eliminar una escuela por ID", description = "Elimina una escuela existente. Devuelve mensaje de confirmación.")
+    public ResponseEntity<String> delete(@PathVariable Long id) {
+        schoolService.deleteSchoolById(id);
+        return ResponseEntity.ok("Escuela borrada correctamente");
+    }
+
+
 
 
 }

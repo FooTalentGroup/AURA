@@ -19,15 +19,17 @@ public class PatientResponseDto {
     private LocalDate birthDate;
     private String dni;
     private String email;
+    private int age;
+    private String genre;
     private boolean hasInsurance;
     private String insuranceName;
-//    private String school;  05/05/2025 es una entidad ahora
+    private String insurancePlan;
+    private String memberShipNumer;
     private String address;
     private String tutorName;
     private String relationToPatient;
     private List<Long> professionalIds;
-    private String level;//level y shift eran de escuela y ahora son de paciente
-    private String shift;
     private Long schoolId;
+
 
 }
