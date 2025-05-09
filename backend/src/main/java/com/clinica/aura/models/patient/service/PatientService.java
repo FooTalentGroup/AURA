@@ -3,6 +3,7 @@ package com.clinica.aura.models.patient.service;
 import com.clinica.aura.config.jwt.JwtUtils;
 import com.clinica.aura.exceptions.EmailAlreadyExistsException;
 import com.clinica.aura.exceptions.PatientNotFoundException;
+import com.clinica.aura.exceptions.SchoolNotFoundException;
 import com.clinica.aura.models.medical_records.repository.MedicalRecordsRepository;
 import com.clinica.aura.models.patient.dto.PatientRequestDto;
 import com.clinica.aura.models.patient.dto.PatientResponseDto;
@@ -29,7 +30,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,7 +48,8 @@ public class PatientService {
     private final JwtUtils jwtUtils;
     private final RoleRepository roleRepository;
     private final PatientRepository patientRepository;
-    private final PersonRepository personRepository;
+
+    private final PersonRepository personRepository;//n
     private final MedicalRecordsRepository medicalRecordsRepository;
     private final ProfessionalRepository professionalRepository;
 
@@ -73,9 +74,7 @@ public class PatientService {
         String tutorName = authCreateUserDto.getTutorName();
         String relationToPatient = authCreateUserDto.getRelationToPatient();
         String genre = authCreateUserDto.getGenre();
-        String insurancePlan = authCreateUserDto.getInsurancePlan();
-        String memberShipNumer= authCreateUserDto.getMemberShipNumer();
-
+        String memberShipNumer = authCreateUserDto.getMemberShipNumer();
 
         if (userRepository.findByEmail(email).isPresent()) {
             throw new EmailAlreadyExistsException("El correo " + email + " ya existe en la base de datos.");
@@ -103,7 +102,6 @@ public class PatientService {
                 .tutorName(tutorName)
                 .relationToPatient(relationToPatient)
                 .genre(genre)
-                .insurancePlan(insurancePlan)
                 .memberShipNumer(memberShipNumer)
                 .build();
 
@@ -122,13 +120,13 @@ public class PatientService {
         }
 
         Long schoolId = authCreateUserDto.getSchoolId();
-        if (schoolId == null) {
-            throw new IllegalArgumentException("El ID de la escuela es obligatorio.");
-        }
+        SchoolModel school = null;
 
-        SchoolModel school = entityManager.find(SchoolModel.class, schoolId);
-        if (school == null) {
-            throw new EntityNotFoundException("La escuela con ID " + schoolId + " no fue encontrada.");
+        if (schoolId != null) {
+            school = entityManager.find(SchoolModel.class, schoolId);
+            if (school == null) {
+                throw new EntityNotFoundException("La escuela con ID " + schoolId + " no fue encontrada.");
+            }
         }
         patientModel.setSchoolModel(school);
 
@@ -165,9 +163,20 @@ public class PatientService {
                                 ? patientModel.getProfessionals().stream().map(ProfessionalModel::getId).toList()
                                 : Collections.emptyList()
                 )
-                .schoolId(school.getId())
+                .schoolId(patientModel.getSchoolModel() != null ? patientModel.getSchoolModel().getId() : null)
                 .age(currentAge)
                 .build();
+    }
+
+    //Asignar en ael atributo schoolId de paciente el id de la escuela
+    public void assignSchoolToPatient(Long patientId, Long schoolId) {
+        PatientModel patient = patientRepository.findById(patientId).orElseThrow(() -> new PatientNotFoundException("Paciente no encontrado con ID: " + patientId));
+        SchoolModel school = entityManager.find(SchoolModel.class, schoolId);
+        if (school == null) {
+            throw new SchoolNotFoundException("La escuela con ID " + schoolId + " no fue encontrada.");
+        }
+        patient.setSchoolModel(school);
+        patientRepository.save(patient);
     }
 
 
@@ -304,13 +313,15 @@ public class PatientService {
         patient.setRelationToPatient(requestDto.getRelationToPatient());
         patient.setGenre(requestDto.getGenre());
 
-        if (requestDto.getSchoolId() == null) {
-            throw new IllegalArgumentException("El ID de la escuela no puede ser null.");
+        if (requestDto.getSchoolId() != null) {
+            SchoolModel school = schoolRepository.findById(requestDto.getSchoolId())
+                    .orElseThrow(() -> new RuntimeException("Escuela no encontrada con ID: " + requestDto.getSchoolId()));
+            patient.setSchoolModel(school);
+        }else{
+            patient.setSchoolModel(null);
         }
         //busca la escuela por ID y asignarla
-        SchoolModel school = schoolRepository.findById(requestDto.getSchoolId())
-                .orElseThrow(() -> new RuntimeException("Escuela no encontrada con ID: " + requestDto.getSchoolId()));
-        patient.setSchoolModel(school);
+
 
         List<Long> profIds = requestDto.getProfessionalIds();
         if (profIds != null && !profIds.isEmpty()) {
@@ -368,8 +379,8 @@ public class PatientService {
                 .tutorName(patient.getTutorName())
                 .relationToPatient(patient.getRelationToPatient())
                 .professionalIds(professionalIds)
+                .schoolId(patient.getSchoolModel() != null ? patient.getSchoolModel().getId() : null)
                 .genre(patient.getGenre())
-                .schoolId(patient.getSchoolModel().getId())
                 .age(currentAge)
                 .build();
     }
@@ -489,7 +500,7 @@ public class PatientService {
     }
 
     private int calculatorAge(Long id, LocalDate age){
-        PersonModel patientModel= personRepository.findById(id).orElseThrow(()->
+        personRepository.findById(id).orElseThrow(()->
                 new PatientNotFoundException("El paciente no se encuentra en la base de datos"));
         LocalDate currentDate = LocalDate.now();
         return Period.between(age, currentDate).getYears();

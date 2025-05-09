@@ -48,6 +48,7 @@ public class PatientModel {
 
     private String memberShipNumer;
 
+    @Transient
     private int age;
 
     @ManyToMany(targetEntity = ProfessionalModel.class, fetch = FetchType.LAZY)
