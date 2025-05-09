@@ -73,15 +73,16 @@ public class PatientRequestDto {
     @Schema(description = "Nombre del plan obra social del paciente", example = "210")
     private String insurancePlan;
 
+
+    @Size(min = 5, max = 20, message = "El número de afiliado debe tener entre 5 y 20 caracteres.")
+    @Pattern(regexp = "^[a-zA-Z0-9/-]+$", message = "El número de afiliado solo puede contener letras, números, guiones o barras.")
     @Schema(description = "Número de afiliado en la obra social. El número de afiliado solo puede contener letras, números, guiones o barras." +
             "El número de afiliado, se conforma de distintas maneras según la obra social del paciente. A continuación se dejan varios ejemplos." +
             "OSDE (ej: 156150-06)" +
             "Swiss Medical (ej: 000012345678)" +
             "Medicus(ej:1234567-01) " +
             "IOSFA(ej:123456/A) ")
-    @Size(min = 5, max = 20, message = "El número de afiliado debe tener entre 5 y 20 caracteres.")
-    @Pattern(regexp = "^[a-zA-Z0-9/-]+$", message = "El número de afiliado solo puede contener letras, números, guiones o barras.")
-        private String memberShipNumer;
+    private String memberShipNumer;
 
     @Schema(description = "Dirección del paciente", example = "Av. Libertador 1925, CABA")
     @Size(min = 5, max = 30, message = "La dirección del paciente debe tener entre 5 y 30 caracteres.")
