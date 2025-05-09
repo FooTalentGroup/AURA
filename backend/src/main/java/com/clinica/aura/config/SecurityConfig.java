@@ -3,6 +3,7 @@ package com.clinica.aura.config;
 import com.clinica.aura.config.filters.JwtTokenValidator;
 import com.clinica.aura.config.jwt.JwtUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.CustomAutowireConfigurer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -32,10 +33,11 @@ import org.springframework.web.filter.CorsFilter;
 @EnableMethodSecurity(
         securedEnabled = true,
         jsr250Enabled = true)
-public class
-SecurityConfig {
+public class SecurityConfig {
 
     private final JwtUtils jwtUtils;
+    private final CustomAccessDeniedHandler accessDeniedHandler;
+    private final CustomAuthenticationEntryPoint entryPoint;
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
@@ -72,7 +74,11 @@ SecurityConfig {
 //                        .requestMatchers(HttpMethod.POST,"/auth/{userId}/suspend").hasRole("ADMIN")
 
                         //Cualquier otro endpoint está denegado
-                        .anyRequest().permitAll()
+                        .anyRequest().authenticated()
+                )
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint(entryPoint)
+                        .accessDeniedHandler(accessDeniedHandler)
                 )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)

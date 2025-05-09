@@ -342,7 +342,7 @@ public class GlobalExceptionController {
     public ResponseEntity<ErrorResponse> handleProfessionalNotFoundException(ProfessionalNotFoundException ex, WebRequest request) {
 
         ErrorResponse errorResponse = ErrorResponse.builder()
-                .errorCode("RESOURCE-404")
+                .errorCode("PROFESSIONAL-404")
                 .message("El profesional solicitado no fue encontrado")
                 .details(List.of(sanitizeErrorMessage(ex.getMessage())))
                 .timestamp(Instant.now())
@@ -362,7 +362,7 @@ public class GlobalExceptionController {
     public ResponseEntity<ErrorResponse> handleReceptionistNotFoundException(ReceptionistNotFoundException ex, WebRequest request) {
 
         ErrorResponse errorResponse = ErrorResponse.builder()
-                .errorCode("RESOURCE-404")
+                .errorCode("RECEPTIONIST-404")
                 .message("El recepcionista solicitado no fue encontrado")
                 .details(List.of(sanitizeErrorMessage(ex.getMessage())))
                 .timestamp(Instant.now())
@@ -446,7 +446,7 @@ public class GlobalExceptionController {
     public ResponseEntity<ErrorResponse> handleEmailAlreadyExists(EmailAlreadyExistsException ex, WebRequest request) {
 
         ErrorResponse errorResponse = ErrorResponse.builder()
-                .errorCode("RESOURCE-409")
+                .errorCode("EMAIL-409")
                 .message("El correo electrónico ya existe")
                 .details(List.of(sanitizeErrorMessage(ex.getMessage())))
                 .timestamp(Instant.now())
@@ -467,7 +467,7 @@ public class GlobalExceptionController {
     public ResponseEntity<ErrorResponse> handlePatientNotFoundException(PatientNotFoundException ex, WebRequest request) {
 
         ErrorResponse errorResponse = ErrorResponse.builder()
-                .errorCode("RESOURCE-404")
+                .errorCode("PATIENT-404")
                 .message("El paciente solicitado no fue encontrado")
                 .details(List.of(sanitizeErrorMessage(ex.getMessage())))
                 .timestamp(Instant.now())

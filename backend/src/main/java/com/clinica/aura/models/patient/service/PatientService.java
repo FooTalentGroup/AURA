@@ -1,9 +1,7 @@
 package com.clinica.aura.models.patient.service;
 
 import com.clinica.aura.config.jwt.JwtUtils;
-import com.clinica.aura.exceptions.EmailAlreadyExistsException;
-import com.clinica.aura.exceptions.PatientNotFoundException;
-import com.clinica.aura.exceptions.SchoolNotFoundException;
+import com.clinica.aura.exceptions.*;
 import com.clinica.aura.models.medical_records.repository.MedicalRecordsRepository;
 import com.clinica.aura.models.patient.dto.PatientRequestDto;
 import com.clinica.aura.models.patient.dto.PatientResponseDto;
@@ -116,7 +114,7 @@ public class PatientService {
             List<Long> nonExistingProfIds = new ArrayList<>(profIds);
             nonExistingProfIds.removeAll(existingProfIds);
             if (!nonExistingProfIds.isEmpty()) {
-                throw new EntityNotFoundException("Los siguientes profesionales no fueron encontrados: " + nonExistingProfIds);
+                throw new ProfessionalNotFoundException("Los siguientes profesionales no fueron encontrados: " + nonExistingProfIds);
             }
             patientModel.setProfessionals(professionals);
         } else {
@@ -129,7 +127,7 @@ public class PatientService {
         if (schoolId != null) {
             school = entityManager.find(SchoolModel.class, schoolId);
             if (school == null) {
-                throw new EntityNotFoundException("La escuela con ID " + schoolId + " no fue encontrada.");
+                throw new SchoolNotFoundException("La escuela con ID " + schoolId + " no fue encontrada.");
             }
         }
         patientModel.setSchoolModel(school);
@@ -246,7 +244,7 @@ public class PatientService {
     //buscar pacientes por id
     public PatientResponseDto getPatientById(Long id) {
         var patient = patientRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Paciente no encontrado con ID: " + id));
+                .orElseThrow(() -> new PatientNotFoundException("Paciente no encontrado con ID: " + id));
 
         var person = patient.getPerson();
 
@@ -298,7 +296,7 @@ public class PatientService {
     //editar paciente por id
     public PatientResponseDto updatePatient(Long id, PatientRequestDto requestDto) {
         var patient = patientRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Paciente no encontrado con ID: " + id));
+                .orElseThrow(() -> new PatientNotFoundException("Paciente no encontrado con ID: " + id));
 
         var person = patient.getPerson();
 
@@ -321,7 +319,7 @@ public class PatientService {
 
         if (requestDto.getSchoolId() != null) {
             SchoolModel school = schoolRepository.findById(requestDto.getSchoolId())
-                    .orElseThrow(() -> new RuntimeException("Escuela no encontrada con ID: " + requestDto.getSchoolId()));
+                    .orElseThrow(() -> new SchoolNotFoundException("Escuela no encontrada con ID: " + requestDto.getSchoolId()));
             patient.setSchoolModel(school);
         }else{
             patient.setSchoolModel(null);
@@ -336,7 +334,7 @@ public class PatientService {
             List<Long> nonExistingProfIds = new ArrayList<>(profIds);
             nonExistingProfIds.removeAll(existingProfIds);
             if (!nonExistingProfIds.isEmpty()) {
-                throw new EntityNotFoundException("Los siguientes profesionales no fueron encontrados: " + nonExistingProfIds);
+                throw new ProfessionalNotFoundException("Los siguientes profesionales no fueron encontrados: " + nonExistingProfIds);
             }
             patient.setProfessionals(professionals);
         } else {
@@ -346,7 +344,7 @@ public class PatientService {
 
         // Actualizar solo el email en la tabla usuario
         Optional<UserModel> optionalUser = userRepository.findByPerson(person);
-        UserModel user = optionalUser.orElseThrow(() -> new RuntimeException("Usuario no encontrado para el paciente con ID: " + id));
+        UserModel user = optionalUser.orElseThrow(() -> new UserNotFoundException("Usuario no encontrado para el paciente con ID: " + id));
 
         user.setEmail(requestDto.getEmail());
 
@@ -395,7 +393,7 @@ public class PatientService {
     @Transactional
     public void deletePatientById(Long patientId) {
         PatientModel patient = patientRepository.findById(patientId)
-                .orElseThrow(() -> new EntityNotFoundException("Paciente no encontrado"));
+                .orElseThrow(() -> new PatientNotFoundException("Paciente no encontrado con ID: " + patientId));
 
         Long personId = patient.getId();
 
@@ -420,7 +418,7 @@ public class PatientService {
     //buscar paciente por dni exacto
     public PatientResponseDto getPatientByDni(String dni) {
         var patient = patientRepository.findByPersonDni(dni)
-                .orElseThrow(() -> new RuntimeException("Paciente no encontrado con DNI: " + dni));
+                .orElseThrow(() -> new PatientNotFoundException("Paciente no encontrado con DNI: " + dni));
 
         var person = patient.getPerson();
         var user = userRepository.findByPerson(person).orElse(null);
@@ -469,7 +467,7 @@ public class PatientService {
         List<PatientModel> patients = patientRepository.searchByFullName(name, sureName);
 
         if (patients.isEmpty()) {
-            throw new RuntimeException("No se encontraron pacientes con el nombre: " + name);
+            throw new PatientNotFoundException("No se encontraron pacientes con el nombre: " + name);
         }
 
         return patients.stream().map(patient -> {
