@@ -13,7 +13,6 @@ import java.util.List;
 public class SchoolResponseDto {
     private Long id;
     private String schoolName;
-    private String schoolRepresentative;
     private String emailSchool;
     private String phoneSchool;
 

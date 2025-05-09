@@ -54,7 +54,7 @@ public class PatientController {
         return ResponseEntity.ok(patientService.getPatientById(id));
     }
 
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     @Operation(summary = "Actualizar paciente", description = "Actualiza los datos de un paciente específico. No olvidar de cambiar los campos de example sino quedaran asi en la bd al ejecutar la prueba")
     public ResponseEntity<PatientResponseDto> updatePatient(@PathVariable("id") Long id, @RequestBody @Valid PatientRequestDto request) {
         PatientResponseDto patientResponseDto =  patientService.updatePatient(id, request);

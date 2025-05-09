@@ -42,9 +42,13 @@ public class PatientModel {
 
     private String relationToPatient;
 
-    private String level;  //estaba en escuela y lo pase aca
+    private String genre;
 
-    private String shift;   //estaba en escuela y lo pase aca
+    private String insurancePlan;
+
+    private String memberShipNumer;
+
+    private int age;
 
     @ManyToMany(targetEntity = ProfessionalModel.class, fetch = FetchType.LAZY)
     @JsonManagedReference

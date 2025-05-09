@@ -18,10 +18,6 @@ public class SchoolRequestDtoUpdate {
     @NotBlank(message = "El nombre de la escuela es obligatorio")
     private String schoolName;
 
-    @Pattern(regexp = "^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$", message = "El nombre del representante solo debe contener letras")
-    @Schema(description = "El representante puede ser un directivo de la escuela o un especialista, (no maestras)", example = "Graciela Paez", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotBlank(message = "El nombre del representante es obligatorio")
-    private String schoolRepresentative;
 
     @NotBlank(message = "El email de la escuela es obligatorio")
     @Email(message = "El email debe tener un formato válido. Ejemplo = rayuela@gmail.com")
