@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 
 import lombok.Setter;
@@ -14,21 +15,19 @@ import java.util.List;
 @Getter
 @Setter
 public class SchoolRequestDto {
-    @Schema(description = "Nombre de la escuela a la que asiste el paciente", example = "Instituto Modelo",
-            requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotBlank(message = "El nombre de la escuela es obligatorio")
+    @Pattern(
+            regexp = "^(?=(.*[A-Za-zÁÉÍÓÚÜÑáéíóúüñ]){1,25})(?=(.*\\d){0,4})[A-Za-zÁÉÍÓÚÜÑáéíóúüñ\\d\\s°]+$",
+            message = "El nombre de la escuela puede tener hasta 25 letras y un máximo de 4 números, permite el caracter °."
+    )
+    @Size(min = 6, max = 30, message = "El nombre de la escuela no puede exceder los 30 caracteres.")
+    @Schema(description = "Nombre de la escuela (máximo 25 letras y 4 números, también acepta el caracter especial °). Ejemplo: 'Jardin maternal n°5'")
     private String schoolName;
 
-    @Pattern(regexp = "^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$", message = "El nombre del representante solo debe contener letras")
-    @Schema(description = "El representante puede ser un directivo de la escuela o un especialista, (no maestras)",
-            example = "Graciela Paez", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotBlank(message = "El nombre del representante es obligatorio")
-    private String schoolRepresentative;
-
-    @Schema(description = "Correo electrónico del refente de la escuela", example = "gracielaPaez@gmail.com",
-            requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotBlank(message = "El email de la escuela es obligatorio")
-    @Email(message = "El email debe tener un formato válido. Ejemplo = rayuela@gmail.com")
+    @Schema(description = "Correo electrónico del referente de la escuela",
+            example = "gracielaPaez@gmail.com", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$",
+            message = "El correo electrónico debe tener un formato válido (ej: nombre@dominio.com)")
+    @NotBlank(message = "El correo de la escuela es obligatorio")
     private String emailSchool;
 
     @Schema(description = "El teléfono esta pensado en modo argentino, se permite el mínimo de 8 números en caso de" +

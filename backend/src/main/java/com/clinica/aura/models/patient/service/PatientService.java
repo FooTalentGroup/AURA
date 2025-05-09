@@ -2,6 +2,7 @@ package com.clinica.aura.models.patient.service;
 
 import com.clinica.aura.config.jwt.JwtUtils;
 import com.clinica.aura.exceptions.EmailAlreadyExistsException;
+import com.clinica.aura.exceptions.PatientNotFoundException;
 import com.clinica.aura.models.medical_records.repository.MedicalRecordsRepository;
 import com.clinica.aura.models.patient.dto.PatientRequestDto;
 import com.clinica.aura.models.patient.dto.PatientResponseDto;
@@ -28,9 +29,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.Period;
 import java.util.Optional;
 
 import java.time.LocalDate;
@@ -44,8 +48,7 @@ public class PatientService {
     private final JwtUtils jwtUtils;
     private final RoleRepository roleRepository;
     private final PatientRepository patientRepository;
-
-    private final PersonRepository personRepository;//n
+    private final PersonRepository personRepository;
     private final MedicalRecordsRepository medicalRecordsRepository;
     private final ProfessionalRepository professionalRepository;
 
@@ -69,8 +72,10 @@ public class PatientService {
         String address = authCreateUserDto.getAddress();
         String tutorName = authCreateUserDto.getTutorName();
         String relationToPatient = authCreateUserDto.getRelationToPatient();
-        String level = authCreateUserDto.getLevel();
-        String shift = authCreateUserDto.getShift();
+        String genre = authCreateUserDto.getGenre();
+        String insurancePlan = authCreateUserDto.getInsurancePlan();
+        String memberShipNumer= authCreateUserDto.getMemberShipNumer();
+
 
         if (userRepository.findByEmail(email).isPresent()) {
             throw new EmailAlreadyExistsException("El correo " + email + " ya existe en la base de datos.");
@@ -97,8 +102,9 @@ public class PatientService {
                 .address(address)
                 .tutorName(tutorName)
                 .relationToPatient(relationToPatient)
-                .level(level)
-                .shift(shift)
+                .genre(genre)
+                .insurancePlan(insurancePlan)
+                .memberShipNumer(memberShipNumer)
                 .build();
 
         List<Long> profIds = authCreateUserDto.getProfessionalIds();
@@ -136,6 +142,7 @@ public class PatientService {
                 .build();
 
         userRepository.save(userEntity);
+        int currentAge= calculatorAge(patientModel.getId(), birthDate);
 
         return PatientResponseDto.builder()
                 .id(personEntity.getId())
@@ -147,17 +154,19 @@ public class PatientService {
                 .dni(personEntity.getDni())
                 .hasInsurance(patientModel.getInsuranceName() != null && !patientModel.getInsuranceName().isBlank())
                 .insuranceName(patientModel.getInsuranceName())
+                .insurancePlan(patientModel.getInsurancePlan())
+                .memberShipNumer(patientModel.getMemberShipNumer())
                 .address(patientModel.getAddress())
                 .tutorName(patientModel.getTutorName())
                 .relationToPatient(patientModel.getRelationToPatient())
-                .level(patientModel.getLevel())
-                .shift(patientModel.getShift())
+                .genre(patientModel.getGenre())
                 .professionalIds(
                         patientModel.getProfessionals() != null
                                 ? patientModel.getProfessionals().stream().map(ProfessionalModel::getId).toList()
                                 : Collections.emptyList()
                 )
                 .schoolId(school.getId())
+                .age(currentAge)
                 .build();
     }
 
@@ -173,6 +182,7 @@ public class PatientService {
                     PersonModel person = patient.getPerson();
                     Optional<UserModel> userOptional = userRepository.findByPerson(person);
 
+
                     PatientResponseDto.PatientResponseDtoBuilder dtoBuilder = PatientResponseDto.builder()
                             .id(patient.getId())
                             .name(person.getName())
@@ -183,11 +193,15 @@ public class PatientService {
                             .email(userOptional.map(UserModel::getEmail).orElse(null))
                             .hasInsurance(patient.isHasInsurance())
                             .insuranceName(patient.getInsuranceName())
+                            .insurancePlan(patient.getInsurancePlan())
+                            .memberShipNumer(patient.getMemberShipNumer())
                             .address(patient.getAddress())
                             .tutorName(patient.getTutorName())
                             .relationToPatient(patient.getRelationToPatient())
-                            .level(patient.getLevel())
-                            .shift(patient.getShift());
+                            .genre(patient.getGenre())
+                            .age(calculateAgeFromBirthDate(person.getBirthDate()));
+
+
 
                     if (patient.getSchoolModel() != null) {
                         dtoBuilder.schoolId(patient.getSchoolModel().getId());
@@ -221,6 +235,13 @@ public class PatientService {
 
         var person = patient.getPerson();
 
+        //trae el id
+        Long idPatient = patient.getId();
+        //busca la fecha de nacimiento en base al id
+        LocalDate birthDate = personRepository.findBirthDateById(id);
+
+        int currentAge= calculatorAge(idPatient, birthDate);
+
         // busca el usuario a partir de la persona
         var user = userRepository.findByPerson(person).orElse(null);
 
@@ -241,12 +262,15 @@ public class PatientService {
                 .email(user != null ? user.getEmail() : null)
                 .insuranceName(patient.getInsuranceName())
                 .hasInsurance(patient.getInsuranceName() != null && !patient.getInsuranceName().isBlank())
+                .insurancePlan(patient.getInsurancePlan())
+                .memberShipNumer(patient.getMemberShipNumer())
                 .address(patient.getAddress())
                 .tutorName(patient.getTutorName())
                 .relationToPatient(patient.getRelationToPatient())
                 .professionalIds(professionalIds)
-                .level(patient.getLevel())
-                .shift(patient.getShift());
+                .age(currentAge)
+                .genre(patient.getGenre());
+
 
         if (patient.getSchoolModel() != null) {
             dtoBuilder.schoolId(patient.getSchoolModel().getId());
@@ -273,11 +297,12 @@ public class PatientService {
         //se  actualizan datos del paciente
         patient.setInsuranceName(requestDto.getInsuranceName());
         patient.setHasInsurance(requestDto.isHasInsurance());
+        patient.setInsurancePlan(requestDto.getInsurancePlan());
+        patient.setMemberShipNumer(requestDto.getMemberShipNumer());
         patient.setAddress(requestDto.getAddress());
         patient.setTutorName(requestDto.getTutorName());
         patient.setRelationToPatient(requestDto.getRelationToPatient());
-        patient.setLevel(requestDto.getLevel());
-        patient.setShift(requestDto.getShift());
+        patient.setGenre(requestDto.getGenre());
 
         if (requestDto.getSchoolId() == null) {
             throw new IllegalArgumentException("El ID de la escuela no puede ser null.");
@@ -320,6 +345,13 @@ public class PatientService {
                     .toList();
         }
 
+        //trae el id del paciente
+        Long idPatient = patient.getId();
+        //busca la fecha de nacimiento en base al id
+        LocalDate birthDate = personRepository.findBirthDateById(id);
+
+        int currentAge= calculatorAge(idPatient, birthDate);
+
         return PatientResponseDto.builder()
                 .id(person.getId())
                 .name(person.getName())
@@ -330,13 +362,15 @@ public class PatientService {
                 .email(user.getEmail())
                 .insuranceName(patient.getInsuranceName())
                 .hasInsurance(patient.getInsuranceName() != null && !patient.getInsuranceName().isBlank())
+                .insurancePlan(patient.getInsurancePlan())
+                .memberShipNumer(patient.getMemberShipNumer())
                 .address(patient.getAddress())
                 .tutorName(patient.getTutorName())
                 .relationToPatient(patient.getRelationToPatient())
                 .professionalIds(professionalIds)
-                .level(patient.getLevel())
-                .shift(patient.getShift())
+                .genre(patient.getGenre())
                 .schoolId(patient.getSchoolModel().getId())
+                .age(currentAge)
                 .build();
     }
 
@@ -380,6 +414,13 @@ public class PatientService {
 
         Long schoolId = patient.getSchoolModel() != null ? patient.getSchoolModel().getId() : null;
 
+        //trae el id
+        Long idPatient = patient.getId();
+        //busca la fecha de nacimiento en base al id
+        LocalDate birthDate = personRepository.findBirthDateByDni(dni);
+
+        int currentAge= calculatorAge(idPatient, birthDate);
+
         return PatientResponseDto.builder()
                 .id(patient.getId())
                 .name(person.getName())
@@ -390,13 +431,15 @@ public class PatientService {
                 .email(user != null ? user.getEmail() : null)
                 .insuranceName(patient.getInsuranceName())
                 .hasInsurance(patient.getInsuranceName() != null && !patient.getInsuranceName().isBlank())
+                .insurancePlan(patient.getInsurancePlan())
+                .memberShipNumer(patient.getMemberShipNumer())
                 .address(patient.getAddress())
                 .tutorName(patient.getTutorName())
                 .relationToPatient(patient.getRelationToPatient())
                 .professionalIds(professionalIds)
-                .level(patient.getLevel())
-                .shift(patient.getShift())
+                .genre(patient.getGenre())
                 .schoolId(schoolId)
+                .age(currentAge)
                 .build();
     }
 
@@ -432,17 +475,30 @@ public class PatientService {
                     .email(user != null ? user.getEmail() : null)
                     .insuranceName(patient.getInsuranceName())
                     .hasInsurance(patient.getInsuranceName() != null && !patient.getInsuranceName().isBlank())
+                    .insurancePlan(patient.getInsurancePlan())
+                    .memberShipNumer(patient.getMemberShipNumer())
                     .address(patient.getAddress())
                     .tutorName(patient.getTutorName())
                     .relationToPatient(patient.getRelationToPatient())
                     .professionalIds(professionalIds)
-                    .level(patient.getLevel())
-                    .shift(patient.getShift())
+                    .genre(patient.getGenre())
                     .schoolId(schoolId)
+                    .age(calculateAgeFromBirthDate(person.getBirthDate()))
                     .build();
         }).toList();
     }
 
+    private int calculatorAge(Long id, LocalDate age){
+        PersonModel patientModel= personRepository.findById(id).orElseThrow(()->
+                new PatientNotFoundException("El paciente no se encuentra en la base de datos"));
+        LocalDate currentDate = LocalDate.now();
+        return Period.between(age, currentDate).getYears();
+    }
+
+    private int calculateAgeFromBirthDate(LocalDate birthDate) {
+        if (birthDate == null) return 0;
+        return Period.between(birthDate, LocalDate.now()).getYears();
+    }
 
 }
 
