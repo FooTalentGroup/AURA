@@ -20,6 +20,7 @@ public class PatientRequestDto {
             regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}(\\.[A-Za-z]{2,})?$",
             message = "El email debe tener un dominio válido, como .com o .com.ar"
     )
+    @Schema(description = "Email del paciente", example = "9k6w5@example.com", requiredMode = Schema.RequiredMode.REQUIRED)
     private String email;
 
     // Datos de la persona
