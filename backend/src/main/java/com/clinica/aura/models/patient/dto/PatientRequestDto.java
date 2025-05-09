@@ -46,12 +46,13 @@ public class PatientRequestDto {
     private LocalDate birthDate;
 
     // Datos específicos del paciente                                //cambiar a femenino/masculino/otro
-    @Schema(description = "Indica el genero del paciente ", example = "mujer/varón/otro (no permite otras palabras)")
+    @Schema(description = "Indica el genero del paciente ", example = "femenino/masculino/otro (no permite otras palabras)")
     @Pattern(regexp = "^(?i)(femenino|masculino|otro)$", message = "El sexo debe ser 'femenino', 'masculino' u 'otro'")
     private String genre;
 
     @Schema(description = "Indica si el paciente tiene seguro médico", example = "true")
     private boolean hasInsurance;
+
 
     @Pattern(
             regexp = "^[a-zA-Z0-9]{3,20}$",
@@ -59,6 +60,7 @@ public class PatientRequestDto {
     )
     @Schema(description = "Nombre de la obra social (si tiene).Debe tener entre 3 y 20 caracteres, solo letras y números.)", example = "OSDE")
     private String insuranceName;
+
 
     @Pattern(
             regexp = "^[a-zA-Z0-9]{3,20}$",

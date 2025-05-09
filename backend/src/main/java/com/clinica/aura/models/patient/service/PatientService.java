@@ -74,6 +74,7 @@ public class PatientService {
         String tutorName = authCreateUserDto.getTutorName();
         String relationToPatient = authCreateUserDto.getRelationToPatient();
         String genre = authCreateUserDto.getGenre();
+        String insurancePlan = authCreateUserDto.getInsurancePlan();
         String memberShipNumer = authCreateUserDto.getMemberShipNumer();
 
         if (userRepository.findByEmail(email).isPresent()) {
@@ -98,12 +99,15 @@ public class PatientService {
                 .person(personEntity)
                 .hasInsurance(authCreateUserDto.isHasInsurance())
                 .insuranceName(authCreateUserDto.getInsuranceName())
+                .insurancePlan(authCreateUserDto.getInsurancePlan())
                 .address(address)
                 .tutorName(tutorName)
                 .relationToPatient(relationToPatient)
                 .genre(genre)
                 .memberShipNumer(memberShipNumer)
                 .build();
+
+
 
         List<Long> profIds = authCreateUserDto.getProfessionalIds();
         if (profIds != null && !profIds.isEmpty()) {
@@ -132,6 +136,8 @@ public class PatientService {
 
         patientRepository.save(patientModel);
 
+        int currentAge= calculatorAge(patientModel.getId(), birthDate);
+
         UserModel userEntity = UserModel.builder()
                 .email(email)
                 .password("")
@@ -140,7 +146,7 @@ public class PatientService {
                 .build();
 
         userRepository.save(userEntity);
-        int currentAge= calculatorAge(patientModel.getId(), birthDate);
+
 
         return PatientResponseDto.builder()
                 .id(personEntity.getId())
@@ -395,6 +401,9 @@ public class PatientService {
 
         // Elimina la relacion con profesionales
         patientRepository.deletePatientProfessionalRelation(patientId);
+
+       //Elimina la relación con medical
+       // medicalRecordsRepository.deleteByPatientId(patientId);
 
         // Elimina el usuario y sus roles
         Optional<UserModel> userOpt = userRepository.findByPersonId(personId);

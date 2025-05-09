@@ -527,31 +527,31 @@ public class GlobalExceptionController {
     }
 
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleException(Exception ex, WebRequest request) {
-        // 1. Obtener mensaje raíz o fallback
-        String rootMessage = Optional.ofNullable(ex.getMessage()).orElse("Error inesperado");
-
-        // 2. Construcción de respuesta
-        ErrorResponse errorResponse = ErrorResponse.builder()
-                .errorCode("SERVER-001")
-                .message("Ha ocurrido un error inesperado")
-                .details(List.of(sanitizeErrorMessage(rootMessage)))
-                .timestamp(Instant.now())
-                .path(getSanitizedPath(request))
-                .build();
-
-        // 3. Logging estructurado
-        log.error("Unhandled Exception - Path: {} | IP: {} | Exception: {}",
-                errorResponse.getPath(),
-                request.getHeader("X-Forwarded-For"),
-                ex.toString());
-
-        // 4. Encabezados de seguridad
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .header("X-Content-Type-Options", "nosniff")
-                .body(errorResponse);
-    }
+//    @ExceptionHandler(Exception.class)
+//    public ResponseEntity<ErrorResponse> handleException(Exception ex, WebRequest request) {
+//        // 1. Obtener mensaje raíz o fallback
+//        String rootMessage = Optional.ofNullable(ex.getMessage()).orElse("Error inesperado");
+//
+//        // 2. Construcción de respuesta
+//        ErrorResponse errorResponse = ErrorResponse.builder()
+//                .errorCode("SERVER-001")
+//                .message("Ha ocurrido un error inesperado")
+//                .details(List.of(sanitizeErrorMessage(rootMessage)))
+//                .timestamp(Instant.now())
+//                .path(getSanitizedPath(request))
+//                .build();
+//
+//        // 3. Logging estructurado
+//        log.error("Unhandled Exception - Path: {} | IP: {} | Exception: {}",
+//                errorResponse.getPath(),
+//                request.getHeader("X-Forwarded-For"),
+//                ex.toString());
+//
+//        // 4. Encabezados de seguridad
+//        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//                .header("X-Content-Type-Options", "nosniff")
+//                .body(errorResponse);
+//    }
 
     // --- Métodos auxiliares ---
 
