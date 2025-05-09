@@ -75,7 +75,7 @@ public class PatientController {
     }
 
     //dni exacto
-    @GetMapping("/buscar/dni")
+    @GetMapping("/search/dni")
     @Operation(summary = "Buscar paciente por dni", description = "Se busca un paciente por dni deben ingresarse los" +
             " 8 caracteres exactos.")
     public ResponseEntity<PatientResponseDto> getPatientByDni(
@@ -83,7 +83,7 @@ public class PatientController {
         return ResponseEntity.ok(patientService.getPatientByDni(dni));
     }
 
-    @GetMapping("/buscar/nombre")
+    @GetMapping("/search/name")
     @Operation(summary = "Buscar paciente por nombre", description = "Se busca un paciente por nombre, apellido o ambos" +
             " (coincidencia parcial o total) Se debe llenar al menos uno de los 2 campos.")
     public ResponseEntity<List<PatientResponseDto>> getPatientsByName(

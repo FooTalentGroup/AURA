@@ -45,7 +45,7 @@ public class PatientRequestDto {
     @Schema(description = "Fecha de nacimiento del paciente", example = "2015-05-20")
     private LocalDate birthDate;
 
-    // Datos específicos del paciente
+    // Datos específicos del paciente                                //cambiar a femenino/masculino/otro
     @Schema(description = "Indica el genero del paciente ", example = "mujer/varón/otro (no permite otras palabras)")
     @Pattern(regexp = "^(?i)(femenino|masculino|otro)$", message = "El sexo debe ser 'femenino', 'masculino' u 'otro'")
     private String genre;
