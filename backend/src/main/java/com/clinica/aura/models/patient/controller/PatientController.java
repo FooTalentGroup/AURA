@@ -76,7 +76,7 @@ public class PatientController {
     }
 
     //dni exacto
-    @GetMapping("/buscar/dni")
+    @GetMapping("/search/dni")
     @Operation(summary = "Buscar paciente por dni", description = "Se busca un paciente por dni deben ingresarse los" +
             " 8 caracteres exactos.")
     public ResponseEntity<PatientResponseDto> getPatientByDni(
@@ -84,7 +84,7 @@ public class PatientController {
         return ResponseEntity.ok(patientService.getPatientByDni(dni));
     }
 
-    @GetMapping("/buscar/nombre")
+    @GetMapping("/search/name")
     @Operation(summary = "Buscar paciente por nombre", description = "Se busca un paciente por nombre, apellido o ambos" +
             " (coincidencia parcial o total) Se debe llenar al menos uno de los 2 campos.")
     public ResponseEntity<List<PatientResponseDto>> getPatientsByName(
@@ -101,7 +101,7 @@ public class PatientController {
         return ResponseEntity.ok(patientService.getPatientsByName(name,sureName));
     }
 
-    @PutMapping("/{patientId}/escuela/{schoolId}")
+    @PutMapping("/{patient_id}/{school_id}")
     @Operation(summary = "Asignar escuela a paciente", description = "Asigna una escuela a un paciente")
     public ResponseEntity<String> assignSchoolToPatient(@Schema(description = "ID del paciente", example = "1") @PathVariable Long patientId,
                                                         @Schema(description = "ID de la escuela", example = "1", title = "ID de la escuela" ) @RequestBody Long schoolId) {

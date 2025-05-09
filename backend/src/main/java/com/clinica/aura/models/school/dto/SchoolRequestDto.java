@@ -25,8 +25,11 @@ public class SchoolRequestDto {
 
     @Schema(description = "Correo electrónico del referente de la escuela",
             example = "gracielaPaez@gmail.com", requiredMode = Schema.RequiredMode.REQUIRED)
-    @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$",
-            message = "El correo electrónico debe tener un formato válido (ej: nombre@dominio.com)")
+    @Email(message = "Formato de email inválido")
+    @Pattern(
+            regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}(\\.[A-Za-z]{2,})?$",
+            message = "El email debe tener un dominio válido, como .com o .com.ar"
+    )
     @NotBlank(message = "El correo de la escuela es obligatorio")
     private String emailSchool;
 
