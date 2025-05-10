@@ -2,6 +2,7 @@ package com.clinica.aura.models.professional.service;
 import com.clinica.aura.models.patient.dto.PatientResponseDto;
 import com.clinica.aura.models.patient.model.PatientModel;
 import com.clinica.aura.models.patient.repository.PatientRepository;
+import com.clinica.aura.models.person.repository.PersonRepository;
 import com.clinica.aura.models.user_account.service.impl.UserDetailsServiceImpl;
 import jakarta.persistence.EntityNotFoundException;
 import com.clinica.aura.exceptions.*;
@@ -43,6 +44,7 @@ public class ProfessionalService {
     private final ProfessionalRepository professionalRepository;
     private final UserDetailsServiceImpl userDetailsService;
     private final PatientRepository patientRepository;
+    private final PersonRepository personRepository;
 
     @Transactional
     public AuthResponseRegisterDto createUser(@Valid ProfessionalRequestDto authCreateUserDto) {
@@ -224,6 +226,7 @@ public class ProfessionalService {
     public void deleteProfessional(Long id) {
         ProfessionalModel professional = professionalRepository.findByIdAndDeletedFalse(id)
                 .orElseThrow(() -> new ProfessionalNotFoundException("Profesional no encontrado con ID: " + id));
+        personRepository.deleteById(professional.getPerson().getId());
         professional.setDeleted(true);
         professionalRepository.save(professional);
     }
