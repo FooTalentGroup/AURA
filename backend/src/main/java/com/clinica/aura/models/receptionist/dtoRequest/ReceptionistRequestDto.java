@@ -16,6 +16,10 @@ import java.time.LocalDate;
 public class ReceptionistRequestDto {
     @NotBlank(message = "El email es obligatorio")
     @Email(message = "El correo electrónica no es válido")
+    @Pattern(
+            regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}(\\.[A-Za-z]{2,})?$",
+            message = "El email debe tener un dominio válido, como .com o .com.ar"
+    )
     @Schema(description = "Correo electrónico del recepcionista", example = "juan.perez@example.com", requiredMode = Schema.RequiredMode.REQUIRED)
     private String email;
 
@@ -25,7 +29,7 @@ public class ReceptionistRequestDto {
 
     // Datos de la persona
     @NotBlank(message = "El DNI es obligatorio")
-    @Pattern(regexp = "^\\d{8}$", message = "El DNI debe tener exactamente 8 dígitos numéricos")
+    @Pattern(regexp = "^[1-9]\\d{7}$", message = "El DNI debe tener exactamente 8 dígitos numéricos")
     @Schema(description = "DNI del recepcionista", requiredMode = Schema.RequiredMode.REQUIRED, example = "12345678")
     private String dni;
 

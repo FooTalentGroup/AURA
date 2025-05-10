@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Getter
 @Setter
@@ -19,6 +20,10 @@ import java.time.LocalDate;
 public class ProfessionalRequestDto {
     @NotBlank(message = "El email es obligatorio")
     @Email(message = "Formato de email inválido")
+    @Pattern(
+            regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}(\\.[A-Za-z]{2,})?$",
+            message = "El email debe tener un dominio válido, como .com o .com.ar"
+    )
     @Schema(description = "Correo del usuario", requiredMode = Schema.RequiredMode.REQUIRED, example = "admin1@example.com")
     private String email;
 
@@ -67,4 +72,11 @@ public class ProfessionalRequestDto {
     @NotBlank(message = "La especialidad es obligatoria")
     @Schema(description = "Especialidad del profesional", requiredMode = Schema.RequiredMode.REQUIRED, example = "Medicina")
     private String specialty;
+
+    @Schema(
+            description = "Lista de IDs de los pacientes asignados al profesional",
+            requiredMode = Schema.RequiredMode.NOT_REQUIRED,
+            example = "[1, 2, 3]"
+    )
+    private List<Long> patientIds;
 }

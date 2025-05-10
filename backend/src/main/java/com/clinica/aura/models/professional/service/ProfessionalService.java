@@ -1,6 +1,8 @@
 package com.clinica.aura.models.professional.service;
-import com.clinica.aura.models.patient.dtoRequest.PatientResponseDto;
+import com.clinica.aura.models.patient.dto.PatientResponseDto;
 import com.clinica.aura.models.patient.model.PatientModel;
+import com.clinica.aura.models.patient.repository.PatientRepository;
+import com.clinica.aura.models.person.repository.PersonRepository;
 import com.clinica.aura.models.user_account.service.impl.UserDetailsServiceImpl;
 import jakarta.persistence.EntityNotFoundException;
 import com.clinica.aura.exceptions.*;
@@ -41,6 +43,8 @@ public class ProfessionalService {
     private final RoleRepository roleRepository;
     private final ProfessionalRepository professionalRepository;
     private final UserDetailsServiceImpl userDetailsService;
+    private final PatientRepository patientRepository;
+    private final PersonRepository personRepository;
 
     @Transactional
     public AuthResponseRegisterDto createUser(@Valid ProfessionalRequestDto authCreateUserDto) {
@@ -158,21 +162,21 @@ public class ProfessionalService {
                 .toList()
                 : Collections.emptyList();
 
-        return new ProfessionalResponseDto(
-                professional.getId(),
-
-                person != null ? person.getDni() : null,
-                person != null ? person.getName() : null,
-                person != null ? person.getLastName() : null,
-                person != null ? person.getPhoneNumber() : null,
-                person != null ? person.getAddress() : null,
-                person != null ? person.getBirthDate() : null,
-                person != null ? person.getLocality() : null,
-                person != null ? person.getCuil() : null,
-                professional.getLicenseNumber(),
-                professional.getSpecialty(),
-                patientIds
-        );
+        return ProfessionalResponseDto.builder()
+                .id(professional.getId())
+                .email(userRepository.findByPersonId(person.getId()).get().getEmail())
+                .dni(person.getDni())
+                .name(person.getName())
+                .lastName(person.getLastName())
+                .phoneNumber(person.getPhoneNumber())
+                .address(person.getAddress())
+                .birthDate(person.getBirthDate())
+                .locality(person.getLocality())
+                .cuil(person.getCuil())
+                .licenseNumber(professional.getLicenseNumber())
+                .specialty(professional.getSpecialty())
+                .patientIds(patientIds)
+                .build();
     }
 
 
@@ -197,6 +201,13 @@ public class ProfessionalService {
         existing.setLicenseNumber(dto.getLicenseNumber());
         existing.setSpecialty(dto.getSpecialty());
 
+        // Setear pacientes
+        List<PatientModel> patients = dto.getPatientIds() != null
+                ? patientRepository.findAllById(dto.getPatientIds())
+                : Collections.emptyList();
+
+        existing.setPatients(patients);
+
         ProfessionalModel updated = professionalRepository.save(existing);
         return mapToDto(updated);
     }
@@ -214,39 +225,46 @@ public class ProfessionalService {
     //método de eliminación logica
     public void deleteProfessional(Long id) {
         ProfessionalModel professional = professionalRepository.findByIdAndDeletedFalse(id)
-                .orElseThrow(() -> new EntityNotFoundException("Profesional no encontrado con ID: " + id));
+                .orElseThrow(() -> new ProfessionalNotFoundException("Profesional no encontrado con ID: " + id));
+        personRepository.deleteById(professional.getPerson().getId());
         professional.setDeleted(true);
         professionalRepository.save(professional);
     }
 
     //metodo para listar los pacientes de un profesional por su id
-    @Transactional(readOnly = true)
-    public List<PatientResponseDto> getPatientsByProfessionalId(Long professionalId) {
-        List<PatientModel> patients = professionalRepository.findPatientsByProfessionalId(professionalId);
+        @Transactional(readOnly = true)
+        public List<PatientResponseDto> getPatientsByProfessionalId(Long professionalId) {
+            List<PatientModel> patients = professionalRepository.findPatientsByProfessionalId(professionalId);
 
-        return patients.stream().map(patient -> {
-            PersonModel person = patient.getPerson(); // extraigo la persona
 
-            return PatientResponseDto.builder()
-                    .id(patient.getId())
-                    .name(person != null ? person.getName() : null)
-                    .lastName(person != null ? person.getLastName() : null)
-                    .dni(person != null ? person.getDni() : null)
-                    .phoneNumber(person != null ? person.getPhoneNumber() : null)
-                   // .country(person != null ? person.getCountry() : null) //cambio sugerido a eliminar  02/05/2025
-                  //  .photoUrl(person != null ? person.getPhotoUrl() : null) //cambio sugerido a eliminar  02/05/2025
-                  //  .birthDate(person != null ? person.getBirthDate() : null) //cambio sugerido a eliminar, que solo este en paciente  02/05/2025
-                    .email(null) //
-                    .hasInsurance(patient.isHasInsurance())
-                    .insuranceName(patient.getInsuranceName())
-                    .school(patient.getSchool())
-                   // .paymentType(patient.getPaymentType()) //cambio sugerido a eliminar  02/05/2025
-                    .professionalIds(patient.getProfessionals() != null
-                            ? patient.getProfessionals().stream()
-                            .map(ProfessionalModel::getId)
-                            .toList()
-                            : Collections.emptyList())
-                    .build();
-        }).toList();
-    }
+            return patients.stream().map(patient -> {
+                PersonModel person = patient.getPerson(); // extraigo la persona
+
+                return PatientResponseDto.builder()
+                        .id(patient.getId())
+                        .name(person != null ? person.getName() : null)
+                        .lastName(person != null ? person.getLastName() : null)
+                        .dni(person != null ? person.getDni() : null)
+                        .phoneNumber(person != null ? person.getPhoneNumber() : null)
+                        // .country(person != null ? person.getCountry() : null) //cambio sugerido a eliminar  02/05/2025
+                        //  .photoUrl(person != null ? person.getPhotoUrl() : null) //cambio sugerido a eliminar  02/05/2025
+                        .birthDate(person != null ? person.getBirthDate() : null)
+                        .email(null) // lo dejás en null porque no tenés el usuario
+                        .hasInsurance(patient.isHasInsurance())
+                        .insuranceName(patient.getInsuranceName())
+                        .address(patient.getAddress())
+                        .tutorName(patient.getTutorName())
+                        .relationToPatient(patient.getRelationToPatient())
+                        .genre(patient.getGenre())
+                        .memberShipNumer(patient.getMemberShipNumer())
+                        .insurancePlan(patient.getInsurancePlan())
+                        .schoolId(patient.getSchoolModel() != null ? patient.getSchoolModel().getId() : null)
+                        .professionalIds(patient.getProfessionals() != null
+                                ? patient.getProfessionals().stream()
+                                .map(ProfessionalModel::getId)
+                                .toList()
+                                : Collections.emptyList())
+                        .build();
+            }).toList();
+        }
 }

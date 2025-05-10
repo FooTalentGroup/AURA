@@ -1,7 +1,11 @@
 package com.clinica.aura.models.patient.model;
 
+
 import com.clinica.aura.models.person.model.PersonModel;
 import com.clinica.aura.models.professional.model.ProfessionalModel;
+import com.clinica.aura.models.school.model.SchoolModel;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -23,7 +27,7 @@ public class PatientModel {
     @Id
     private Long id;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)//cascade elimina paciente y persona
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)//cascade elimina paciente y persona
     @MapsId
     @JoinColumn(name = "id")
     private PersonModel person;
@@ -32,19 +36,23 @@ public class PatientModel {
 
     private String insuranceName;
 
-    private String school;
-
-    private LocalDate birthDate; //se agrega la fecha aca en paciente, a pedidos de los mismos 02/05/2025
-
-    //private String paymentType; //campo quitado a pedido de Axel, ux (Tomas) y analista Funcional dieron el ok
-
-    private String address;
+     private String address;
 
     private String tutorName;
 
     private String relationToPatient;
 
+    private String genre;
+
+    private String insurancePlan;
+
+    private String memberShipNumer;
+
+    @Transient
+    private int age;
+
     @ManyToMany(targetEntity = ProfessionalModel.class, fetch = FetchType.LAZY)
+    @JsonManagedReference
     @JoinTable(
             name = "professional_patient",
             joinColumns = @JoinColumn(name = "patient_id"),
@@ -58,5 +66,8 @@ public class PatientModel {
 
     @CreationTimestamp
     private LocalDateTime updatedAt;
+
+    @ManyToOne(targetEntity = SchoolModel.class, fetch = FetchType.LAZY)
+    private SchoolModel  schoolModel;
 
 }

@@ -4,6 +4,7 @@ import com.clinica.aura.models.patient.model.PatientModel;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -40,8 +41,41 @@ public interface PatientRepository extends JpaRepository<PatientModel, Long> {
     // se usa en el metodo buscar por dni
     Optional<PatientModel> findByPersonDni(String dni);
 
-    //se usa en el metodo buscar por nombre
-    List<PatientModel> findByPerson_NameContainingIgnoreCase(String name);
+    // se usa para obtener pacientes por el ID de la escuela
+    List<PatientModel> findBySchoolModelId(Long schoolId);
+
+    //name o apellido o ambos
+    @Query("""
+    SELECT p FROM PatientModel p
+    WHERE (
+        
+        (:kw1 IS NULL OR :kw1 = '' OR
+         LOWER(p.person.name) LIKE LOWER(CONCAT('%', :kw1, '%')) OR
+         LOWER(p.person.lastName) LIKE LOWER(CONCAT('%', :kw1, '%')) OR
+         LOWER(CONCAT(p.person.name, ' ', p.person.lastName)) LIKE LOWER(CONCAT('%', :kw1, '%')) OR
+         LOWER(CONCAT(p.person.lastName, ' ', p.person.name)) LIKE LOWER(CONCAT('%', :kw1, '%'))
+        )
+    )
+    AND
+    (
+       
+        (:kw2 IS NULL OR :kw2 = '' OR
+         LOWER(p.person.lastName) LIKE LOWER(CONCAT('%', :kw2, '%')) OR
+         LOWER(p.person.name) LIKE LOWER(CONCAT('%', :kw2, '%')) OR
+         LOWER(CONCAT(p.person.lastName, ' ', p.person.name)) LIKE LOWER(CONCAT('%', :kw2, '%')) OR
+         LOWER(CONCAT(p.person.name, ' ', p.person.lastName)) LIKE LOWER(CONCAT('%', :kw2, '%'))
+        )
+    )
+    OR
+    (
+       
+        (:kw1 IS NOT NULL AND :kw1 != '' AND :kw2 IS NOT NULL AND :kw2 != '' AND (
+            LOWER(CONCAT(p.person.name, ' ', p.person.lastName)) = LOWER(CONCAT(:kw1, ' ', :kw2)) OR
+            LOWER(CONCAT(p.person.lastName, ' ', p.person.name)) = LOWER(CONCAT(:kw2, ' ', :kw1))
+        ))
+    )
+""")
+    List<PatientModel> searchByFullName(@Param("kw1") String kw1, @Param("kw2") String kw2);
 
 
 
