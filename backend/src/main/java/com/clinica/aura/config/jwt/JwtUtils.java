@@ -9,6 +9,7 @@ import com.auth0.jwt.interfaces.JWTVerifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -34,7 +35,8 @@ public class JwtUtils {
 
         Algorithm algorithm = Algorithm.HMAC256(this.SECRET_KEY);
 
-        String username = authentication.getPrincipal().toString();
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        String username = userDetails.getUsername();
 
         String authorities = authentication.getAuthorities()
                 .stream().map(GrantedAuthority::getAuthority)

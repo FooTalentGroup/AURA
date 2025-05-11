@@ -282,6 +282,30 @@ public class GlobalExceptionController {
                 .body(errorResponse);
     }
 
+    @ExceptionHandler(UnauthorizedAccessException.class)
+    public ResponseEntity<ErrorResponse> handleUnauthorizedAccess(
+            UnauthorizedAccessException ex,
+            WebRequest request) {
+
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .errorCode("AUTH-403")
+                .message("Acceso no autorizado")
+                .details(List.of(sanitizeErrorMessage(ex.getMessage())))
+                .timestamp(Instant.now())
+                .path(getSanitizedPath(request))
+                .build();
+
+        log.warn("Acceso no autorizado - Path: {} | IP: {} | Mensaje: {}",
+                errorResponse.getPath(),
+                request.getHeader("X-Forwarded-For"),
+                ex.getMessage());
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .header("X-Content-Type-Options", "nosniff")
+                .header("X-Auth-Error", "true")
+                .body(errorResponse);
+    }
+
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ErrorResponse> handleDataIntegrityViolation(
             DataIntegrityViolationException ex,
@@ -318,7 +342,7 @@ public class GlobalExceptionController {
     public ResponseEntity<ErrorResponse> handleProfessionalNotFoundException(ProfessionalNotFoundException ex, WebRequest request) {
 
         ErrorResponse errorResponse = ErrorResponse.builder()
-                .errorCode("RESOURCE-404")
+                .errorCode("PROFESSIONAL-404")
                 .message("El profesional solicitado no fue encontrado")
                 .details(List.of(sanitizeErrorMessage(ex.getMessage())))
                 .timestamp(Instant.now())
@@ -338,7 +362,7 @@ public class GlobalExceptionController {
     public ResponseEntity<ErrorResponse> handleReceptionistNotFoundException(ReceptionistNotFoundException ex, WebRequest request) {
 
         ErrorResponse errorResponse = ErrorResponse.builder()
-                .errorCode("RESOURCE-404")
+                .errorCode("RECEPTIONIST-404")
                 .message("El recepcionista solicitado no fue encontrado")
                 .details(List.of(sanitizeErrorMessage(ex.getMessage())))
                 .timestamp(Instant.now())
@@ -422,14 +446,14 @@ public class GlobalExceptionController {
     public ResponseEntity<ErrorResponse> handleEmailAlreadyExists(EmailAlreadyExistsException ex, WebRequest request) {
 
         ErrorResponse errorResponse = ErrorResponse.builder()
-                .errorCode("RESOURCE-409")
-                .message("El correo electrónica ya existe")
+                .errorCode("EMAIL-409")
+                .message("El correo electrónico ya existe")
                 .details(List.of(sanitizeErrorMessage(ex.getMessage())))
                 .timestamp(Instant.now())
                 .path(getSanitizedPath(request))
                 .build();
 
-        log.warn("El correo electrónica ya existe - Path: {} | IP: {} | Mensaje: {}",
+        log.warn("El correo electrónico ya existe - Path: {} | IP: {} | Mensaje: {}",
                 errorResponse.getPath(),
                 request.getHeader("X-Forwarded-For"),
                 ex.getMessage());
@@ -439,6 +463,110 @@ public class GlobalExceptionController {
                 .body(errorResponse);
     }
 
+    @ExceptionHandler(PatientNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handlePatientNotFoundException(PatientNotFoundException ex, WebRequest request) {
+
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .errorCode("PATIENT-404")
+                .message("El paciente solicitado no fue encontrado")
+                .details(List.of(sanitizeErrorMessage(ex.getMessage())))
+                .timestamp(Instant.now())
+                .path(getSanitizedPath(request))
+                .build();
+
+        log.warn("Paciente no se encuentra - Path: {} | IP: {} | Mensaje: {}",
+                errorResponse.getPath(),
+                request.getHeader("X-Forwarded-For"),
+                ex.getMessage());
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .header("X-Content-Type-Options", "nosniff")
+                .body(errorResponse);
+    }
+
+    @ExceptionHandler(ConflictWithExistingRecord.class)
+    public ResponseEntity<ErrorResponse> handleConflictWithExistingRecord(ConflictWithExistingRecord ex, WebRequest request) {
+
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .errorCode("RESOURCE-409")
+                .message("El registro ya existe")
+                .details(List.of(sanitizeErrorMessage(ex.getMessage())))
+                .timestamp(Instant.now())
+                .path(getSanitizedPath(request))
+                .build();
+
+        log.warn("El registro ya existe - Path: {} | IP: {} | Mensaje: {}",
+                errorResponse.getPath(),
+                request.getHeader("X-Forwarded-For"),
+                ex.getMessage());
+
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .header("X-Content-Type-Options", "nosniff")
+                .body(errorResponse);
+    }
+
+    @ExceptionHandler(SchoolNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleSchoolNotFoundException(SchoolNotFoundException ex, WebRequest request) {
+
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .errorCode("RESOURCE-404")
+                .message(ex.getMessage())
+                .details(List.of("La escuela con el ID especificado no fue encontrada"))
+                .timestamp(Instant.now())
+                .path(getSanitizedPath(request))
+                .build();
+
+        log.warn("Escuela no encontrada - Path: {} | IP: {} | Mensaje: {}",
+                errorResponse.getPath(),
+                request.getHeader("X-Forwarded-For"),
+                ex.getMessage());
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .header("X-Content-Type-Options", "nosniff")
+                .body(errorResponse);
+    }
+
+    @ExceptionHandler(DianosesNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleDianosesNotFoundException(DianosesNotFoundException ex, WebRequest request) {
+
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .errorCode("DIAGNOSES-404")
+                .message(ex.getMessage())
+                .details(List.of("El diagnostico con el ID especificado no fue encontrada"))
+                .timestamp(Instant.now())
+                .path(getSanitizedPath(request))
+                .build();
+
+        log.warn("Diagnostico no encontrado - Path: {} | IP: {} | Mensaje: {}",
+                errorResponse.getPath(),
+                request.getHeader("X-Forwarded-For"),
+                ex.getMessage());
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .header("X-Content-Type-Options", "nosniff")
+                .body(errorResponse);
+    }
+
+    @ExceptionHandler(MedicalRecordsNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleMedicalRecordsNotFoundException(MedicalRecordsNotFoundException ex, WebRequest request) {
+
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .errorCode("MEDICAL_RECORDS-404")
+                .message(ex.getMessage())
+                .details(List.of("El registro medico con el ID especificado no fue encontrada"))
+                .timestamp(Instant.now())
+                .path(getSanitizedPath(request))
+                .build();
+
+        log.warn("Registro medico no encontrado - Path: {} | IP: {} | Mensaje: {}",
+                errorResponse.getPath(),
+                request.getHeader("X-Forwarded-For"),
+                ex.getMessage());
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .header("X-Content-Type-Options", "nosniff")
+                .body(errorResponse);
+    }
 
 
     @ExceptionHandler(Exception.class)
