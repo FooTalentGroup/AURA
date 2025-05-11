@@ -30,16 +30,22 @@ public class FollowUpEntriesService {
                         "La historia clínica con ID " + dto.getMedicalRecordId() + " no existe"));
         FollowUpEntriesModel record = new FollowUpEntriesModel();
         record.setMedicals(medicalRecord);
-        record.setDate(dto.getDate());
-        record.setNotes(dto.getNotes());
+        record.setSpecialty(dto.getSpecialty());
+        record.setObservations(dto.getObservations());
+        record.setInterventions(dto.getInterventions());
+        record.setNextSessionInstructions(dto.getNextSessionInstructions());
 
         followUpEntriesRepository.save(record);
 
         FollowUpEntriesDtoResponse response = new FollowUpEntriesDtoResponse();
         response.setId(record.getId());
-        response.setDate(record.getDate());
-        response.setNotes(record.getNotes());
+        response.setSpecialty(record.getSpecialty());
+        response.setObservations(record.getObservations());
+        response.setInterventions(record.getInterventions());
+        response.setNextSessionInstructions(record.getNextSessionInstructions());
         response.setMedicalRecordId(record.getMedicals().getId());
+        response.setCreatedAt(record.getCreatedAt());
+        response.setUpdatedAt(record.getUpdatedAt());
 
         return response;
 
@@ -49,9 +55,15 @@ public class FollowUpEntriesService {
         FollowUpEntriesModel record = followUpEntriesRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Registro con id "+ id + " no encontrado"));
         FollowUpEntriesDtoResponse response = new FollowUpEntriesDtoResponse();
         response.setId(record.getId());
-        response.setNotes(record.getNotes());
-        response.setDate(record.getDate());
+        response.setSpecialty(record.getSpecialty());
+        response.setObservations(record.getObservations());
+        response.setInterventions(record.getInterventions());
+        response.setNextSessionInstructions(record.getNextSessionInstructions());
+
         response.setMedicalRecordId(record.getMedicals().getId());
+
+        response.setCreatedAt(record.getCreatedAt());
+        response.setUpdatedAt(record.getUpdatedAt());
 
         return response;
     }
@@ -66,15 +78,23 @@ public class FollowUpEntriesService {
 
         //FollowUpEntriesModel record = new FollowUpEntriesModel();
         //record.setMedicals(medicalRecord);
-        record.setDate(dto.getDate());
-        record.setNotes(dto.getNotes());
+        record.setSpecialty(dto.getSpecialty());
+        record.setObservations(dto.getObservations());
+        record.setInterventions(dto.getInterventions());
+        record.setNextSessionInstructions(dto.getNextSessionInstructions());
+        //record.setUpdatedAt(dto.getUpdatedAt());
 
         followUpEntriesRepository.save(record);
 
         FollowUpEntriesDtoResponse response = new FollowUpEntriesDtoResponse();
+
         response.setId(record.getId());
-        response.setDate(record.getDate());
-        response.setNotes(record.getNotes());
+        response.setSpecialty(record.getSpecialty());
+        response.setObservations(record.getObservations());
+        response.setInterventions(record.getInterventions());
+        response.setNextSessionInstructions(record.getNextSessionInstructions());
+        response.setUpdatedAt(record.getUpdatedAt());
+        response.setCreatedAt(record.getCreatedAt());
         response.setMedicalRecordId(record.getMedicals().getId());
 
         return response;
@@ -88,9 +108,13 @@ public class FollowUpEntriesService {
     private FollowUpEntriesDtoResponse mapToDto(FollowUpEntriesModel followUpEntriesModel) {
         return new FollowUpEntriesDtoResponse(
                 followUpEntriesModel.getId(),
-                followUpEntriesModel.getDate(),
-                followUpEntriesModel.getNotes(),
-                followUpEntriesModel.getMedicals().getId()
+                followUpEntriesModel.getMedicals().getId(),
+                followUpEntriesModel.getSpecialty(),
+                followUpEntriesModel.getObservations(),
+                followUpEntriesModel.getInterventions(),
+                followUpEntriesModel.getNextSessionInstructions(),
+                followUpEntriesModel.getCreatedAt(),
+                followUpEntriesModel.getUpdatedAt()
         );
     }
 }

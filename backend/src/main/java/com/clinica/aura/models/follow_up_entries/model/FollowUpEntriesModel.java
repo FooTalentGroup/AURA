@@ -1,9 +1,15 @@
 package com.clinica.aura.models.follow_up_entries.model;
 
 import com.clinica.aura.models.medical_records.model.MedicalRecordsModel;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
@@ -23,7 +29,18 @@ public class FollowUpEntriesModel {
     @JoinColumn(name="medical_record_id", nullable = false)
     private MedicalRecordsModel medicals;
 
-    private Date date;
+    private String specialty;
 
-    private String notes;
+    private String observations;
+
+    private String interventions;
+
+    private String nextSessionInstructions;
+
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
+
 }
