@@ -235,7 +235,8 @@ public class ProfessionalService {
     //método de eliminación logica
     public void deleteProfessional(Long id) {
         ProfessionalModel professional = professionalRepository.findByIdAndDeletedFalse(id)
-                .orElseThrow(() -> new EntityNotFoundException("Profesional no encontrado con ID: " + id));
+                .orElseThrow(() -> new ProfessionalNotFoundException("Profesional no encontrado con ID: " + id));
+        personRepository.deleteById(professional.getPerson().getId());
         professional.setDeleted(true);
         professionalRepository.save(professional);
     }

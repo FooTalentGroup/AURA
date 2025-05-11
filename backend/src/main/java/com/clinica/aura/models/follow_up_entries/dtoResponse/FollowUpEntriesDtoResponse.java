@@ -1,8 +1,12 @@
 package com.clinica.aura.models.follow_up_entries.dtoResponse;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Getter
@@ -12,15 +16,21 @@ import java.util.Date;
 @Builder
 public class FollowUpEntriesDtoResponse {
 
-    @Schema
     private Long id;
-    //medicalRecordId
-    @Schema
-    private Date date;
 
-    @Schema
-    private String notes;
+    private String observations;
 
-    @Schema
+    private String interventions;
+
+    private String nextSessionInstructions;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime createdAt;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime updatedAt;
+
+    private Long professionalId;
+
     private Long medicalRecordId;
 }

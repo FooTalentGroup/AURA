@@ -7,7 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -16,12 +17,18 @@ import java.util.Date;
 public class FollowUpEntriesDtoRequest {
 
     @NotNull(message = "El ID de la historia clínica es obligatorio")
+    @Schema(description = "El ID de la historia clínica", example = "1", requiredMode = Schema.RequiredMode.REQUIRED)
     private Long medicalRecordId;
 
-    @NotNull(message = "La fecha es obligatoria")
-    @PastOrPresent(message = "La fecha no puede ser futura")
-    private Date date;
+    @NotBlank(message = "Las observaciones no pueden estar vacías")
+    @Schema(description = "Las observaciones", example = "Estoy bien", requiredMode = Schema.RequiredMode.REQUIRED)
+    private String observations;
 
-    @NotBlank(message = "Las notas no pueden estar vacías")
-    private String notes;
+    @NotBlank(message = "Las intervenciones no pueden estar vacías")
+    @Schema(description = "Las intervenciones", example = "No hay", requiredMode = Schema.RequiredMode.REQUIRED)
+    private String interventions;
+
+    @NotBlank(message = "Las instrucciones para la próxima sesión son obligatorias")
+    @Schema(description = "Las instrucciones para la próxima sesión", example = "No hay", requiredMode = Schema.RequiredMode.REQUIRED)
+    private String nextSessionInstructions;
 }

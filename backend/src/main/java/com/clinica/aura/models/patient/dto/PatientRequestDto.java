@@ -20,10 +20,11 @@ public class PatientRequestDto {
             regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}(\\.[A-Za-z]{2,})?$",
             message = "El email debe tener un dominio válido, como .com o .com.ar"
     )
+    @Schema(description = "Email del paciente", example = "9k6w5@example.com", requiredMode = Schema.RequiredMode.REQUIRED)
     private String email;
 
     // Datos de la persona
-    @Pattern(regexp = "\\d+", message = "El DNI solo debe tener números")
+    @Pattern(regexp = "^[1-9]\\d{7}$", message = "El DNI solo debe tener números y maximo 8 caracteres")
     @Size(min =8, max=8, message = "El dni debe 8 caracteres")
     @NotBlank(message = "El DNI es obligatorio")
     @Schema(description = "DNI del paciente", requiredMode = Schema.RequiredMode.REQUIRED, example = "40650777")
@@ -72,15 +73,22 @@ public class PatientRequestDto {
     @Schema(description = "Nombre del plan obra social del paciente", example = "210")
     private String insurancePlan;
 
+
+    @Size(min = 5, max = 20, message = "El número de afiliado debe tener entre 5 y 20 caracteres.")
+    @Pattern(regexp = "^[a-zA-Z0-9/-]+$", message = "El número de afiliado solo puede contener letras, números, guiones o barras.")
     @Schema(description = "Número de afiliado en la obra social. El número de afiliado solo puede contener letras, números, guiones o barras." +
             "El número de afiliado, se conforma de distintas maneras según la obra social del paciente. A continuación se dejan varios ejemplos." +
             "OSDE (ej: 156150-06)" +
             "Swiss Medical (ej: 000012345678)" +
             "Medicus(ej:1234567-01) " +
             "IOSFA(ej:123456/A) ")
+<<<<<<< HEAD
     @Size(min = 5, max = 20, message = "El número de afiliado debe tener entre 5 y 20 caracteres.")
     @Pattern(regexp = "^[a-zA-Z0-9/-]+$", message = "El número de afiliado solo puede contener letras, números, guiones o barras.")
         private String memberShipNumber;
+=======
+    private String memberShipNumer;
+>>>>>>> develop
 
     @Schema(description = "Dirección del paciente", example = "Av. Libertador 1925, CABA")
     @Size(min = 5, max = 30, message = "La dirección del paciente debe tener entre 5 y 30 caracteres.")

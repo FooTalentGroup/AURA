@@ -5,6 +5,9 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
 import lombok.*;
 
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Getter
@@ -13,11 +16,13 @@ import java.util.Date;
 @AllArgsConstructor
 public class FollowUpEntriesDtoRequestUpdate {
 
-    @NotNull(message = "La fecha es obligatoria")
-    @PastOrPresent(message = "La fecha no puede ser futura")
-    private Date date;
+    @NotBlank(message = "Las observaciones no pueden estar vacías")
+    private String observations;
 
-    @NotBlank(message = "Las notas no pueden estar vacías")
-    private String notes;
+    @NotBlank(message = "Las intervenciones no pueden estar vacías")
+    private String interventions;
+
+    @NotBlank(message = "Las instrucciones para la próxima sesión son obligatorias")
+    private String nextSessionInstructions;
 
 }

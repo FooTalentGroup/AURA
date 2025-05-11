@@ -346,7 +346,7 @@ public class GlobalExceptionController {
     public ResponseEntity<ErrorResponse> handleProfessionalNotFoundException(ProfessionalNotFoundException ex, WebRequest request) {
 
         ErrorResponse errorResponse = ErrorResponse.builder()
-                .errorCode("RESOURCE-404")
+                .errorCode("PROFESSIONAL-404")
                 .message("El profesional solicitado no fue encontrado")
                 .details(List.of(sanitizeErrorMessage(ex.getMessage())))
                 .timestamp(Instant.now())
@@ -366,7 +366,7 @@ public class GlobalExceptionController {
     public ResponseEntity<ErrorResponse> handleReceptionistNotFoundException(ReceptionistNotFoundException ex, WebRequest request) {
 
         ErrorResponse errorResponse = ErrorResponse.builder()
-                .errorCode("RESOURCE-404")
+                .errorCode("RECEPTIONIST-404")
                 .message("El recepcionista solicitado no fue encontrado")
                 .details(List.of(sanitizeErrorMessage(ex.getMessage())))
                 .timestamp(Instant.now())
@@ -450,7 +450,7 @@ public class GlobalExceptionController {
     public ResponseEntity<ErrorResponse> handleEmailAlreadyExists(EmailAlreadyExistsException ex, WebRequest request) {
 
         ErrorResponse errorResponse = ErrorResponse.builder()
-                .errorCode("RESOURCE-409")
+                .errorCode("EMAIL-409")
                 .message("El correo electrónico ya existe")
                 .details(List.of(sanitizeErrorMessage(ex.getMessage())))
                 .timestamp(Instant.now())
@@ -471,7 +471,7 @@ public class GlobalExceptionController {
     public ResponseEntity<ErrorResponse> handlePatientNotFoundException(PatientNotFoundException ex, WebRequest request) {
 
         ErrorResponse errorResponse = ErrorResponse.builder()
-                .errorCode("RESOURCE-404")
+                .errorCode("PATIENT-404")
                 .message("El paciente solicitado no fue encontrado")
                 .details(List.of(sanitizeErrorMessage(ex.getMessage())))
                 .timestamp(Instant.now())
@@ -551,32 +551,74 @@ public class GlobalExceptionController {
                 .body(errorResponse);
     }
 
+    @ExceptionHandler(DianosesNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleDianosesNotFoundException(DianosesNotFoundException ex, WebRequest request) {
 
-//    @ExceptionHandler(Exception.class)
-//    public ResponseEntity<ErrorResponse> handleException(Exception ex, WebRequest request) {
-//        // 1. Obtener mensaje raíz o fallback
-//        String rootMessage = Optional.ofNullable(ex.getMessage()).orElse("Error inesperado");
-//
-//        // 2. Construcción de respuesta
-//        ErrorResponse errorResponse = ErrorResponse.builder()
-//                .errorCode("SERVER-001")
-//                .message("Ha ocurrido un error inesperado")
-//                .details(List.of(sanitizeErrorMessage(rootMessage)))
-//                .timestamp(Instant.now())
-//                .path(getSanitizedPath(request))
-//                .build();
-//
-//        // 3. Logging estructurado
-//        log.error("Unhandled Exception - Path: {} | IP: {} | Exception: {}",
-//                errorResponse.getPath(),
-//                request.getHeader("X-Forwarded-For"),
-//                ex.toString());
-//
-//        // 4. Encabezados de seguridad
-//        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-//                .header("X-Content-Type-Options", "nosniff")
-//                .body(errorResponse);
-//    }
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .errorCode("DIAGNOSES-404")
+                .message(ex.getMessage())
+                .details(List.of("El diagnostico con el ID especificado no fue encontrada"))
+                .timestamp(Instant.now())
+                .path(getSanitizedPath(request))
+                .build();
+
+        log.warn("Diagnostico no encontrado - Path: {} | IP: {} | Mensaje: {}",
+                errorResponse.getPath(),
+                request.getHeader("X-Forwarded-For"),
+                ex.getMessage());
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .header("X-Content-Type-Options", "nosniff")
+                .body(errorResponse);
+    }
+
+    @ExceptionHandler(MedicalRecordsNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleMedicalRecordsNotFoundException(MedicalRecordsNotFoundException ex, WebRequest request) {
+
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .errorCode("MEDICAL_RECORDS-404")
+                .message(ex.getMessage())
+                .details(List.of("El registro medico con el ID especificado no fue encontrada"))
+                .timestamp(Instant.now())
+                .path(getSanitizedPath(request))
+                .build();
+
+        log.warn("Registro medico no encontrado - Path: {} | IP: {} | Mensaje: {}",
+                errorResponse.getPath(),
+                request.getHeader("X-Forwarded-For"),
+                ex.getMessage());
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .header("X-Content-Type-Options", "nosniff")
+                .body(errorResponse);
+    }
+
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleException(Exception ex, WebRequest request) {
+        // 1. Obtener mensaje raíz o fallback
+        String rootMessage = Optional.ofNullable(ex.getMessage()).orElse("Error inesperado");
+
+        // 2. Construcción de respuesta
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .errorCode("SERVER-001")
+                .message("Ha ocurrido un error inesperado")
+                .details(List.of(sanitizeErrorMessage(rootMessage)))
+                .timestamp(Instant.now())
+                .path(getSanitizedPath(request))
+                .build();
+
+        // 3. Logging estructurado
+        log.error("Unhandled Exception - Path: {} | IP: {} | Exception: {}",
+                errorResponse.getPath(),
+                request.getHeader("X-Forwarded-For"),
+                ex.toString());
+
+        // 4. Encabezados de seguridad
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .header("X-Content-Type-Options", "nosniff")
+                .body(errorResponse);
+    }
 
     // --- Métodos auxiliares ---
 

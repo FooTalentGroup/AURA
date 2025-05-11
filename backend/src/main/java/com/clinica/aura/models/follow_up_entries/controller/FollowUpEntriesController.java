@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @Tag(name = "Follow Up Entries", description = "Entradas de seguimiento")
 @RestController
+@PreAuthorize("hasRole('ADMIN') or hasRole('PROFESSIONAL')")
 public class FollowUpEntriesController {
 
     public final FollowUpEntriesService followUpEntriesService;

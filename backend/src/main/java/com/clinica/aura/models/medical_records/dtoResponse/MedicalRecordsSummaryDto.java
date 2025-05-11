@@ -2,6 +2,7 @@ package com.clinica.aura.models.medical_records.dtoResponse;
 
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
@@ -10,12 +11,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 public class MedicalRecordsSummaryDto {
-    private Long id;
-    private Long patientId;
-    private String notes;
-    private String previousConditions;
-    private Long createdById;
-    private Long updatedById;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private String specialty;
+    private String professionalName;
+    private LocalDate createdAt;
 }

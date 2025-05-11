@@ -102,7 +102,8 @@ public class PatientController {
     }
 
     @PutMapping("/{patient_id}/{school_id}")
-    @Operation(summary = "Asignar escuela a paciente", description = "Asigna una escuela a un paciente")
+    @Operation(summary = "Asignar escuela a paciente", description = "Asigna una escuela a un paciente, se debe ingresar el ID del paciente " +
+            "en el path y en el cuerpo del request el ID de la escuela")
     public ResponseEntity<String> assignSchoolToPatient(@Schema(description = "ID del paciente", example = "1") @PathVariable("patient_id") Long patientId,
                                                         @Schema(description = "ID de la escuela", example = "1", title = "ID de la escuela" ) @RequestBody Long schoolId) {
         patientService.assignSchoolToPatient(patientId, schoolId);

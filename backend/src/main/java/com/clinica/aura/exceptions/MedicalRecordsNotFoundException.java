@@ -1,4 +1,4 @@
-package com.clinica.aura.models.follow_up_entries.service;
+package com.clinica.aura.exceptions;
 
 public class MedicalRecordsNotFoundException extends RuntimeException {
     public MedicalRecordsNotFoundException(String message) {
