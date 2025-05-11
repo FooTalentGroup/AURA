@@ -13,10 +13,11 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class DiagnosesResponseDto {
 
-    private String id;
+    private Long id;
     private LocalDate date;
-    private Long idProfessional;
     private String title;
     private String details;
+    private Long idProfessional;
+    private Long medicalRecordId;
 
 }

@@ -34,11 +34,7 @@ public class MedicalRecordsModel {
     @JoinColumn(name = "updated_by_professional_id", nullable = false)
     private ProfessionalModel updatedBy;
 
-    private String notes;
-
-//    private String allergies;
-
-    private String previousConditions;
+    private String specialty;
 
     @CreationTimestamp
     private LocalDateTime createdAt;

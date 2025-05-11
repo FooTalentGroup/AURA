@@ -30,8 +30,6 @@ public class DiagnosesService {
     private final DiagnosesRepository diagnosesRepository;
     private final MedicalRecordsRepository medicalRecordsRepository;
     private final DiagnosesMapper diagnosesMapper;
-    private final ProfessionalRepository professionalRepository;
-    private final UserRepository userRepository;
     private final SecurityUtil securityUtil;
 
     @Transactional

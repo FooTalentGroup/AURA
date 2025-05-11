@@ -18,6 +18,7 @@ import com.clinica.aura.exceptions.ConflictWithExistingRecord;
 import com.clinica.aura.exceptions.PatientNotFoundException;
 import com.clinica.aura.exceptions.ProfessionalNotFoundException;
 import com.clinica.aura.exceptions.UnauthorizedAccessException;
+import com.clinica.aura.util.SecurityUtil;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -36,8 +37,7 @@ public class MedicalRecordsService {
 
     private final MedicalRecordsRepository medicalRecordsRepository;
     private final PatientRepository patientRepository;
-    private final ProfessionalRepository professionalRepository;
-    private final UserRepository userRepository;
+    private final SecurityUtil securityUtil;
 
     public MedicalRecordsResponseDto create(MedicalRecordsRequestDto dto) {
         PatientModel patient = patientRepository.findById(dto.getPatientId()).orElseThrow(() -> new PatientNotFoundException("Paciente con id " + dto.getPatientId() + " no encontrado"));
@@ -46,79 +46,50 @@ public class MedicalRecordsService {
             throw new ConflictWithExistingRecord("El paciente con id " + dto.getPatientId() + " ya tiene una historia clínica registrada");
         }
 
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-
-        if ("anonymousUser".equals(email)) {
-            throw new UnauthorizedAccessException("Debe iniciar sesión un profesional para registrar la historia clínica");
-        }
-        UserModel user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("El usuario con el email " + email + ", que intenta registrar la historia clínica, no existe"));
-
-        PersonModel person = user.getPerson();
-
-        ProfessionalModel professional = professionalRepository.findByPerson(person)
-                .orElseThrow(() -> new ProfessionalNotFoundException("El profesional con id " + person.getId() + ", que intenta registrar la historia clínica, no existe"));
-
+        ProfessionalModel professionalModel = securityUtil.getAuthenticatedProfessional();
         MedicalRecordsModel record = new MedicalRecordsModel();
-        record.setCreatedBy(professional);
-        record.setUpdatedBy(professional);
+        record.setCreatedBy(professionalModel);
+        record.setUpdatedBy(professionalModel);
         record.setPatients(patient);
-        record.setNotes(dto.getNotes());
-        //record.setAllergies(dto.getAllergies());
-        record.setPreviousConditions(dto.getPreviousConditions());
+        record.setSpecialty(dto.getSpeciality());
         medicalRecordsRepository.save(record);
 
         MedicalRecordsResponseDto response = new MedicalRecordsResponseDto();
         response.setId(record.getId());
-        response.setNotes(record.getNotes());
-        //response.setAllergies(record.getAllergies());
-        response.setPreviousConditions(record.getPreviousConditions());
-        response.setPatientId(record.getPatients().getId());
-
-        return response;
-    }
-
-    public MedicalRecordsResponseInfoDto findById(Long id) {
-        MedicalRecordsModel record = medicalRecordsRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Registro no encontrado"));
-        MedicalRecordsResponseInfoDto response = new MedicalRecordsResponseInfoDto();
-        response.setId(record.getId());
-        response.setNotes(record.getNotes());
-        //response.setAllergies(record.getAllergies());
-        response.setPreviousConditions(record.getPreviousConditions());
-        response.setPatientId(record.getPatients().getId());
-
-
-        ProfessionalSummaryDto createdBy = new ProfessionalSummaryDto();
-        createdBy.setId(record.getCreatedBy().getId());
-        createdBy.setName(record.getCreatedBy().getPerson().getName());
-        createdBy.setSpecialty(record.getCreatedBy().getSpecialty());
-        response.setCreatedBy(createdBy);
-
-        ProfessionalSummaryDto updatedBy = new ProfessionalSummaryDto();
-        updatedBy.setId(record.getUpdatedBy().getId());
-        updatedBy.setName(record.getUpdatedBy().getPerson().getName());
-        updatedBy.setSpecialty(record.getUpdatedBy().getSpecialty());
-        response.setUpdatedBy(updatedBy);
-
+        response.setSpecialty(record.getSpecialty());
         response.setCreatedAt(record.getCreatedAt());
         response.setUpdatedAt(record.getUpdatedAt());
+        response.setPatientId(record.getPatients().getId());
+        response.setProfessionalId(record.getCreatedBy().getId());
+
         return response;
     }
-    public MedicalRecordsSummaryDto findByPatientsId(Long patientId){
+
+    public MedicalRecordsResponseDto findById(Long id) {
+        MedicalRecordsModel record = medicalRecordsRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Registro no encontrado"));
+        MedicalRecordsResponseDto response = new MedicalRecordsResponseDto();
+        response.setId(record.getId());
+        response.setSpecialty(record.getSpecialty());
+        response.setCreatedAt(record.getCreatedAt());
+        response.setUpdatedAt(record.getUpdatedAt());
+        response.setPatientId(record.getPatients().getId());
+        response.setProfessionalId(record.getCreatedBy().getId());
+
+        return response;
+    }
+    public MedicalRecordsResponseDto findByPatientsId(Long patientId){
         MedicalRecordsModel record = medicalRecordsRepository.findByPatientsId(patientId)
                 .orElseThrow(() -> new EntityNotFoundException("Historia clínica no encontrada para el paciente con ID: " + patientId));
 
-        MedicalRecordsSummaryDto dto = new MedicalRecordsSummaryDto();
-        dto.setId(record.getId());
-        dto.setPatientId(record.getPatients().getId());
-        dto.setNotes(record.getNotes());
-        dto.setPreviousConditions(record.getPreviousConditions());
-        dto.setCreatedById(record.getCreatedBy().getId());
-        dto.setUpdatedById(record.getUpdatedBy().getId());
-        dto.setCreatedAt(record.getCreatedAt());
-        dto.setUpdatedAt(record.getUpdatedAt());
+        MedicalRecordsResponseDto response = new MedicalRecordsResponseDto();
+        response.setId(record.getId());
+        response.setSpecialty(record.getSpecialty());
+        response.setCreatedAt(record.getCreatedAt());
+        response.setUpdatedAt(record.getUpdatedAt());
+        response.setPatientId(record.getPatients().getId());
+        response.setProfessionalId(record.getCreatedBy().getId());
 
-        return dto;
+        return response;
     }
 
     public List<MedicalRecordsResponseDto> getAllMedicalRecords() {
@@ -127,10 +98,11 @@ public class MedicalRecordsService {
         for (MedicalRecordsModel record : records) {
             MedicalRecordsResponseDto dto = new MedicalRecordsResponseDto();
             dto.setId(record.getId());
-            dto.setNotes(record.getNotes());
-            //dto.setAllergies(record.getAllergies());
-            dto.setPreviousConditions(record.getPreviousConditions());
+            dto.setSpecialty(record.getSpecialty());
+            dto.setCreatedAt(record.getCreatedAt());
+            dto.setUpdatedAt(record.getUpdatedAt());
             dto.setPatientId(record.getPatients().getId());
+            dto.setProfessionalId(record.getCreatedBy().getId());
             response.add(dto);
         }
         return response;
@@ -141,29 +113,21 @@ public class MedicalRecordsService {
                 .orElseThrow(() -> new EntityNotFoundException("Registro no encontrado"));
 
         // Obtener profesional autenticado
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        UserModel user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("El usuario con el email " + email + " no existe"));
-
-        PersonModel person = user.getPerson();
-
-        ProfessionalModel professional = professionalRepository.findByPerson(person)
-                .orElseThrow(() -> new ProfessionalNotFoundException("El profesional con id " + person.getId() + " no existe"));
+        ProfessionalModel professional = securityUtil.getAuthenticatedProfessional();
 
         // Actualizar campos
-        record.setNotes(dto.getNotes());
-        //record.setAllergies(dto.getAllergies());
-        record.setPreviousConditions(dto.getPreviousConditions());
+        record.setSpecialty(dto.getSpeciality());
         record.setUpdatedBy(professional);
         medicalRecordsRepository.save(record);
 
         // Construir respuesta
         MedicalRecordsResponseDto response = new MedicalRecordsResponseDto();
         response.setId(record.getId());
-        response.setNotes(record.getNotes());
-        //response.setAllergies(record.getAllergies());
-        response.setPreviousConditions(record.getPreviousConditions());
+        response.setSpecialty(record.getSpecialty());
+        response.setCreatedAt(record.getCreatedAt());
+        response.setUpdatedAt(record.getUpdatedAt());
         response.setPatientId(record.getPatients().getId());
+        response.setProfessionalId(record.getCreatedBy().getId());
 
         return response;
     }
@@ -183,10 +147,11 @@ public class MedicalRecordsService {
     private MedicalRecordsResponseDto mapToDto(MedicalRecordsModel medicalRecordsModel) {
         return new MedicalRecordsResponseDto(
                 medicalRecordsModel.getId(),
-                medicalRecordsModel.getNotes(),
-                //medicalRecordsModel.getAllergies(),
-                medicalRecordsModel.getPreviousConditions(),
-                medicalRecordsModel.getPatients().getId()
+                medicalRecordsModel.getSpecialty(),
+                medicalRecordsModel.getCreatedAt(),
+                medicalRecordsModel.getUpdatedAt(),
+                medicalRecordsModel.getPatients().getId(),
+                medicalRecordsModel.getCreatedBy().getId()
         );
     }
 }

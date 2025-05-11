@@ -17,11 +17,12 @@ public class DiagnosesMapper {
 
     public DiagnosesResponseDto toDiagnosesResponseDto(DiagnosesModel diagnosesModel) {
         DiagnosesResponseDto dto = new DiagnosesResponseDto();
-        dto.setId(String.valueOf(diagnosesModel.getId()));
+        dto.setId(diagnosesModel.getId());
         dto.setDate(diagnosesModel.getCreatedAt());
         dto.setIdProfessional(diagnosesModel.getCreatedBy().getId());
         dto.setTitle(diagnosesModel.getTitle());
         dto.setDetails(diagnosesModel.getDetails());
+        dto.setMedicalRecordId(diagnosesModel.getMedicalRecord().getId());
         return dto;
     }
 
