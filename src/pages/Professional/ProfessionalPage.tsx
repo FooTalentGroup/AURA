@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useProfessionals } from "../../features/professional/hooks/useProfessionals";
 import { ProfessionalRow } from "../../features/professional/components/ProfessionalRow";
 import { PageContainer } from "../../components/shared/layouts/PageContainer";
+import { useNavigate } from "react-router-dom";
 
 const ProfessionalPage: React.FC = () => {
   const [query, setQuery] = useState("");
@@ -10,15 +11,14 @@ const ProfessionalPage: React.FC = () => {
     20,
     query
   );
-
+const navigate = useNavigate();
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setQuery(e.target.value);
   };
 
 
   const handleAdd = () => {
-    // lógica para crear usuario
-  };
+    {navigate("/Uregister")};  };
 
   const handleView = (id: number) => {
     console.log('Ver paciente', id);

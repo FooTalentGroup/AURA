@@ -5,7 +5,7 @@ import AdminRoute from "./AdminRoutes";
 
 // Páginas públicas
 import LoginPage from "../pages/auth/LoginPage";
-import RegisterPage from "../pages/auth/RegisterPage";
+// import RegisterPage from "../pages/auth/RegisterPage";
 
 // Páginas privadas
 import DashboardPage from "../pages/dashboard/DashboardPage";
@@ -16,6 +16,7 @@ import ForgotPasswordForm from "../pages/auth/ForgotPasswordForm";
 import ProfilePage from "../pages/profile/ProfilePage";
 import AdminPage from "../pages/admin/AdminPage";
 import ProfessionalPage from "../pages/Professional/ProfessionalPage";
+import { UserRegister } from "../features/user/components/UserRegister";
 
 const AppRoutes = () => {
   return (
@@ -23,7 +24,7 @@ const AppRoutes = () => {
       <Route element={<PublicRoutes />}>
         <Route path="/forgot-password" element={<ForgotPasswordForm />} />
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
+        {/* <Route path="/register" element={<RegisterPage />} /> */}
       </Route>
 
       <Route element={<PrivateRoutes />}>
@@ -31,6 +32,7 @@ const AppRoutes = () => {
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/patients" element={<PatientsPage />} />
         <Route path="/appointments" element={<AppointmentsPage />} />
+        <Route path="/Uregister" element={<UserRegister />} />
       </Route>
 
       <Route element={<AdminRoute />}>
