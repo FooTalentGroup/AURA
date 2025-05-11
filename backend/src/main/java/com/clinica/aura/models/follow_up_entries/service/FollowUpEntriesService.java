@@ -1,12 +1,11 @@
 package com.clinica.aura.models.follow_up_entries.service;
 
+import com.clinica.aura.exceptions.MedicalRecordsNotFoundException;
 import com.clinica.aura.models.follow_up_entries.dtoRequest.FollowUpEntriesDtoRequest;
 import com.clinica.aura.models.follow_up_entries.dtoRequest.FollowUpEntriesDtoRequestUpdate;
 import com.clinica.aura.models.follow_up_entries.dtoResponse.FollowUpEntriesDtoResponse;
 import com.clinica.aura.models.follow_up_entries.model.FollowUpEntriesModel;
 import com.clinica.aura.models.follow_up_entries.repository.FollowUpEntriesRepository;
-import com.clinica.aura.models.medical_records.dtoResponse.MedicalRecordsResponseDto;
-import com.clinica.aura.models.medical_records.dtoResponse.MedicalRecordsResponseInfoDto;
 import com.clinica.aura.models.medical_records.model.MedicalRecordsModel;
 import com.clinica.aura.models.medical_records.repository.MedicalRecordsRepository;
 import jakarta.persistence.EntityNotFoundException;

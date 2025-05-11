@@ -526,6 +526,48 @@ public class GlobalExceptionController {
                 .body(errorResponse);
     }
 
+    @ExceptionHandler(DianosesNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleDianosesNotFoundException(DianosesNotFoundException ex, WebRequest request) {
+
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .errorCode("DIAGNOSES-404")
+                .message(ex.getMessage())
+                .details(List.of("El diagnostico con el ID especificado no fue encontrada"))
+                .timestamp(Instant.now())
+                .path(getSanitizedPath(request))
+                .build();
+
+        log.warn("Diagnostico no encontrado - Path: {} | IP: {} | Mensaje: {}",
+                errorResponse.getPath(),
+                request.getHeader("X-Forwarded-For"),
+                ex.getMessage());
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .header("X-Content-Type-Options", "nosniff")
+                .body(errorResponse);
+    }
+
+    @ExceptionHandler(MedicalRecordsNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleMedicalRecordsNotFoundException(MedicalRecordsNotFoundException ex, WebRequest request) {
+
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .errorCode("MEDICAL_RECORDS-404")
+                .message(ex.getMessage())
+                .details(List.of("El registro medico con el ID especificado no fue encontrada"))
+                .timestamp(Instant.now())
+                .path(getSanitizedPath(request))
+                .build();
+
+        log.warn("Registro medico no encontrado - Path: {} | IP: {} | Mensaje: {}",
+                errorResponse.getPath(),
+                request.getHeader("X-Forwarded-For"),
+                ex.getMessage());
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .header("X-Content-Type-Options", "nosniff")
+                .body(errorResponse);
+    }
+
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleException(Exception ex, WebRequest request) {
