@@ -1,15 +1,22 @@
 package com.clinica.aura.models.medical_records.controller;
 
+import com.clinica.aura.models.medical_records.dtoResponse.MedicalRecordFilterRequest;
 import com.clinica.aura.models.medical_records.dtoResponse.MedicalRecordsResponseDto;
 import com.clinica.aura.models.medical_records.dtoRequest.MedicalRecordsRequestDto;
 import com.clinica.aura.models.medical_records.dtoRequest.MedicalRecordsRequestUpdateDto;
+import com.clinica.aura.models.medical_records.dtoResponse.MedicalRecordsSummaryDto;
 import com.clinica.aura.models.medical_records.service.MedicalRecordsService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 
 
 @RestController
@@ -77,6 +84,18 @@ public class MedicalRecordsController {
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody MedicalRecordsRequestUpdateDto dto) {
         return ResponseEntity.ok(service.update(id, dto));
+    }
+
+    @GetMapping("/filter")
+    public ResponseEntity<List<MedicalRecordsSummaryDto>> getHistory(
+            @RequestParam(required = false) String specialty,
+            @RequestParam(required = false) Long professionalId,
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate, // Formato ISO Date
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate
+    ) {
+        return ResponseEntity.ok(
+                service.getFilteredHistory(specialty, professionalId, startDate, endDate)
+        );
     }
 
 

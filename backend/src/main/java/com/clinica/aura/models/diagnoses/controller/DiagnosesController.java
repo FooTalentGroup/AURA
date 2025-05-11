@@ -10,12 +10,14 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/diagnoses")
 @Tag(name = "Diagnoses", description = "Diagnoses")
+@PreAuthorize("hasRole('ADMIN') or hasRole('PROFESSIONAL')")
 public class DiagnosesController {
     private final DiagnosesService diagnosesService;
 

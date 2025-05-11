@@ -32,7 +32,7 @@ public class ProfessionalRequestDto {
     private String password;
 
     @NotBlank(message = "El DNI es obligatorio")
-    @Pattern(regexp = "^\\d{8}$", message = "El DNI debe tener exactamente 8 dígitos numéricos")
+    @Pattern(regexp = "^[1-9]\\d{7}$", message = "El DNI debe tener exactamente 8 dígitos numéricos")
     @Schema(description = "DNI del profesional", requiredMode = Schema.RequiredMode.REQUIRED, example = "12345678")
     private String dni;
 

@@ -1,10 +1,10 @@
 package com.clinica.aura.models.medical_records.service;
 
 import com.clinica.aura.models.medical_records.dtoRequest.*;
+import com.clinica.aura.models.medical_records.dtoResponse.MedicalRecordFilterRequest;
 import com.clinica.aura.models.medical_records.dtoResponse.MedicalRecordsResponseDto;
-import com.clinica.aura.models.medical_records.dtoResponse.MedicalRecordsResponseInfoDto;
+
 import com.clinica.aura.models.medical_records.dtoResponse.MedicalRecordsSummaryDto;
-import com.clinica.aura.models.medical_records.dtoResponse.ProfessionalSummaryDto;
 import com.clinica.aura.models.medical_records.model.MedicalRecordsModel;
 import com.clinica.aura.models.medical_records.repository.MedicalRecordsRepository;
 import com.clinica.aura.models.patient.model.PatientModel;
@@ -18,9 +18,11 @@ import com.clinica.aura.exceptions.ConflictWithExistingRecord;
 import com.clinica.aura.exceptions.PatientNotFoundException;
 import com.clinica.aura.exceptions.ProfessionalNotFoundException;
 import com.clinica.aura.exceptions.UnauthorizedAccessException;
+import com.clinica.aura.util.PaginatedResponse;
 import com.clinica.aura.util.SecurityUtil;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -28,6 +30,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,6 +42,7 @@ public class MedicalRecordsService {
     private final MedicalRecordsRepository medicalRecordsRepository;
     private final PatientRepository patientRepository;
     private final SecurityUtil securityUtil;
+    private final ModelMapper mapper;
 
     public MedicalRecordsResponseDto create(MedicalRecordsRequestDto dto) {
         PatientModel patient = patientRepository.findById(dto.getPatientId()).orElseThrow(() -> new PatientNotFoundException("Paciente con id " + dto.getPatientId() + " no encontrado"));
@@ -154,4 +159,32 @@ public class MedicalRecordsService {
                 medicalRecordsModel.getCreatedBy().getId()
         );
     }
+
+
+    public List<MedicalRecordsSummaryDto> getFilteredHistory(
+            String specialty,
+            Long professionalId,
+            LocalDate startDate,
+            LocalDate endDate
+    ) {
+
+        LocalDateTime startDateTime = startDate != null ? startDate.atStartOfDay() : null;
+        LocalDateTime endDateTime = endDate != null ? endDate.atTime(23, 59, 59) : null;
+
+        List<MedicalRecordsModel> records = medicalRecordsRepository.filterClinicalHistory(
+                specialty,
+                professionalId,
+                startDateTime,
+                endDateTime
+        );
+
+        return records.stream().map(record ->
+                new MedicalRecordsSummaryDto(
+                        record.getSpecialty(),
+                        record.getCreatedBy().getPerson().getName() + " " + record.getCreatedBy().getPerson().getLastName(),
+                        record.getCreatedAt().toLocalDate()
+                )
+        ).toList();
+    }
+
 }

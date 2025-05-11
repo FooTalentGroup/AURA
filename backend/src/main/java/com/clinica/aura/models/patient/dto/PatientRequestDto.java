@@ -24,7 +24,7 @@ public class PatientRequestDto {
     private String email;
 
     // Datos de la persona
-    @Pattern(regexp = "\\d+", message = "El DNI solo debe tener números")
+    @Pattern(regexp = "^[1-9]\\d{7}$", message = "El DNI solo debe tener números y maximo 8 caracteres")
     @Size(min =8, max=8, message = "El dni debe 8 caracteres")
     @NotBlank(message = "El DNI es obligatorio")
     @Schema(description = "DNI del paciente", requiredMode = Schema.RequiredMode.REQUIRED, example = "40650777")
