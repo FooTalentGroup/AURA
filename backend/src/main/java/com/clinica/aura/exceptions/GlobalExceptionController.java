@@ -19,6 +19,10 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
+import com.clinica.aura.exceptions.DniAlreadyExistsException;
+import jakarta.servlet.http.HttpServletRequest;
+
+
 
 import java.time.Instant;
 import java.util.Comparator;
@@ -483,6 +487,27 @@ public class GlobalExceptionController {
                 .header("X-Content-Type-Options", "nosniff")
                 .body(errorResponse);
     }
+
+    @ExceptionHandler(DniAlreadyExistsException.class)
+    public ResponseEntity<ErrorResponse> handleDniAlreadyExistsException(DniAlreadyExistsException ex, HttpServletRequest request) {
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .errorCode("DNI_CONFLICT")
+                .message(ex.getMessage()) // El mensaje personalizado que envíes desde la excepción
+                .details(List.of("El DNI ya existe en la base de datos"))
+                .timestamp(Instant.now())
+                .path(request.getRequestURI())
+                .build();
+
+        log.warn("DNI duplicado - Path: {} | IP: {} | Mensaje: {}",
+                errorResponse.getPath(),
+                request.getHeader("X-Forwarded-For"),
+                ex.getMessage());
+
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .header("X-Content-Type-Options", "nosniff")
+                .body(errorResponse);
+    }
+
 
     @ExceptionHandler(ConflictWithExistingRecord.class)
     public ResponseEntity<ErrorResponse> handleConflictWithExistingRecord(ConflictWithExistingRecord ex, WebRequest request) {
