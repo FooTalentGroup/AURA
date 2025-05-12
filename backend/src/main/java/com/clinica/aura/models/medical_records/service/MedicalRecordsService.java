@@ -155,8 +155,7 @@ public class MedicalRecordsService {
             String professionalName,
             LocalDate date
     ) {
-
-        String nameQuery = professionalName != null && !professionalName.isBlank()
+        String nameQuery = (professionalName != null && !professionalName.isBlank())
                 ? "%" + professionalName.toLowerCase() + "%"
                 : null;
 
@@ -166,14 +165,15 @@ public class MedicalRecordsService {
                 nameQuery
         );
 
-        return records.stream().map(record ->
-                new MedicalRecordsSummaryDto(
+        return records.stream()
+                .map(record -> new MedicalRecordsSummaryDto(
                         record.getCreatedBy().getSpecialty(),
                         record.getCreatedBy().getPerson().getName() + " " + record.getCreatedBy().getPerson().getLastName(),
                         record.getCreatedAt().toLocalDate()
-                )
-        ).toList();
+                ))
+                .toList();
     }
+
 
 
 
