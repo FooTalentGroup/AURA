@@ -21,7 +21,9 @@ public class PersonModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(unique = true)
     private String dni;
+
     private String name;
     private String lastName;
     private String address;
@@ -29,7 +31,6 @@ public class PersonModel {
     private String phoneNumber;
     private String locality;
     private String cuil;
-    // private String country;
 
 
 }

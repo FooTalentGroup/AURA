@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 public interface PersonRepository extends JpaRepository<PersonModel, Long> {
     //se usa para recuperar la fecha de nacimiento en base al id
@@ -15,5 +16,8 @@ public interface PersonRepository extends JpaRepository<PersonModel, Long> {
     //se usa para traer la fecha de nacimiento en base al documento
     @Query("SELECT p.birthDate FROM PersonModel p WHERE p.dni = :dni")
     LocalDate findBirthDateByDni(@Param("dni") String dni);
+
+    //valida que no este el dni en la base
+    Optional<PersonModel> findByDni(String dni);
 
 }

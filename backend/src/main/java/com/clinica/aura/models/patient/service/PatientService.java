@@ -1,7 +1,14 @@
 package com.clinica.aura.models.patient.service;
 
 import com.clinica.aura.config.jwt.JwtUtils;
+
+import com.clinica.aura.exceptions.DniAlreadyExistsException;
+import com.clinica.aura.exceptions.EmailAlreadyExistsException;
+import com.clinica.aura.exceptions.PatientNotFoundException;
+import com.clinica.aura.exceptions.SchoolNotFoundException;
+
 import com.clinica.aura.exceptions.*;
+
 import com.clinica.aura.models.medical_records.repository.MedicalRecordsRepository;
 import com.clinica.aura.models.patient.dto.PatientRequestDto;
 import com.clinica.aura.models.patient.dto.PatientResponseDto;
@@ -78,6 +85,11 @@ public class PatientService {
         if (userRepository.findByEmail(email).isPresent()) {
             throw new EmailAlreadyExistsException("El correo " + email + " ya existe en la base de datos.");
         }
+
+        if (personRepository.findByDni(dni).isPresent()) {
+            throw new DniAlreadyExistsException("El DNI " + dni + " ya está registrado en la base de datos.");
+        }
+
 
         Optional<RoleModel> professionalRole = roleRepository.findByEnumRole(EnumRole.PATIENT);
         if (professionalRole.isEmpty()) {
