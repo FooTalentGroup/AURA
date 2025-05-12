@@ -27,26 +27,21 @@ public interface MedicalRecordsRepository extends JpaRepository<MedicalRecordsMo
     List<MedicalRecordsModel> findAllByOrderByCreatedAtAsc();
 
 
-//    @Query(value = """
-//        SELECT mr.*
-//        FROM medical_records mr
-//        JOIN professional p ON p.id = mr.created_by_professional_id
-//        JOIN person per ON per.id = p.person_id
-//        WHERE (:specialty IS NULL        OR p.specialty = :specialty)
-//          AND (:date IS NULL             OR DATE(mr.created_at) = :date)
-//          AND (:professionalName IS NULL OR LOWER(CONCAT(per.name, ' ', per.last_name)) LIKE :professionalName)
-//        """,
-//            nativeQuery = true)
-@Query("""
-    SELECT mr FROM MedicalRecordsModel mr
-    WHERE (:specialty IS NULL OR mr.createdBy.specialty = :specialty)
-    AND (:date IS NULL OR CAST(mr.createdAt AS date) = :date)
-    AND (:professionalName IS NULL OR 
-         LOWER(mr.createdBy.person.name || ' ' || mr.createdBy.person.lastName) LIKE LOWER(:professionalName)
-    )
-    """)
+    @Query(value = """
+        SELECT mr.* 
+        FROM medical_records mr
+        JOIN professional p 
+          ON p.id = mr.created_by_professional_id
+        JOIN person per 
+          ON per.id = p.id
+        WHERE (:specialty IS NULL        OR p.specialty = :specialty)
+          AND (:date IS NULL             OR DATE(mr.created_at) = :date)
+          AND (:professionalName IS NULL 
+               OR LOWER(CONCAT(per.name, ' ', per.last_name)) LIKE :professionalName)
+        """,
+            nativeQuery = true)
 
-List<MedicalRecordsModel> filterClinicalHistory(
+    List<MedicalRecordsModel> filterClinicalHistory(
             @Param("specialty")        String specialty,
             @Param("date")             LocalDate date,
             @Param("professionalName") String professionalName
