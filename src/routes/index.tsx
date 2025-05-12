@@ -31,7 +31,7 @@ const AppRoutes = () => {
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/patients" element={<PatientsPage />} />
-        <Route path="/patient" element={<PatientTabs />} />
+        <Route path="/patient/:id" element={<PatientTabs />} />
         <Route path="/appointments" element={<AppointmentsPage />} />
       </Route>
 

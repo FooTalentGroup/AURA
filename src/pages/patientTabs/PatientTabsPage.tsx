@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DashboardLayout from "../../layouts/DashboardLayout";
 import {
+  DiagnosesProps,
   // PatientData,
-  PatientDB,
+  PatientProps,
+  SchoolProps,
   TabId,
   TabItem,
 } from "../../features/patientTabs/types/patientTabs.types";
@@ -13,7 +15,8 @@ import {
   PlusIcon,
   SearchIcon,
 } from "../../components/shared/ui/Icons";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
+import { api } from "../../core/services/api";
 
 // Definición de las pestañas disponibles
 const tabs: TabItem[] = [
@@ -24,144 +27,104 @@ const tabs: TabItem[] = [
   { id: "antecedentes", label: "Antecedentes" },
 ];
 
-// const patientData: PatientData = {
+const patientSchool: SchoolProps = {
+  id: 345345345,
+  schoolName: "Colegio San Gabriel",
+  emailSchool: "lucianagomez@gmail.com",
+  phoneSchool: "+54 11 6789 2345",
+};
+
+const patientDiagnoses: DiagnosesProps = {
+  id: 4778943,
+  date: "2025-05-12",
+  title: "Trastorno del lenguaje",
+  details:
+    "Desde el área psicopedagógica, se detectan dificultades en procesos atencionales sostenidos y selectivos, así como desafíos en la conciencia fonológica y procesamiento secuencial de la información verbal. Estas dificultades inciden en el rendimiento académico, especialmente en actividades de lectoescritura y resolución de consignas múltiples.",
+  idProfessional: 674234,
+  medicalRecordId: 7406451,
+};
+
+// const patientDB: PatientDB = {
 //   id: 123,
 //   name: "Olivia",
 //   lastName: "Curuchet",
+//   phoneNumber: "+54 11 6789 2345",
 //   birthDate: "12 / 05 / 2016",
 //   dni: "46.237.981",
+//   email: "paula.curuchet@gmail.com",
 //   age: 8,
 //   genre: "Femenino",
+//   hasInsurance: true,
 //   insuranceName: "OSDE",
 //   insurancePlan: "210",
 //   membershipNumber: "156150-06",
+//   address: "Av. San Martín 3500, Quilmes, Buenos Aires",
+//   tutorName: "Paula Curuchet",
+//   relationToPatient: "Madre",
+//   professionalIds: [123123],
+//   schoolId: 544123,
 // };
-
-// interface ContactData {
-//   name: string;
-//   relationship: string;
-//   phone: string;
-//   residence: string;
-//   email: string;
-//   school: {
-//     name: string;
-//     level: string;
-//     shift: string;
-//     director: string;
-//     email: string;
-//     phone: string;
-//   };
-// }
-
-// const contactData: ContactData = {
-//   name: "Paula Curuchet",
-//   relationship: "Madre",
-//   phone: "+54 11 6789 2345",
-//   residence: "Av. San Martín 3500, Quilmes, Buenos Aires",
-//   email: "paula.curuchet@gmail.com",
-//   school: {
-//     name: "Colegio San Gabriel",
-//     level: "Primario - 2° Grado",
-//     shift: "Mañana",
-//     director: "Laura Domínguez",
-//     email: "lucianagomez@gmail.com",
-//     phone: "+54 11 6789 2345",
-//   },
-// };
-
-// interface DiagnosticData {
-//   title: string;
-//   paragraphs: string[];
-//   treatmentPlan: {
-//     title: string;
-//     items: string[];
-//   };
-// }
-
-// const diagnosticData: DiagnosticData = {
-//   title: "Trastorno del lenguaje",
-//   paragraphs: [
-//     "Olivia Curuchet, de 7 años, presenta un cuadro de dificultades en la adquisición y organización del lenguaje, manifestadas principalmente en el área de la expresión oral y la comprensión de consignas complejas. A nivel fonológico, se observa alteración en la articulación de fonemas (particularmente en grupos consonánticos y sonidos fricativos), lo que impacta en la inteligibilidad de su discurso.",
-//     "Desde el área psicopedagógica, se detectan dificultades en procesos atencionales sostenidos y selectivos, así como desafíos en la conciencia fonológica y procesamiento secuencial de la información verbal. Estas dificultades inciden en el rendimiento académico, especialmente en actividades de lectoescritura y resolución de consignas múltiples.",
-//     "La evaluación interdisciplinaria respalda la hipótesis de un trastorno específico del lenguaje (TEL) de tipo expresivo y mixto, asociado a un trastorno de aprendizaje con alteración en la lectura y escritura (Dislexia - Disgrafía incipiente).",
-//   ],
-//   treatmentPlan: {
-//     title: "Plan de tratamiento sugerido:",
-//     items: [
-//       "Intervención fonoaudiológica específica para la rehabilitación articulatoria, estimulación de la comprensión verbal y enriquecimiento del vocabulario.",
-//       "Tratamiento psicopedagógico focalizado en estrategias de atención, memoria verbal de trabajo y programas de apoyo a la lectoescritura.",
-//       "Articulación con la escuela para la implementación de adaptaciones curriculares no significativas (tiempo extendido, consignas simples, uso de apoyos visuales).",
-//       "Revisión diagnóstica interdisciplinaria en seis meses para evaluar evolución y ajustar el plan terapéutico.",
-//     ],
-//   },
-// };
-
-// interface ClinicalHistoryData {
-//   observations: string;
-//   interventions: string[];
-//   indications: string[];
-// }
-
-// const clinicalHistoryData: ClinicalHistoryData = {
-//   observations:
-//     "Se trabajó conciencia fonológica (identificación de sílabas iniciales en palabras familiares). Olivia mostró mayor rapidez en la identificación de palabras monosílabas, aunque presentó dificultades en palabras compuestas. Se observó buena predisposición y participación activa durante la actividad de rimas.",
-//   interventions: [
-//     "Juegos de asociación sonora.",
-//     "Ejercicios de segmentación silábica con apoyo visual.",
-//   ],
-//   indications: [
-//     "Reforzar la construcción de frases simples utilizando imágenes.",
-//     "Incorporar ejercicios de discriminación auditiva.",
-//   ],
-// };
-
-const patientDB: PatientDB = {
-  id: 123,
-  name: "Olivia",
-  lastName: "Curuchet",
-  phoneNumber: "+54 11 6789 2345",
-  birthDate: "12 / 05 / 2016",
-  dni: "46.237.981",
-  email: "paula.curuchet@gmail.com",
-  hasInsurance: true,
-  insuranceName: "OSDE",
-  address: "Av. San Martín 3500, Quilmes, Buenos Aires",
-  tutorName: "Paula Curuchet",
-  relationToPatient: "Madre",
-  professionalIds: [123123],
-  level: "Primario - 2° Grado",
-  shift: "Mañana",
-  schoolId: 544123,
-  // age: 8,
-  // genre: "Femenino",
-  // insurancePlan: "210",
-  // membershipNumber: "156150-06",
-};
 
 interface PatientTabsProps {
-  patient: PatientDB;
+  patient: PatientProps;
 }
+
+// interface PatientSchoolProps {
+//   school: SchoolProps;
+// }
+
+interface PatientContactTab {
+  patient: PatientProps;
+  school: SchoolProps;
+}
+
 // Componente principal
-export default function PatientTabs({ patient = patientDB }: PatientTabsProps) {
+export default function PatientTabs() {
+  const { id } = useParams();
   const [activeTab, setActiveTab] = useState<TabId>("paciente");
+  const [patientDB, setPatient] = useState<PatientProps | null>(null);
+  // const [medicalRecord, setMedicalRecord] = useState();
+
+  useEffect(() => {
+    const fetchPatient = async () => {
+      try {
+        if (!id) return;
+        const patientID = Number(id);
+        const patientData = await api.getPatientById(patientID);
+        // const medicalRecordData = await api.getMedicalRecordById(patientID);
+
+        setPatient(patientData);
+        // setMedicalRecord(medicalRecordData);
+        console.log(patientData);
+        // console.log(medicalRecordData);
+      } catch (err) {
+        console.error("Error al cargar el paciente:", err);
+      }
+    };
+    fetchPatient();
+  }, [id]);
 
   const handleTabChange = (tabId: TabId) => {
     setActiveTab(tabId);
+    // getPatientById();
   };
 
   // Renderizar el contenido según la pestaña activa
   const renderTabContent = () => {
     switch (activeTab) {
       case "paciente":
-        return <PatientInfoTab patient={patient} />;
+        if (!patientDB) {
+          return <div>Cargando datos del paciente...</div>;
+        }
+        return <PatientInfoTab patient={patientDB} />;
       case "contacto":
-        return <ContactTab patient={patient} />;
-      case "diagnostico":
-        return <DiagnosticTab patient={patient} />;
-      case "historial":
-        return <ClinicalHistoryTab patient={patient} />;
-      case "antecedentes":
-        return <MedicalBackgroundTab patient={patient} />;
+        return <ContactTab patient={patientDB} school={patientSchool} />;
+      // case "diagnostico":
+      //   return <DiagnosticTab diagnoses={diagnoses} />;
+      // case "historial":
+      //   return <ClinicalHistoryTab patient={patient} />;
+      // case "antecedentes":
+      //   return <MedicalBackgroundTab patient={patient} />;
       default:
         return null;
     }
@@ -170,50 +133,56 @@ export default function PatientTabs({ patient = patientDB }: PatientTabsProps) {
   return (
     <DashboardLayout>
       <section className="bg-white rounded-2xl shadow-sm">
-        <div className="p-4 border-b-2 border-gray-300/90 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Link to="/">
-              <ArrowLeftIcon />
-            </Link>
-            <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-medium">
-              OC
+        {!patientDB ? (
+          <div className="p-4">Cargando datos del paciente...</div>
+        ) : (
+          <>
+            <div className="p-4 border-b-2 border-gray-300/90 flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <Link to="/">
+                  <ArrowLeftIcon />
+                </Link>
+                <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-medium">
+                  OC
+                </div>
+                <h2 className="text-2xl font-medium text-gray-800">
+                  Olivia Curuchet
+                </h2>
+              </div>
+              <div className="flex gap-3">
+                <button className="flex items-center gap-2 px-4 py-2 border border-black rounded-full text-blue-600 hover:bg-blue-50 cursor-pointer">
+                  <EmailIcon />
+                  Crear Informe
+                </button>
+                <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 cursor-pointer">
+                  <PlusIcon />
+                  Agregar registro
+                </button>
+              </div>
             </div>
-            <h2 className="text-2xl font-medium text-gray-800">
-              Olivia Curuchet
-            </h2>
-          </div>
-          <div className="flex gap-3">
-            <button className="flex items-center gap-2 px-4 py-2 border border-black rounded-full text-blue-600 hover:bg-blue-50 cursor-pointer">
-              <EmailIcon />
-              Crear Informe
-            </button>
-            <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 cursor-pointer">
-              <PlusIcon />
-              Agregar registro
-            </button>
-          </div>
-        </div>
 
-        <header className="mt-4 px-6">
-          <nav className="flex">
-            {tabs.map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => handleTabChange(tab.id)}
-                className={`relative px-8 py-4 rounded-t-2xl font-medium transition-colors cursor-pointer ${
-                  activeTab === tab.id
-                    ? "bg-gray-200/60 text-blue-600 after:content-[''] after:absolute after:bottom-0 after:left-1/2 after:-translate-x-1/2 after:w-16 after:h-0.5 after:bg-blue-600"
-                    : "text-gray-500 hover:text-gray-700"
-                }`}
-              >
-                {tab.label}
-              </button>
-            ))}
-          </nav>
-        </header>
+            <header className="mt-4 px-6">
+              <nav className="flex">
+                {tabs.map((tab) => (
+                  <button
+                    key={tab.id}
+                    onClick={() => handleTabChange(tab.id)}
+                    className={`relative px-8 py-4 rounded-t-2xl font-medium transition-colors cursor-pointer ${
+                      activeTab === tab.id
+                        ? "bg-gray-200/60 text-blue-600 after:content-[''] after:absolute after:bottom-0 after:left-1/2 after:-translate-x-1/2 after:w-16 after:h-0.5 after:bg-blue-600"
+                        : "text-gray-500 hover:text-gray-700"
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
+              </nav>
+            </header>
 
-        {/* Contenido de la pestaña activa */}
-        <main className="px-6 pb-6">{renderTabContent()}</main>
+            {/* Contenido de la pestaña activa */}
+            <main className="px-6 pb-6">{renderTabContent()}</main>
+          </>
+        )}
       </section>
     </DashboardLayout>
   );
@@ -251,7 +220,7 @@ function PatientInfoTab({ patient }: PatientTabsProps) {
           <div>
             <label className="font-semibold text-blue-600">Edad</label>
             <p className="py-2 px-3 text-gray-600 bg-blue-50/80 rounded-md mt-2">
-              {/* {patient.age} */}
+              {patient.age}
             </p>
           </div>
           <div>
@@ -262,8 +231,8 @@ function PatientInfoTab({ patient }: PatientTabsProps) {
           </div>
           <div>
             <label className="font-semibold text-blue-600">Sexo</label>
-            <p className="py-2 px-3 text-gray-600 bg-blue-50/80 rounded-md mt-2">
-              {/* {patient.genre} */}
+            <p className="capitalize py-2 px-3 text-gray-600 bg-blue-50/80 rounded-md mt-2">
+              {patient.genre}
             </p>
           </div>
         </form>
@@ -287,7 +256,7 @@ function PatientInfoTab({ patient }: PatientTabsProps) {
           <div>
             <label className="font-semibold text-blue-600">Plan</label>
             <p className="py-2 px-3 text-gray-600 bg-blue-50/80 rounded-md mt-2">
-              {/* {patient.insurancePlan} */}
+              {patient.insurancePlan}
             </p>
           </div>
           <div className="col-span-2">
@@ -295,7 +264,7 @@ function PatientInfoTab({ patient }: PatientTabsProps) {
               Número de afiliado
             </label>
             <p className="py-2 px-3 text-gray-600 bg-blue-50/80 rounded-md mt-2">
-              {/* {patient.membershipNumber} */}
+              {patient.memberShipNumer}
             </p>
           </div>
         </form>
@@ -309,7 +278,7 @@ function PatientInfoTab({ patient }: PatientTabsProps) {
   );
 }
 
-function ContactTab({ patient }: PatientTabsProps) {
+function ContactTab({ patient, school }) {
   return (
     <section className="grid grid-cols-3 gap-4 bg-gray-200/60 p-4 rounded-b-2xl rounded-t-2xl">
       <article className="h-fit bg-white py-2 rounded-lg">
@@ -369,41 +338,22 @@ function ContactTab({ patient }: PatientTabsProps) {
           <div className="col-span-2">
             <label className="font-semibold text-blue-600">Institución</label>
             <p className="py-2 px-3 text-gray-600 bg-blue-50/80 rounded-md mt-2">
-              {/* {contactData.school.name} */}
+              {school.schoolName}
             </p>
           </div>
-          <div>
-            <label className="font-semibold text-blue-600">Nivel</label>
-            <p className="py-2 px-3 text-gray-600 bg-blue-50/80 rounded-md mt-2">
-              {patient.level}
-            </p>
-          </div>
-          <div>
-            <label className="font-semibold text-blue-600">Turno</label>
-            <p className="py-2 px-3 text-gray-600 bg-blue-50/80 rounded-md mt-2">
-              {patient.shift}
-            </p>
-          </div>
-          <div className="col-span-2">
-            <label className="font-semibold text-blue-600">
-              Directivo de referencia
-            </label>
-            <p className="py-2 px-3 text-gray-600 bg-blue-50/80 rounded-md mt-2">
-              {/* {contactData.school.director} */}
-            </p>
-          </div>
+
           <div className="col-span-2">
             <label className="font-semibold text-blue-600">
               Correo electrónico
             </label>
             <p className="py-2 px-3 text-gray-600 bg-blue-50/80 rounded-md mt-2">
-              {/* {patient.email} */}
+              {school.emailSchool}
             </p>
           </div>
           <div className="col-span-2">
             <label className="font-semibold text-blue-600">Teléfono</label>
             <p className="py-2 px-3 text-gray-600 bg-blue-50/80 rounded-md mt-2">
-              {/* {contactData.school.phone} */}
+              {school.phoneSchool}
             </p>
           </div>
         </form>
@@ -416,7 +366,7 @@ function ContactTab({ patient }: PatientTabsProps) {
   );
 }
 
-function DiagnosticTab({ patient }: PatientTabsProps) {
+function DiagnosticTab({ diagnoses }) {
   return (
     <section className="bg-gray-200/60 p-4 rounded-b-2xl rounded-t-2xl">
       <article className="h-fit w-4/6 bg-white py-2 rounded-lg">
@@ -625,26 +575,7 @@ function MedicalBackgroundTab({ patient }: PatientTabsProps) {
               {/* {contactData.school.name} */}
             </p>
           </div>
-          <div>
-            <label className="font-semibold text-blue-600">Nivel</label>
-            <p className="py-2 px-3 text-gray-600 bg-blue-50/80 rounded-md mt-2">
-              {patient.level}
-            </p>
-          </div>
-          <div>
-            <label className="font-semibold text-blue-600">Turno</label>
-            <p className="py-2 px-3 text-gray-600 bg-blue-50/80 rounded-md mt-2">
-              {patient.shift}
-            </p>
-          </div>
-          <div className="col-span-2">
-            <label className="font-semibold text-blue-600">
-              Directivo de referencia
-            </label>
-            <p className="py-2 px-3 text-gray-600 bg-blue-50/80 rounded-md mt-2">
-              {/* {contactData.school.director} */}
-            </p>
-          </div>
+
           <div className="col-span-2">
             <label className="font-semibold text-blue-600">
               Correo electrónico

@@ -11,7 +11,7 @@ const MedicalHistory: FC<MedicalHistoryProps> = ({ children }) => {
           <ClipBoardIcon /> Historial clínico
         </h2>
         <Link
-          to="/patient"
+          to="/patient/61"
           className="text-blue-600 py-2 px-5 border border-black rounded-4xl hover:bg-gray-200 cursor-pointer"
         >
           Ver historial

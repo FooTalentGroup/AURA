@@ -23,7 +23,7 @@ export interface PatientData {
   membershipNumber: string;
 }
 
-export interface PatientDB {
+export interface PatientProps {
   id: number;
   name: string;
   lastName: string;
@@ -31,20 +31,19 @@ export interface PatientDB {
   birthDate: string;
   dni: string;
   email: string;
+  age: number;
+  genre: string;
   hasInsurance: boolean;
   insuranceName: string;
+  insurancePlan: string;
+  memberShipNumer: string;
   address: string;
   tutorName: string;
   relationToPatient: string;
   professionalIds: number[];
-  level: string; //sacar
-  shift: string; //sacar
   schoolId: number;
 
-  // age: number; // Faltantes
-  // genre: string;
-  // insurancePlan: string;
-  // membershipNumber: string;
+  // Faltantes
   // schoolName: string;
   // schoolDirector: string; //sacar
 
@@ -62,4 +61,20 @@ export interface PatientDB {
   //   interventions: string[];
   //   indications: string[];
   // };
+}
+
+export interface SchoolProps {
+  id: number;
+  schoolName: string;
+  emailSchool: string;
+  phoneSchool: string;
+}
+
+export interface DiagnosesProps {
+  id: number;
+  date: string;
+  title: string;
+  details: string;
+  idProfessional: number;
+  medicalRecordId: number;
 }
