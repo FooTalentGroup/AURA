@@ -82,7 +82,7 @@ public class PatientRequestDto {
             "Swiss Medical (ej: 000012345678)" +
             "Medicus(ej:1234567-01) " +
             "IOSFA(ej:123456/A) ")
-    private String memberShipNumer;
+    private String memberShipNumber;
 
     @Schema(description = "Dirección del paciente", example = "Av. Libertador 1925, CABA")
     @Size(min = 5, max = 30, message = "La dirección del paciente debe tener entre 5 y 30 caracteres.")
