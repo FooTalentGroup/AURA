@@ -155,10 +155,15 @@ public class MedicalRecordsService {
             String professionalName,
             LocalDate date
     ) {
+
+        String nameQuery = professionalName != null && !professionalName.isBlank()
+                ? "%" + professionalName.toLowerCase() + "%"
+                : null;
+
         List<MedicalRecordsModel> records = medicalRecordsRepository.filterClinicalHistory(
                 specialty,
                 date,
-                professionalName
+                nameQuery
         );
 
         return records.stream().map(record ->
