@@ -37,15 +37,18 @@ export interface PatientDB {
   tutorName: string;
   relationToPatient: string;
   professionalIds: number[];
-  level: string;
-  shift: string;
+  level: string; //sacar
+  shift: string; //sacar
   schoolId: number;
+
   // age: number; // Faltantes
   // genre: string;
   // insurancePlan: string;
   // membershipNumber: string;
   // schoolName: string;
-  // schoolDirector: string;
+  // schoolDirector: string; //sacar
+
+  //endpoints diferentes
   // diagnostic: {
   //   title: string;
   //   paragraphs: string[];
