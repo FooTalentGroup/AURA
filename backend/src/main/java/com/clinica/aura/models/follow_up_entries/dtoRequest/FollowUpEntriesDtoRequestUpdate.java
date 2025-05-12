@@ -16,9 +16,6 @@ import java.util.Date;
 @AllArgsConstructor
 public class FollowUpEntriesDtoRequestUpdate {
 
-    @NotBlank(message = "La especialidad es obligatoria")
-    private String specialty;
-
     @NotBlank(message = "Las observaciones no pueden estar vacías")
     private String observations;
 
@@ -27,7 +24,5 @@ public class FollowUpEntriesDtoRequestUpdate {
 
     @NotBlank(message = "Las instrucciones para la próxima sesión son obligatorias")
     private String nextSessionInstructions;
-
-    private LocalDateTime updatedAt;
 
 }

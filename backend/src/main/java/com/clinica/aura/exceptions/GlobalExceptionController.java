@@ -12,6 +12,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.LockedException;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -19,7 +20,11 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
+import com.clinica.aura.exceptions.DniAlreadyExistsException;
+import jakarta.servlet.http.HttpServletRequest;
 
+
+import java.nio.file.AccessDeniedException;
 import java.time.Instant;
 import java.util.Comparator;
 import java.util.List;
@@ -306,6 +311,31 @@ public class GlobalExceptionController {
                 .body(errorResponse);
     }
 
+    @ExceptionHandler(AuthorizationDeniedException.class)
+    public ResponseEntity<ErrorResponse> handleAuthorizationDenied(
+            AuthorizationDeniedException ex,
+            WebRequest request) {
+
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .errorCode("AUTH-403")
+                .message("Acceso no autorizado")
+                .details(List.of(sanitizeErrorMessage(ex.getMessage())))
+                .timestamp(Instant.now())
+                .path(getSanitizedPath(request))
+                .build();
+
+        log.warn("Acceso no autorizado - Path: {} | IP: {} | Mensaje: {}",
+                errorResponse.getPath(),
+                request.getHeader("X-Forwarded-For"),
+                ex.getMessage());
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .header("X-Content-Type-Options", "nosniff")
+                .header("X-Auth-Error", "true")
+                .body(errorResponse);
+    }
+
+
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ErrorResponse> handleDataIntegrityViolation(
             DataIntegrityViolationException ex,
@@ -484,6 +514,27 @@ public class GlobalExceptionController {
                 .body(errorResponse);
     }
 
+    @ExceptionHandler(DniAlreadyExistsException.class)
+    public ResponseEntity<ErrorResponse> handleDniAlreadyExistsException(DniAlreadyExistsException ex, HttpServletRequest request) {
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .errorCode("DNI_CONFLICT")
+                .message(ex.getMessage()) // El mensaje personalizado que envíes desde la excepción
+                .details(List.of("El DNI ya existe en la base de datos"))
+                .timestamp(Instant.now())
+                .path(request.getRequestURI())
+                .build();
+
+        log.warn("DNI duplicado - Path: {} | IP: {} | Mensaje: {}",
+                errorResponse.getPath(),
+                request.getHeader("X-Forwarded-For"),
+                ex.getMessage());
+
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .header("X-Content-Type-Options", "nosniff")
+                .body(errorResponse);
+    }
+
+
     @ExceptionHandler(ConflictWithExistingRecord.class)
     public ResponseEntity<ErrorResponse> handleConflictWithExistingRecord(ConflictWithExistingRecord ex, WebRequest request) {
 
@@ -517,6 +568,48 @@ public class GlobalExceptionController {
                 .build();
 
         log.warn("Escuela no encontrada - Path: {} | IP: {} | Mensaje: {}",
+                errorResponse.getPath(),
+                request.getHeader("X-Forwarded-For"),
+                ex.getMessage());
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .header("X-Content-Type-Options", "nosniff")
+                .body(errorResponse);
+    }
+
+    @ExceptionHandler(DianosesNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleDianosesNotFoundException(DianosesNotFoundException ex, WebRequest request) {
+
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .errorCode("DIAGNOSES-404")
+                .message(ex.getMessage())
+                .details(List.of("El diagnostico con el ID especificado no fue encontrada"))
+                .timestamp(Instant.now())
+                .path(getSanitizedPath(request))
+                .build();
+
+        log.warn("Diagnostico no encontrado - Path: {} | IP: {} | Mensaje: {}",
+                errorResponse.getPath(),
+                request.getHeader("X-Forwarded-For"),
+                ex.getMessage());
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .header("X-Content-Type-Options", "nosniff")
+                .body(errorResponse);
+    }
+
+    @ExceptionHandler(MedicalRecordsNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleMedicalRecordsNotFoundException(MedicalRecordsNotFoundException ex, WebRequest request) {
+
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .errorCode("MEDICAL_RECORDS-404")
+                .message(ex.getMessage())
+                .details(List.of("El registro medico con el ID especificado no fue encontrada"))
+                .timestamp(Instant.now())
+                .path(getSanitizedPath(request))
+                .build();
+
+        log.warn("Registro medico no encontrado - Path: {} | IP: {} | Mensaje: {}",
                 errorResponse.getPath(),
                 request.getHeader("X-Forwarded-For"),
                 ex.getMessage());

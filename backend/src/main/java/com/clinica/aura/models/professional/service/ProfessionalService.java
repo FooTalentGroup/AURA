@@ -33,6 +33,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
+import com.clinica.aura.exceptions.DniAlreadyExistsException;
+
 
 @Service
 @RequiredArgsConstructor
@@ -51,14 +53,21 @@ public class ProfessionalService {
 
         String email = authCreateUserDto.getEmail();
         String password = authCreateUserDto.getPassword();
+        String dni = authCreateUserDto.getDni();
 
         if (userRepository.findByEmail(email).isPresent()) {
             throw new EmailAlreadyExistsException("El correo " + email + " ya existe en la base de datos.");
         }
 
+        //valida que el dni no este en la base
+        if (personRepository.findByDni(dni).isPresent()) {
+            throw new DniAlreadyExistsException("El DNI " + dni + " ya está registrado en la base de datos.");
+        }
+
         RoleModel professionalRole = roleRepository.findByEnumRole(EnumRole.PROFESSIONAL)
                 .orElseThrow(() -> new IllegalArgumentException("El rol especificado no está configurado en la base de datos."));
         Set<RoleModel> roleEntities = Set.of(professionalRole);
+
 
         // Crea la persona con todos los campos nuevos
         PersonModel personEntity = PersonModel.builder()
@@ -71,6 +80,7 @@ public class ProfessionalService {
                 .locality(authCreateUserDto.getLocality())
                 .cuil(authCreateUserDto.getCuil())
                 .build();
+
 
         // Crea el profesional
         ProfessionalModel professionalEntity = ProfessionalModel.builder()
@@ -256,7 +266,7 @@ public class ProfessionalService {
                         .tutorName(patient.getTutorName())
                         .relationToPatient(patient.getRelationToPatient())
                         .genre(patient.getGenre())
-                        .memberShipNumer(patient.getMemberShipNumer())
+                        .memberShipNumber(patient.getMemberShipNumber())
                         .insurancePlan(patient.getInsurancePlan())
                         .schoolId(patient.getSchoolModel() != null ? patient.getSchoolModel().getId() : null)
                         .professionalIds(patient.getProfessionals() != null

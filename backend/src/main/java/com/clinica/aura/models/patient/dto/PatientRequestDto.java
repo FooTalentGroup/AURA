@@ -24,7 +24,7 @@ public class PatientRequestDto {
     private String email;
 
     // Datos de la persona
-    @Pattern(regexp = "\\d+", message = "El DNI solo debe tener números")
+    @Pattern(regexp = "^[1-9]\\d{7}$", message = "El DNI solo debe tener números y maximo 8 caracteres")
     @Size(min =8, max=8, message = "El dni debe 8 caracteres")
     @NotBlank(message = "El DNI es obligatorio")
     @Schema(description = "DNI del paciente", requiredMode = Schema.RequiredMode.REQUIRED, example = "40650777")
@@ -82,7 +82,7 @@ public class PatientRequestDto {
             "Swiss Medical (ej: 000012345678)" +
             "Medicus(ej:1234567-01) " +
             "IOSFA(ej:123456/A) ")
-    private String memberShipNumer;
+    private String memberShipNumber;
 
     @Schema(description = "Dirección del paciente", example = "Av. Libertador 1925, CABA")
     @Size(min = 5, max = 30, message = "La dirección del paciente debe tener entre 5 y 30 caracteres.")

@@ -46,7 +46,7 @@ public class PatientModel {
 
     private String insurancePlan;
 
-    private String memberShipNumer;
+    private String memberShipNumber;
 
     @Transient
     private int age;

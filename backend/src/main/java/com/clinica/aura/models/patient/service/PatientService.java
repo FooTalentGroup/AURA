@@ -1,7 +1,14 @@
 package com.clinica.aura.models.patient.service;
 
 import com.clinica.aura.config.jwt.JwtUtils;
+
+import com.clinica.aura.exceptions.DniAlreadyExistsException;
+import com.clinica.aura.exceptions.EmailAlreadyExistsException;
+import com.clinica.aura.exceptions.PatientNotFoundException;
+import com.clinica.aura.exceptions.SchoolNotFoundException;
+
 import com.clinica.aura.exceptions.*;
+
 import com.clinica.aura.models.medical_records.repository.MedicalRecordsRepository;
 import com.clinica.aura.models.patient.dto.PatientRequestDto;
 import com.clinica.aura.models.patient.dto.PatientResponseDto;
@@ -73,11 +80,16 @@ public class PatientService {
         String relationToPatient = authCreateUserDto.getRelationToPatient();
         String genre = authCreateUserDto.getGenre();
         String insurancePlan = authCreateUserDto.getInsurancePlan();
-        String memberShipNumer = authCreateUserDto.getMemberShipNumer();
+        String memberShipNumer = authCreateUserDto.getMemberShipNumber();
 
         if (userRepository.findByEmail(email).isPresent()) {
             throw new EmailAlreadyExistsException("El correo " + email + " ya existe en la base de datos.");
         }
+
+        if (personRepository.findByDni(dni).isPresent()) {
+            throw new DniAlreadyExistsException("El DNI " + dni + " ya está registrado en la base de datos.");
+        }
+
 
         Optional<RoleModel> professionalRole = roleRepository.findByEnumRole(EnumRole.PATIENT);
         if (professionalRole.isEmpty()) {
@@ -102,7 +114,7 @@ public class PatientService {
                 .tutorName(tutorName)
                 .relationToPatient(relationToPatient)
                 .genre(genre)
-                .memberShipNumer(memberShipNumer)
+                .memberShipNumber(memberShipNumer)
                 .build();
 
 
@@ -157,7 +169,7 @@ public class PatientService {
                 .hasInsurance(patientModel.getInsuranceName() != null && !patientModel.getInsuranceName().isBlank())
                 .insuranceName(patientModel.getInsuranceName())
                 .insurancePlan(patientModel.getInsurancePlan())
-                .memberShipNumer(patientModel.getMemberShipNumer())
+                .memberShipNumber(patientModel.getMemberShipNumber())
                 .address(patientModel.getAddress())
                 .tutorName(patientModel.getTutorName())
                 .relationToPatient(patientModel.getRelationToPatient())
@@ -207,7 +219,7 @@ public class PatientService {
                             .hasInsurance(patient.isHasInsurance())
                             .insuranceName(patient.getInsuranceName())
                             .insurancePlan(patient.getInsurancePlan())
-                            .memberShipNumer(patient.getMemberShipNumer())
+                            .memberShipNumber(patient.getMemberShipNumber())
                             .address(patient.getAddress())
                             .tutorName(patient.getTutorName())
                             .relationToPatient(patient.getRelationToPatient())
@@ -276,7 +288,7 @@ public class PatientService {
                 .insuranceName(patient.getInsuranceName())
                 .hasInsurance(patient.getInsuranceName() != null && !patient.getInsuranceName().isBlank())
                 .insurancePlan(patient.getInsurancePlan())
-                .memberShipNumer(patient.getMemberShipNumer())
+                .memberShipNumber(patient.getMemberShipNumber())
                 .address(patient.getAddress())
                 .tutorName(patient.getTutorName())
                 .relationToPatient(patient.getRelationToPatient())
@@ -311,7 +323,7 @@ public class PatientService {
         patient.setInsuranceName(requestDto.getInsuranceName());
         patient.setHasInsurance(requestDto.isHasInsurance());
         patient.setInsurancePlan(requestDto.getInsurancePlan());
-        patient.setMemberShipNumer(requestDto.getMemberShipNumer());
+        patient.setMemberShipNumber(requestDto.getMemberShipNumber());
         patient.setAddress(requestDto.getAddress());
         patient.setTutorName(requestDto.getTutorName());
         patient.setRelationToPatient(requestDto.getRelationToPatient());
@@ -378,7 +390,7 @@ public class PatientService {
                 .insuranceName(patient.getInsuranceName())
                 .hasInsurance(patient.getInsuranceName() != null && !patient.getInsuranceName().isBlank())
                 .insurancePlan(patient.getInsurancePlan())
-                .memberShipNumer(patient.getMemberShipNumer())
+                .memberShipNumber(patient.getMemberShipNumber())
                 .address(patient.getAddress())
                 .tutorName(patient.getTutorName())
                 .relationToPatient(patient.getRelationToPatient())
@@ -450,7 +462,7 @@ public class PatientService {
                 .insuranceName(patient.getInsuranceName())
                 .hasInsurance(patient.getInsuranceName() != null && !patient.getInsuranceName().isBlank())
                 .insurancePlan(patient.getInsurancePlan())
-                .memberShipNumer(patient.getMemberShipNumer())
+                .memberShipNumber(patient.getMemberShipNumber())
                 .address(patient.getAddress())
                 .tutorName(patient.getTutorName())
                 .relationToPatient(patient.getRelationToPatient())
@@ -494,7 +506,7 @@ public class PatientService {
                     .insuranceName(patient.getInsuranceName())
                     .hasInsurance(patient.getInsuranceName() != null && !patient.getInsuranceName().isBlank())
                     .insurancePlan(patient.getInsurancePlan())
-                    .memberShipNumer(patient.getMemberShipNumer())
+                    .memberShipNumber(patient.getMemberShipNumber())
                     .address(patient.getAddress())
                     .tutorName(patient.getTutorName())
                     .relationToPatient(patient.getRelationToPatient())

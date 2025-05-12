@@ -18,10 +18,6 @@ public class FollowUpEntriesDtoResponse {
 
     private Long id;
 
-    private Long medicalRecordId;
-
-    private String specialty;
-
     private String observations;
 
     private String interventions;
@@ -33,4 +29,8 @@ public class FollowUpEntriesDtoResponse {
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updatedAt;
+
+    private Long professionalId;
+
+    private Long medicalRecordId;
 }
