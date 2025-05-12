@@ -1,9 +1,25 @@
 package com.clinica.aura.models.medical_notes_files.model;
 
-public class MedicalNotesFilesModel {
-    private Long id;
-    private  String file_name;
-    private String url;
-    private  String uploaded_at;
+import jakarta.persistence.*;
+import lombok.*;
+import java.time.LocalDateTime;
 
+@Entity
+@Setter
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+
+@Table(name = "medical_notes_files")
+public class MedicalNotesFilesModel {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String file_name;
+    private String patient_name;
+    private String patient_last_name;
+    private String url;
+    private LocalDateTime uploaded_at;
 }
+

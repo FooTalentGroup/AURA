@@ -1,7 +1,11 @@
 package com.clinica.aura.models.medical_notes_files.service;
 
-import com.clinica.aura.models.medical_notes_files.dto.MedicalRecordReporteDTO;
-import com.clinica.aura.models.medical_notes_files.repository.MedicalRecordRepository;
+import com.clinica.aura.models.medical_notes_files.dto.MedicalNotesFilesResponseDTO;
+import com.clinica.aura.models.medical_notes_files.model.MedicalNotesFilesModel;
+import com.clinica.aura.models.medical_notes_files.repository.MedicalNotesFilesRepository;
+import com.clinica.aura.models.patient.dto.PatientResponseDto;
+import com.clinica.aura.models.patient.model.PatientModel;
+import com.clinica.aura.models.patient.repository.PatientRepository;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.draw.LineSeparator;
@@ -9,22 +13,24 @@ import com.itextpdf.text.pdf.draw.LineSeparator;
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.springframework.stereotype.Service;
 
 @Service
-public class MedicalReportService {
+public class MedicalNotesFilesService {
 
-    private final MedicalRecordRepository repository;
+    private final MedicalNotesFilesRepository repository;
 
-    public MedicalReportService(MedicalRecordRepository repository) {
+
+    public MedicalNotesFilesService(MedicalNotesFilesRepository repository) {
         this.repository = repository;
     }
 
     public byte[] generatePdfReport(String dni, String tituloReporte) {
-        List<MedicalRecordReporteDTO.MedicalRecordReportDTO> records = repository.findReportByDni(dni);
+        List<MedicalNotesFilesResponseDTO.MedicalFilesDTO> records = repository.findReportByDni(dni);
 
         if (records.isEmpty()) {
             throw new RuntimeException("No se encontraron registros para el DNI: " + dni);
@@ -61,7 +67,7 @@ public class MedicalReportService {
 
             // Agrupamos por followUpEntry (aunque estén repetidos otros datos)
             int i=0;
-            for (MedicalRecordReporteDTO.MedicalRecordReportDTO r : records) {
+            for (MedicalNotesFilesResponseDTO.MedicalFilesDTO r : records) {
                 if(i>0) break;
                 document.add(new Paragraph("Paciente: " + r.getName() + " " + r.getLastName()));
                 document.add(new Paragraph("Fecha de nacimiento: " + r.getBirthDate()));
@@ -71,25 +77,45 @@ public class MedicalReportService {
                 document.add(new Paragraph("Teléfono: " + (r.getPhoneNumber() != null ? r.getPhoneNumber() : "N/A")));
                 document.add(new Paragraph("Email: " + (r.getEmail() != null ? r.getEmail() : "N/A")));
 
-                document.add(new Paragraph("Profesional: " + r.getProfessionalName() + " " + r.getProfessionalLastName() + " (" + r.getSpecialty() + ")"));
                 document.add(new Paragraph(" "));
                 document.add(new LineSeparator());
+                //
+                MedicalNotesFilesModel fileRecord = MedicalNotesFilesModel.builder()
+                        .file_name(tituloReporte + ".pdf")
+                        .patient_name(r.getName())
+                        .patient_last_name(r.getLastName())
+                        .url("GENERADO_AL_DESCARGAR")
+                        .uploaded_at(LocalDateTime.now())
+                        .build();
+                repository.save(fileRecord); // Guarda el registro del archivo
                 i++;
             }
 
-            for(MedicalRecordReporteDTO.MedicalRecordReportDTO r: records){
-                document.add(new Paragraph("Fecha de seguimiento: " + (r.getFollowUpDate() != null ? r.getFollowUpDate().toString() : "N/A")));
-                document.add(new Paragraph("Nota: " + (r.getFollowUpNotes() != null ? r.getFollowUpNotes() : "N/A")));
+            for(MedicalNotesFilesResponseDTO.MedicalFilesDTO r: records){
+                document.add(new Paragraph("Fecha de seguimiento: " + (r.getCreateDate() != null ? r.getCreateDate().toString() : "N/A")));
+                document.add(new Paragraph("Profesional que hizo el seguimiento: "+ r.getFollowUpProfessionalName()+" "+ r.getFollowUpProfessionalLastName()));
+                document.add(new Paragraph("Observación: " + (r.getObservations() != null ? r.getObservations() : "N/A")));
+                document.add(new Paragraph("Intervensiones: " + (r.getInterventions() != null ? r.getInterventions() : "N/A")));
+                document.add(new Paragraph("Instrucciones de la próxima sesión : " + (r.getNextSessionInstructions() != null ? r.getNextSessionInstructions() : "N/A")));
+
+                document.add(new Paragraph(" "));
+                document.add(new LineSeparator());
+                document.add(new Paragraph("Diagnóstico: "+ r.getDiagnostico()));
+                document.add(new Paragraph("Detalles: "+ r.getDetails()));
                 document.add(new Paragraph(" "));
             }
 
             document.close();
+            //aca guarda el registro de la descarga
+           // Guardar registro en la tabla medical_notes_files esto me diste vos
+
+
         } catch (Exception e) {
             // Es importante manejar las excepciones al trabajar con iTextPDF
             System.err.println("Error al generar el PDF: " + e.getMessage());
             // Considera lanzar una excepción personalizada aquí para informar mejor el error
             throw new RuntimeException("Error al generar el reporte PDF", e);
         }
-        return out.toByteArray();
+        return out.toByteArray(); // Envía el PDF como respuesta
    }
 }

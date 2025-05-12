@@ -1,5 +1,5 @@
 package com.clinica.aura.models.medical_notes_files.controller;
-import com.clinica.aura.models.medical_notes_files.service.MedicalReportService;
+import com.clinica.aura.models.medical_notes_files.service.MedicalNotesFilesService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ContentDisposition;
 import org.springframework.http.MediaType;
@@ -11,11 +11,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/report")
-public class MedicalReportController {
+public class MedicalNotesFilesController {
 
-    private final MedicalReportService reportService;
+    private final MedicalNotesFilesService reportService;
 
-    public MedicalReportController(MedicalReportService reportService) {
+    public MedicalNotesFilesController(MedicalNotesFilesService reportService) {
         this.reportService = reportService;
     }
 

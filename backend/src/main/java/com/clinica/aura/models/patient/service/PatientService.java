@@ -1,14 +1,14 @@
 package com.clinica.aura.models.patient.service;
 
 import com.clinica.aura.config.jwt.JwtUtils;
-<<<<<<< HEAD
+
 import com.clinica.aura.exceptions.DniAlreadyExistsException;
 import com.clinica.aura.exceptions.EmailAlreadyExistsException;
 import com.clinica.aura.exceptions.PatientNotFoundException;
 import com.clinica.aura.exceptions.SchoolNotFoundException;
-=======
+
 import com.clinica.aura.exceptions.*;
->>>>>>> develop
+
 import com.clinica.aura.models.medical_records.repository.MedicalRecordsRepository;
 import com.clinica.aura.models.patient.dto.PatientRequestDto;
 import com.clinica.aura.models.patient.dto.PatientResponseDto;
