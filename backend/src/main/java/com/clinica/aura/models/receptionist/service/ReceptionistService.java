@@ -1,7 +1,9 @@
 package com.clinica.aura.models.receptionist.service;
 
 import com.clinica.aura.config.jwt.JwtUtils;
+import com.clinica.aura.exceptions.DniAlreadyExistsException;
 import com.clinica.aura.models.person.model.PersonModel;
+import com.clinica.aura.models.person.repository.PersonRepository;
 import com.clinica.aura.models.receptionist.dtoRequest.ReceptionistRequestDto;
 import com.clinica.aura.models.receptionist.dtoRequest.ReceptionistRequestUpdateDto;
 import com.clinica.aura.models.receptionist.dtoResponse.ReceptionistResponseDto;
@@ -48,6 +50,7 @@ public class ReceptionistService {
     private final ReceptionistMapper receptionistMapper;
     private final JwtUtils jwtUtils;
     private final UserDetailsServiceImpl userDetailsService;
+    private final PersonRepository personRepository;
 
     @Transactional
     public AuthResponseRegisterDto createUser(@Valid ReceptionistRequestDto authCreateUserDto) {
@@ -66,6 +69,11 @@ public class ReceptionistService {
         UserModel emailExists = userRepository.findByEmail(email).orElse(null);
         if (emailExists != null) {
             throw new EmailAlreadyExistsException("El correo " + email + " ya existe en la base de datos.");
+        }
+
+        //valida que el dni no este en la base
+        if (personRepository.findByDni(dni).isPresent()) {
+            throw new DniAlreadyExistsException("El DNI " + dni + " ya está registrado en la base de datos.");
         }
 
         Optional<RoleModel> professionalRole = roleRepository.findByEnumRole(EnumRole.RECEPTIONIST);
