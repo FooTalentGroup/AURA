@@ -34,8 +34,6 @@ public class MedicalRecordsModel {
     @JoinColumn(name = "updated_by_professional_id", nullable = false)
     private ProfessionalModel updatedBy;
 
-    private String specialty;
-
     @CreationTimestamp
     private LocalDateTime createdAt;
 

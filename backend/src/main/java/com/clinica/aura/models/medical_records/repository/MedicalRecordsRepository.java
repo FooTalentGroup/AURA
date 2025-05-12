@@ -27,15 +27,20 @@ public interface MedicalRecordsRepository extends JpaRepository<MedicalRecordsMo
     List<MedicalRecordsModel> findAllByOrderByCreatedAtAsc();
 
 
-    @Query("SELECT mr FROM MedicalRecordsModel mr " +
-            "WHERE (:specialty IS NULL OR mr.specialty = :specialty) " +
-            "AND (:professionalId IS NULL OR mr.createdBy.id = :professionalId) " +
-            "AND (:startDate IS NULL OR mr.createdAt >= :startDate) " +
-            "AND (:endDate IS NULL OR mr.createdAt <= :endDate)")
+    @Query("""
+    SELECT mr FROM MedicalRecordsModel mr
+    WHERE (:specialty IS NULL OR mr.createdBy.specialty = :specialty)
+    AND (:date IS NULL OR FUNCTION('DATE', mr.createdAt) = :date)
+    AND (
+        :professionalName IS NULL OR
+        CONCAT(mr.createdBy.person.name, ' ', mr.createdBy.person.lastName) ILIKE %:professionalName%
+    )
+""")
     List<MedicalRecordsModel> filterClinicalHistory(
             @Param("specialty") String specialty,
-            @Param("professionalId") Long professionalId,
-            @Param("startDate") LocalDateTime startDate,
-            @Param("endDate") LocalDateTime endDate
+            @Param("date") LocalDate date,
+            @Param("professionalName") String professionalName
     );
+
+
 }

@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 public class MedicalRecordsResponseDto {
 
     private Long id;
-    private String specialty;
+    //private String specialty;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private Long patientId;

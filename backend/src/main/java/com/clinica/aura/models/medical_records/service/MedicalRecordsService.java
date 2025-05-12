@@ -1,7 +1,6 @@
 package com.clinica.aura.models.medical_records.service;
 
 import com.clinica.aura.models.medical_records.dtoRequest.*;
-import com.clinica.aura.models.medical_records.dtoResponse.MedicalRecordFilterRequest;
 import com.clinica.aura.models.medical_records.dtoResponse.MedicalRecordsResponseDto;
 
 import com.clinica.aura.models.medical_records.dtoResponse.MedicalRecordsSummaryDto;
@@ -9,16 +8,9 @@ import com.clinica.aura.models.medical_records.model.MedicalRecordsModel;
 import com.clinica.aura.models.medical_records.repository.MedicalRecordsRepository;
 import com.clinica.aura.models.patient.model.PatientModel;
 import com.clinica.aura.models.patient.repository.PatientRepository;
-import com.clinica.aura.models.person.model.PersonModel;
 import com.clinica.aura.models.professional.model.ProfessionalModel;
-import com.clinica.aura.models.professional.repository.ProfessionalRepository;
-import com.clinica.aura.models.user_account.models.UserModel;
-import com.clinica.aura.models.user_account.repository.UserRepository;
 import com.clinica.aura.exceptions.ConflictWithExistingRecord;
 import com.clinica.aura.exceptions.PatientNotFoundException;
-import com.clinica.aura.exceptions.ProfessionalNotFoundException;
-import com.clinica.aura.exceptions.UnauthorizedAccessException;
-import com.clinica.aura.util.PaginatedResponse;
 import com.clinica.aura.util.SecurityUtil;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -26,12 +18,10 @@ import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,12 +46,11 @@ public class MedicalRecordsService {
         record.setCreatedBy(professionalModel);
         record.setUpdatedBy(professionalModel);
         record.setPatients(patient);
-        record.setSpecialty(dto.getSpeciality());
         medicalRecordsRepository.save(record);
 
         MedicalRecordsResponseDto response = new MedicalRecordsResponseDto();
         response.setId(record.getId());
-        response.setSpecialty(record.getSpecialty());
+        //response.setSpecialty(record.getSpecialty());
         response.setCreatedAt(record.getCreatedAt());
         response.setUpdatedAt(record.getUpdatedAt());
         response.setPatientId(record.getPatients().getId());
@@ -74,7 +63,7 @@ public class MedicalRecordsService {
         MedicalRecordsModel record = medicalRecordsRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Registro no encontrado"));
         MedicalRecordsResponseDto response = new MedicalRecordsResponseDto();
         response.setId(record.getId());
-        response.setSpecialty(record.getSpecialty());
+        //response.setSpecialty(record.getSpecialty());
         response.setCreatedAt(record.getCreatedAt());
         response.setUpdatedAt(record.getUpdatedAt());
         response.setPatientId(record.getPatients().getId());
@@ -88,7 +77,7 @@ public class MedicalRecordsService {
 
         MedicalRecordsResponseDto response = new MedicalRecordsResponseDto();
         response.setId(record.getId());
-        response.setSpecialty(record.getSpecialty());
+        //response.setSpecialty(record.getSpecialty());
         response.setCreatedAt(record.getCreatedAt());
         response.setUpdatedAt(record.getUpdatedAt());
         response.setPatientId(record.getPatients().getId());
@@ -103,7 +92,7 @@ public class MedicalRecordsService {
         for (MedicalRecordsModel record : records) {
             MedicalRecordsResponseDto dto = new MedicalRecordsResponseDto();
             dto.setId(record.getId());
-            dto.setSpecialty(record.getSpecialty());
+           //dto.setSpecialty(record.getSpecialty());
             dto.setCreatedAt(record.getCreatedAt());
             dto.setUpdatedAt(record.getUpdatedAt());
             dto.setPatientId(record.getPatients().getId());
@@ -113,29 +102,29 @@ public class MedicalRecordsService {
         return response;
     }
 
-    public MedicalRecordsResponseDto update(Long id, MedicalRecordsRequestUpdateDto dto) {
-        MedicalRecordsModel record = medicalRecordsRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Registro no encontrado"));
-
-        // Obtener profesional autenticado
-        ProfessionalModel professional = securityUtil.getAuthenticatedProfessional();
-
-        // Actualizar campos
-        record.setSpecialty(dto.getSpeciality());
-        record.setUpdatedBy(professional);
-        medicalRecordsRepository.save(record);
-
-        // Construir respuesta
-        MedicalRecordsResponseDto response = new MedicalRecordsResponseDto();
-        response.setId(record.getId());
-        response.setSpecialty(record.getSpecialty());
-        response.setCreatedAt(record.getCreatedAt());
-        response.setUpdatedAt(record.getUpdatedAt());
-        response.setPatientId(record.getPatients().getId());
-        response.setProfessionalId(record.getCreatedBy().getId());
-
-        return response;
-    }
+//    public MedicalRecordsResponseDto update(Long id, MedicalRecordsRequestUpdateDto dto) {
+//        MedicalRecordsModel record = medicalRecordsRepository.findById(id)
+//                .orElseThrow(() -> new EntityNotFoundException("Registro no encontrado"));
+//
+//        // Obtener profesional autenticado
+//        ProfessionalModel professional = securityUtil.getAuthenticatedProfessional();
+//
+//        // Actualizar campos
+//        record.setSpecialty(dto.getSpeciality());
+//        record.setUpdatedBy(professional);
+//        medicalRecordsRepository.save(record);
+//
+//        // Construir respuesta
+//        MedicalRecordsResponseDto response = new MedicalRecordsResponseDto();
+//        response.setId(record.getId());
+//        response.setSpecialty(record.getSpecialty());
+//        response.setCreatedAt(record.getCreatedAt());
+//        response.setUpdatedAt(record.getUpdatedAt());
+//        response.setPatientId(record.getPatients().getId());
+//        response.setProfessionalId(record.getCreatedBy().getId());
+//
+//        return response;
+//    }
 
 
     public void delete(Long id) {
@@ -152,7 +141,7 @@ public class MedicalRecordsService {
     private MedicalRecordsResponseDto mapToDto(MedicalRecordsModel medicalRecordsModel) {
         return new MedicalRecordsResponseDto(
                 medicalRecordsModel.getId(),
-                medicalRecordsModel.getSpecialty(),
+               // medicalRecordsModel.getSpecialty(),
                 medicalRecordsModel.getCreatedAt(),
                 medicalRecordsModel.getUpdatedAt(),
                 medicalRecordsModel.getPatients().getId(),
@@ -163,28 +152,24 @@ public class MedicalRecordsService {
 
     public List<MedicalRecordsSummaryDto> getFilteredHistory(
             String specialty,
-            Long professionalId,
-            LocalDate startDate,
-            LocalDate endDate
+            String professionalName,
+            LocalDate date
     ) {
-
-        LocalDateTime startDateTime = startDate != null ? startDate.atStartOfDay() : null;
-        LocalDateTime endDateTime = endDate != null ? endDate.atTime(23, 59, 59) : null;
-
         List<MedicalRecordsModel> records = medicalRecordsRepository.filterClinicalHistory(
                 specialty,
-                professionalId,
-                startDateTime,
-                endDateTime
+                date,
+                professionalName
         );
 
         return records.stream().map(record ->
                 new MedicalRecordsSummaryDto(
-                        record.getSpecialty(),
+                        record.getCreatedBy().getSpecialty(),
                         record.getCreatedBy().getPerson().getName() + " " + record.getCreatedBy().getPerson().getLastName(),
                         record.getCreatedAt().toLocalDate()
                 )
         ).toList();
     }
+
+
 
 }
