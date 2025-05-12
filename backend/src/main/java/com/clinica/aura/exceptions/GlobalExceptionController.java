@@ -12,6 +12,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.LockedException;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -23,7 +24,7 @@ import com.clinica.aura.exceptions.DniAlreadyExistsException;
 import jakarta.servlet.http.HttpServletRequest;
 
 
-
+import java.nio.file.AccessDeniedException;
 import java.time.Instant;
 import java.util.Comparator;
 import java.util.List;
@@ -309,6 +310,31 @@ public class GlobalExceptionController {
                 .header("X-Auth-Error", "true")
                 .body(errorResponse);
     }
+
+    @ExceptionHandler(AuthorizationDeniedException.class)
+    public ResponseEntity<ErrorResponse> handleAuthorizationDenied(
+            AuthorizationDeniedException ex,
+            WebRequest request) {
+
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .errorCode("AUTH-403")
+                .message("Acceso no autorizado")
+                .details(List.of(sanitizeErrorMessage(ex.getMessage())))
+                .timestamp(Instant.now())
+                .path(getSanitizedPath(request))
+                .build();
+
+        log.warn("Acceso no autorizado - Path: {} | IP: {} | Mensaje: {}",
+                errorResponse.getPath(),
+                request.getHeader("X-Forwarded-For"),
+                ex.getMessage());
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .header("X-Content-Type-Options", "nosniff")
+                .header("X-Auth-Error", "true")
+                .body(errorResponse);
+    }
+
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ErrorResponse> handleDataIntegrityViolation(
