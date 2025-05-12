@@ -84,7 +84,6 @@ public class MedicalNotesFilesService {
                         .file_name(tituloReporte + ".pdf")
                         .patient_name(r.getName())
                         .patient_last_name(r.getLastName())
-                        .url("GENERADO_AL_DESCARGAR")
                         .uploaded_at(LocalDateTime.now())
                         .build();
                 repository.save(fileRecord); // Guarda el registro del archivo

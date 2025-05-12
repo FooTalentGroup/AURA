@@ -19,7 +19,6 @@ public class MedicalNotesFilesModel {
     private String file_name;
     private String patient_name;
     private String patient_last_name;
-    private String url;
     private LocalDateTime uploaded_at;
 }
 
