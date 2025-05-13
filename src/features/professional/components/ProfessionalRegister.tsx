@@ -65,7 +65,7 @@ const [success, setSuccess] = useState(false);
     await register(values as RegisterProfessionalPayload);
     setSuccess(true);      // ← marcas éxito
   } catch {
-    // opcional: setSuccess(false) o manejar error
+    //  setSuccess(false)
   }
 };
 
