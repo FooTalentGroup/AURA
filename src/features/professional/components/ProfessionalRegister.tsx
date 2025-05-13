@@ -38,7 +38,7 @@ const stepFields: Record<number, Field[]> = {
 
 
 
-export const UserRegister: React.FC = () => {
+export const ProfessionalRegister: React.FC = () => {
   const totalSteps = 4;
   const [currentStep, setCurrentStep] = useState(1);
   const [values, setValues] = useState<Partial<RegisterProfessionalPayload>>({ patientIds: [] });

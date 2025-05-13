@@ -4,6 +4,7 @@ export interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   children: React.ReactNode;
+  
 }
 
 /**
@@ -13,9 +14,8 @@ export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
   if (!isOpen) return null;
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50">
-      {/* Backdrop transparent, captures clicks */}
       <div className="absolute inset-0" onClick={onClose} />
-      <div className="relative bg-white rounded-2xl p-6 max-w-lg w-full shadow-lg">
+      <div className="relative bg-white rounded-2xl p-10 max-w-lg w-full shadow-lg min-h-[250px] flex flex-col justify-center">
         <button
           className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
           onClick={onClose}

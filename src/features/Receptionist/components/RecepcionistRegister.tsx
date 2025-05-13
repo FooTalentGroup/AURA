@@ -65,6 +65,7 @@ export const ReceptionistRegister: React.FC = () => {
       <>
         <RegisterForm
           title="Alta de nueva recepcionista"
+          onClose={() => history.back()}
           subtitle={subtitles[currentStep - 1]}
           currentStep={currentStep}
           totalSteps={totalSteps}

@@ -3,6 +3,7 @@ import { useProfessionals } from "../../features/professional/hooks/useProfessio
 import { ProfessionalRow } from "../../features/professional/components/ProfessionalRow";
 import { PageContainer } from "../../components/shared/layouts/PageContainer";
 import { useNavigate } from "react-router-dom";
+import { Modal } from "../../layouts/Modal";
 
 const ProfessionalPage: React.FC = () => {
   const [query, setQuery] = useState("");
@@ -15,17 +16,30 @@ const navigate = useNavigate();
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setQuery(e.target.value);
   };
-
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleAdd = () => {
-    {navigate("/Uregister")};  };
+       setIsModalOpen(true);
+   };
+    const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
+    const chooseType = (type: "administrativo" | "profesional") => {
+    setIsModalOpen(false);
+    if (type === "administrativo") {
+      navigate("/Pregister");
+    } else {
+      navigate("/Rregister");
+    }
+  };
 
   const handleView = (id: number) => {
     console.log('Ver paciente', id);
     //  un navigate(`/patients/${id}`)
   };
 
-  return (
+  return (<>
     <PageContainer
       title="Personal del centro"
       description="Nombre o Especialidad"
@@ -59,6 +73,26 @@ const navigate = useNavigate();
         ))
       )}
     </PageContainer>
+     <Modal isOpen={isModalOpen} onClose={closeModal}>
+        <div className="text-center space-y-6">
+          <h2 className="text-lg font-medium">¿Qué usuario queres registrar?</h2>
+          <div className="flex justify-center gap-4">
+            <button
+              onClick={() => chooseType("administrativo")}
+              className="px- py-2 border border-gray-500 text-blue-500 rounded-full hover:bg-blue-50"
+            >
+              Administrativo
+            </button>
+            <button
+              onClick={() => chooseType("profesional")}
+              className="px-6 py-2 bg-[#E5F6FF] text-blue-500  rounded-full hover:bg-[#c9e2f0]"
+            >
+              Profesional
+            </button>
+          </div>
+        </div>
+      </Modal>
+  </>
   );
 };
 

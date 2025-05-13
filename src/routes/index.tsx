@@ -16,7 +16,8 @@ import ForgotPasswordForm from "../pages/auth/ForgotPasswordForm";
 import ProfilePage from "../pages/profile/ProfilePage";
 import AdminPage from "../pages/admin/AdminPage";
 import ProfessionalPage from "../pages/Professional/ProfessionalPage";
-import { UserRegister } from "../features/professional/components/ProfessionalRegister";
+import { ProfessionalRegister } from "../features/professional/components/ProfessionalRegister";
+import { ReceptionistRegister } from "../features/Receptionist/components/RecepcionistRegister";
 
 const AppRoutes = () => {
   return (
@@ -32,7 +33,9 @@ const AppRoutes = () => {
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/patients" element={<PatientsPage />} />
         <Route path="/appointments" element={<AppointmentsPage />} />
-        <Route path="/Uregister" element={<UserRegister />} />
+        <Route path="/Pregister" element={<ProfessionalRegister />} />
+        <Route path="/Rregister" element={<ReceptionistRegister />} />
+
       </Route>
 
       <Route element={<AdminRoute />}>
