@@ -30,7 +30,7 @@ export const PasswordErrorList: React.FC<PasswordErrorListProps> = ({
   numberValid,
   skipUpper = false,
 }) => (
-  <ul className="text-xs text-red-600 mt-2 space-y-1 list-disc list-inside">
+  <ul className="text-xs text-red-600 mt-2 space-y-1 list-disc list-inside ">
     <li className={lengthValid ? 'text-green-600' : ''}>
       Debe tener mínimo 8 caracteres
     </li>

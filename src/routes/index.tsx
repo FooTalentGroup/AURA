@@ -16,7 +16,7 @@ import ForgotPasswordForm from "../pages/auth/ForgotPasswordForm";
 import ProfilePage from "../pages/profile/ProfilePage";
 import AdminPage from "../pages/admin/AdminPage";
 import ProfessionalPage from "../pages/Professional/ProfessionalPage";
-import { UserRegister } from "../features/user/components/UserRegister";
+import { UserRegister } from "../features/professional/components/ProfessionalRegister";
 
 const AppRoutes = () => {
   return (

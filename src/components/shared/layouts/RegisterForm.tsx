@@ -8,13 +8,13 @@ export type FieldOption = {
 export type Field = {
   name: string;
   label: string;
-  type: 'text' | 'select' | 'number' | 'email' | 'tel' | 'date';
+  type: 'text' | 'select' | 'number' | 'email' | 'tel' | 'date' | 'password' ;
   options?: FieldOption[];
 };
 
 export interface GenericFormLayoutProps {
   title: string;
-  subtitle?: string;                      // e.g. sección actual: "Tutor"
+  subtitle?: string;                     
   currentStep: number;
   totalSteps: number;
   fields: Field[];
@@ -23,7 +23,7 @@ export interface GenericFormLayoutProps {
   onNext: () => void;
   onBack?: () => void;
   onSubmit?: () => void;
-  extraAction?: React.ReactNode;          // render enlace o botón adicional
+  extraAction?: React.ReactNode;         
   nextLabel?: string;
   backLabel?: string;
   submitLabel?: string;
@@ -153,7 +153,7 @@ export const RegisterForm: React.FC<GenericFormLayoutProps> = ({
           </div>
         ))}
 
-        {extraAction && <div className="text-sm text-blue-600 hover:underline cursor-pointer">{extraAction}</div>}
+        {extraAction && <div className="text-sm  pointer-events: none">{extraAction}</div>}
 
         {/* Botonera */}
         <div className="flex items-center mt-6 pt-4 border-t border-gray-200">
@@ -161,15 +161,15 @@ export const RegisterForm: React.FC<GenericFormLayoutProps> = ({
             <button
               type="button"
               onClick={onBack}
-              className="px-5 py-2 border border-blue-400 text-blue-400 rounded-full hover:bg-blue-50"
+              className="px-5 py-2 border border-gray-600 text-blue-400 rounded-full hover:bg-blue-50 cursor-pointer"
             >
               {backLabel}
             </button>
           )}
           <button
             type="submit"
-            className={`ml-auto px-6 py-2 rounded-full text-white shadow-sm ${
-              isLast ? 'bg-green-500 hover:bg-green-600' : 'bg-blue-400 hover:bg-blue-500'
+            className={`ml-auto px-6 py-2 rounded-full text-[#00539A] shadow-sm cursor-pointer ${
+              isLast ? 'bg-[#E5F6FF] hover:bg-[#7ab3d1]' : 'bg-[#E5F6FF] hover:bg-[#7ab3d1]'
             }`}
           >
             {isLast ? submitLabel : nextLabel}
