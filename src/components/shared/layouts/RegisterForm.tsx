@@ -1,5 +1,4 @@
 import React from 'react';
-
 export type FieldOption = {
   value: string | number;
   label: string;
@@ -27,6 +26,7 @@ export interface GenericFormLayoutProps {
   nextLabel?: string;
   backLabel?: string;
   submitLabel?: string;
+  onClose?: () => void;
 }
 
 export const RegisterForm: React.FC<GenericFormLayoutProps> = ({
@@ -41,6 +41,7 @@ export const RegisterForm: React.FC<GenericFormLayoutProps> = ({
   onBack,
   onSubmit,
   extraAction,
+   onClose,
   nextLabel = 'Siguiente',
   backLabel = 'Atrás',
   submitLabel = 'Enviar',
@@ -61,14 +62,18 @@ export const RegisterForm: React.FC<GenericFormLayoutProps> = ({
     : 0;
 
   return (
-    <div className="bg-white rounded-t-2xl p-6 shadow-sm max-w-4xl mx-auto">
+  <div className="mt-8 bg-white rounded-3xl  border-gray-200  p-6 shadow-sm w-full">
       {/* Título */}
-      <div className="flex justify-between items-center mb-4">
+      <div className="flex justify-between items-center mb-10 border-b border-gray-200 p-4  ">
         <h2 className="text-2xl font-medium">{title}</h2>
+        {onClose && (
+          <button         type="button"  onClick={onClose}       className="text-gray-400 hover:text-gray-600"    >      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none"     viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />      </svg>    </button>  )}
       </div>
 
+     <div className="max-w-xl mx-auto">
+
       {/* Progress bar + step circles */}
-      <div className="relative mb-6">
+      <div className="relative mb-6 ">
         {/* Barra base y progreso */}
         <div className="absolute inset-0 flex items-center">
           <div className="w-full h-1 bg-gray-200 rounded" />
@@ -118,7 +123,14 @@ export const RegisterForm: React.FC<GenericFormLayoutProps> = ({
       </div>
 
       {/* Subtítulo de sección */}
-      {subtitle && <p className="mb-4 text-gray-600">{subtitle}</p>}
+     {subtitle && (
+  <div className="flex items-center mb-4">
+    {/* circulito */}
+    <span className="inline-block w-2 h-2 border border-gray-600 rounded-full mr-2 flex-shrink-0" />
+    {/* texto */}
+    <p className="text-gray-600">{subtitle}</p>
+  </div>
+)}
 
       {/* Formulario */}
       <form onSubmit={handleSubmit} className="space-y-5">
@@ -156,7 +168,7 @@ export const RegisterForm: React.FC<GenericFormLayoutProps> = ({
         {extraAction && <div className="text-sm  pointer-events: none">{extraAction}</div>}
 
         {/* Botonera */}
-        <div className="flex items-center mt-6 pt-4 border-t border-gray-200">
+        <div className="flex items-center mt-6 pt-4">
           {onBack && (
             <button
               type="button"
@@ -176,6 +188,7 @@ export const RegisterForm: React.FC<GenericFormLayoutProps> = ({
           </button>
         </div>
       </form>
+    </div>
     </div>
   );
 };
