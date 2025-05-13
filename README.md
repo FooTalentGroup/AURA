@@ -136,6 +136,9 @@ mvn spring-boot:run
 ```
 ---
 
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/AuraFTG/backend)
+
+
 ## 📄 Licencia
 
 Este proyecto está bajo la licencia [Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0).  
