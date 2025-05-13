@@ -79,7 +79,7 @@ const navigate = useNavigate();
           <div className="flex justify-center gap-4">
             <button
               onClick={() => chooseType("administrativo")}
-              className="px- py-2 border border-gray-500 text-blue-500 rounded-full hover:bg-blue-50"
+              className="px-4 py-2 border border-gray-500 text-blue-500 rounded-full hover:bg-blue-50"
             >
               Administrativo
             </button>

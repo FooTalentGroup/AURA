@@ -62,7 +62,7 @@ export const RegisterForm: React.FC<GenericFormLayoutProps> = ({
     : 0;
 
   return (
-  <div className="mt-8 bg-white rounded-3xl  border-gray-200  p-6 shadow-sm w-full">
+  <div className="mt-8 bg-white rounded-3xl  border-gray-200  p-6 shadow-sm w-full min-h-[710px]">
       {/* Título */}
       <div className="flex justify-between items-center mb-10 border-b border-gray-200 p-4  ">
         <h2 className="text-2xl font-medium">{title}</h2>
