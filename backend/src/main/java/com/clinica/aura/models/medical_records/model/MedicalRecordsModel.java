@@ -1,5 +1,7 @@
 package com.clinica.aura.models.medical_records.model;
 
+import com.clinica.aura.models.diagnoses.model.DiagnosesModel;
+import com.clinica.aura.models.follow_up_entries.model.FollowUpEntriesModel;
 import com.clinica.aura.models.patient.model.PatientModel;
 import com.clinica.aura.models.professional.model.ProfessionalModel;
 import jakarta.persistence.*;
@@ -8,6 +10,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Setter
@@ -33,6 +36,13 @@ public class MedicalRecordsModel {
     @ManyToOne(targetEntity = ProfessionalModel.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "updated_by_professional_id", nullable = false)
     private ProfessionalModel updatedBy;
+
+    @OneToMany(mappedBy = "medicalRecord", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<DiagnosesModel> diagnoses;
+
+    @OneToMany(mappedBy = "medicals", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<FollowUpEntriesModel> followUps;
+
 
     @CreationTimestamp
     private LocalDateTime createdAt;

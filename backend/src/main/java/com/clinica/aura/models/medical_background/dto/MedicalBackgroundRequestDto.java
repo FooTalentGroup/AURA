@@ -14,7 +14,7 @@ import java.util.List;
 @Builder
 public class MedicalBackgroundRequestDto {
 
-    @Schema(description = "ID del paciente asociado", example = "1", required = true)
+    @Schema(description = "ID del paciente asociado", example = "1", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotNull(message = "El ID del paciente no puede ser nulo")
     private Long patientId;
 
@@ -22,10 +22,10 @@ public class MedicalBackgroundRequestDto {
     private String schoolReports;
 
     @Schema(description = "Lista de alergias del paciente", example = "[\"Polen\", \"Penicilina\"]")
-    @NotEmpty(message = "Debe especificar al menos una alergia")
+    //@NotEmpty(message = "Debe especificar al menos una alergia")
     private List<String> allergies;
 
     @Schema(description = "Lista de discapacidades del paciente", example = "[\"Dislexia\"]")
-    @NotEmpty(message = "Debe especificar al menos una discapacidad")
+   // @NotEmpty(message = "Debe especificar al menos una discapacidad")
     private List<String> disabilities;
 }

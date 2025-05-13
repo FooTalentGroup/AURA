@@ -57,13 +57,13 @@ public class MedicalBackgroundModel {
     private LocalDateTime updatedAt;
 
 
-// Relaciones con ProfessionalModel (creado por / actualizado por)
-@ManyToOne
-@JoinColumn(name = "created_by")
-private ProfessionalModel createdBy;
+    // Relaciones con ProfessionalModel (creado por / actualizado por)
+    @ManyToOne
+    @JoinColumn(name = "created_by")
+    private ProfessionalModel createdBy;
 
-@ManyToOne
-@JoinColumn(name = "updated_by")
-private ProfessionalModel updatedBy;
+    @ManyToOne
+    @JoinColumn(name = "updated_by")
+    private ProfessionalModel updatedBy;
 
 }

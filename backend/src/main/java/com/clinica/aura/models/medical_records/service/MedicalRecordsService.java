@@ -1,5 +1,7 @@
 package com.clinica.aura.models.medical_records.service;
 
+import com.clinica.aura.models.diagnoses.model.DiagnosesModel;
+import com.clinica.aura.models.follow_up_entries.model.FollowUpEntriesModel;
 import com.clinica.aura.models.medical_records.dtoRequest.*;
 import com.clinica.aura.models.medical_records.dtoResponse.MedicalRecordsResponseDto;
 
@@ -55,6 +57,8 @@ public class MedicalRecordsService {
         response.setUpdatedAt(record.getUpdatedAt());
         response.setPatientId(record.getPatients().getId());
         response.setProfessionalId(record.getCreatedBy().getId());
+        response.setDiagnosisIds(record.getDiagnoses().stream().map(DiagnosesModel::getId).toList());
+        response.setFollowUpIds(record.getFollowUps().stream().map(FollowUpEntriesModel::getId).toList());
 
         return response;
     }
@@ -68,6 +72,8 @@ public class MedicalRecordsService {
         response.setUpdatedAt(record.getUpdatedAt());
         response.setPatientId(record.getPatients().getId());
         response.setProfessionalId(record.getCreatedBy().getId());
+        response.setDiagnosisIds(record.getDiagnoses().stream().map(DiagnosesModel::getId).toList());
+        response.setFollowUpIds(record.getFollowUps().stream().map(FollowUpEntriesModel::getId).toList());
 
         return response;
     }
@@ -82,6 +88,8 @@ public class MedicalRecordsService {
         response.setUpdatedAt(record.getUpdatedAt());
         response.setPatientId(record.getPatients().getId());
         response.setProfessionalId(record.getCreatedBy().getId());
+        response.setDiagnosisIds(record.getDiagnoses().stream().map(DiagnosesModel::getId).toList());
+        response.setFollowUpIds(record.getFollowUps().stream().map(FollowUpEntriesModel::getId).toList());
 
         return response;
     }
@@ -97,6 +105,8 @@ public class MedicalRecordsService {
             dto.setUpdatedAt(record.getUpdatedAt());
             dto.setPatientId(record.getPatients().getId());
             dto.setProfessionalId(record.getCreatedBy().getId());
+            dto.setDiagnosisIds(record.getDiagnoses().stream().map(DiagnosesModel::getId).toList());
+            dto.setFollowUpIds(record.getFollowUps().stream().map(FollowUpEntriesModel::getId).toList());
             response.add(dto);
         }
         return response;
@@ -145,7 +155,9 @@ public class MedicalRecordsService {
                 medicalRecordsModel.getCreatedAt(),
                 medicalRecordsModel.getUpdatedAt(),
                 medicalRecordsModel.getPatients().getId(),
-                medicalRecordsModel.getCreatedBy().getId()
+                medicalRecordsModel.getCreatedBy().getId(),
+                medicalRecordsModel.getDiagnoses().stream().map(DiagnosesModel::getId).toList(),
+                medicalRecordsModel.getFollowUps().stream().map(FollowUpEntriesModel::getId).toList()
         );
     }
 
