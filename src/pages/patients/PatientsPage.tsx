@@ -2,12 +2,12 @@ import React, { useState } from "react";
 import { usePatients } from "../../features/patients/hooks/usePatients";
 import { PatientRow } from "../../features/patients/components/PatientRow";
 import { PageContainer } from "../../components/shared/layouts/PageContainer";
-
+import { useNavigate } from "react-router-dom"; 
 
 const PatientsPage: React.FC = () => {
   const [query, setQuery] = useState("");
   const { patients, loading, error, reload } = usePatients(0, 20);
-
+ const navigate = useNavigate();
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const q = e.target.value;
     setQuery(q);
@@ -15,7 +15,7 @@ const PatientsPage: React.FC = () => {
   };
 
   const handleAdd = () => {
-    // …
+  navigate("/Sregister");
   };
   const handleView = (id: number) => { console.log('Ver paciente', id);};
 
@@ -26,7 +26,7 @@ const PatientsPage: React.FC = () => {
     query={query}
     onQueryChange={handleSearchChange}
     onAdd={handleAdd}
-    addLabel="Agregar paciente"
+    addLabel="Agregar paciente" 
   >
     {/* Encabezados: 8 columnas */}
     <div className="grid grid-cols-[2fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr] items-end text-sm text-gray-500 mb-4 px-4">
