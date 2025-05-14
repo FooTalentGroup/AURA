@@ -6,6 +6,15 @@ import jakarta.validation.ConstraintValidatorContext;
 
 import java.util.regex.Pattern;
 
+/**
+ * Validador para los campos relacionados al seguro médico dentro de PatientRequestDto.
+ * - Si el paciente tiene seguro (hasInsurance = true):
+ *   - insuranceName y insurancePlan deben tener entre 3 y 20 caracteres, solo letras y números.
+ *   - memberShipNumber debe tener entre 5 y 20 caracteres y puede incluir letras, números, guiones o barras.
+ * - Si el paciente NO tiene seguro (hasInsurance = false):
+ *   - insuranceName debe ser exactamente "Particular".
+ * Este validador se utiliza con la anotación @ValidInsurance sobre la clase PatientRequestDto.
+ */
 public class InsuranceValidator implements ConstraintValidator<ValidInsurance, PatientRequestDto> {
 
     private static final Pattern INSURANCE_NAME_PLAN_PATTERN = Pattern.compile("^[a-zA-Z0-9]{3,20}$");

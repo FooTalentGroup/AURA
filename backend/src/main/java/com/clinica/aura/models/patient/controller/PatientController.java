@@ -41,7 +41,8 @@ public class PatientController {
     }
 
     @GetMapping
-    @Operation(summary = "Filtrar pacientes por paginación", description = "(Recordar que empieza desde 0)")
+    @Operation(summary = "Filtrar pacientes por paginación", description = "(Recordar que empieza desde " +
+            "page 0 y size 1. Significa quiero traer de la página 0, un solo registro)")
     public ResponseEntity<PaginatedResponse<PatientResponseDto>> getAllPatients
     (@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
         return ResponseEntity.ok(patientService.getAllPatients(page, size));
@@ -60,24 +61,10 @@ public class PatientController {
         return new ResponseEntity<>(patientResponseDto, HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/{id}")
-    @Operation(summary = "Eliminar paciente", description = "Elimina un paciente del sistema junto con su usuario, roles y datos personales.")
-    public ResponseEntity<?> deletePatient(@PathVariable("id") Long id) {
-        try {
-            patientService.deletePatientById(id);
-            return ResponseEntity.ok("Paciente eliminado exitosamente.");
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.status(404).body(e.getMessage());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(500).body("Error al eliminar el paciente.");
-        }
-    }
-
-
     @GetMapping("/search/dni")
     @Operation(summary = "Buscar paciente por dni", description = "Se busca un paciente por dni deben ingresarse los" +
-            " 8 caracteres exactos.")
+            " 8 caracteres exactos. El sistema espera 8 números, en caso de enviar letra, guiones y/o caracteres especiales" +
+            "el sistema buscará igual pero no encontrará ningún paciente")
     public ResponseEntity<PatientResponseDto> getPatientByDni(
             @RequestParam(name = "dni") String dni) {
         return ResponseEntity.ok(patientService.getPatientByDni(dni));
@@ -85,7 +72,8 @@ public class PatientController {
 
     @GetMapping("/search/name")
     @Operation(summary = "Buscar paciente por nombre", description = "Se busca un paciente por nombre, apellido o ambos" +
-            " (coincidencia parcial o total) Se debe llenar al menos uno de los 2 campos.")
+            " (coincidencia parcial o total) Se debe llenar al menos uno de los 2 campos. Se espera el ingreso " +
+            "de nombres o apellidos si se ingresan caracteres o números el sistema buscará igual aunque no encuentre pacientes obviamente")
     public ResponseEntity<List<PatientResponseDto>> getPatientsByName(
             @RequestParam(name = "name", required = false) String name,
             @RequestParam(name = "sureName", required = false) String sureName) {

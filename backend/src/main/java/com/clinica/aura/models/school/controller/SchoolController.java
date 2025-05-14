@@ -24,7 +24,6 @@ public class SchoolController {
 
     private final SchoolService schoolService;
 
-    //crear escuela
     @PostMapping
     @Operation(summary = "Crear una nueva escuela", description = "Se crea una nueva escuela con todos sus datos de contacto, " +
             "acá no se agregan pacientes a la escuela. Cuando se crea el nuevo paciente ahí puede agregarse el id" +
@@ -35,7 +34,6 @@ public class SchoolController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    //listar escuelas
     @GetMapping("/schools")
     @Operation(summary = "Listar todas las escuelas", description = "Obtiene una lista paginada de todas las escuelas registradas")
     public PaginatedResponse<SchoolResponseDto> listSchools(@RequestParam(defaultValue = "0") int page,
@@ -43,7 +41,6 @@ public class SchoolController {
         return schoolService.getAllSchools(page, size);
     }
 
-    //actualizar escuela
     @PutMapping("/schools/{id}")
     @Operation(summary = "Editar una escuela", description = "Actualiza los datos de una escuela existente por su ID.")
     public ResponseEntity<SchoolResponseDto> updateSchool(@PathVariable Long id, @Valid @RequestBody SchoolRequestDtoUpdate request) {
@@ -51,7 +48,6 @@ public class SchoolController {
         return ResponseEntity.ok(updatedSchool);
     }
 
-    //borrar escuela por id
     @DeleteMapping("/{id}")
     @Operation(summary = "Eliminar una escuela por ID", description = "Elimina una escuela existente. Devuelve mensaje de confirmación.")
     public ResponseEntity<String> delete(@PathVariable Long id) {

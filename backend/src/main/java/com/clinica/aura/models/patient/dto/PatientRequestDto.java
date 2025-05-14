@@ -8,13 +8,20 @@ import lombok.*;
 import java.time.LocalDate;
 import java.util.List;
 
+/**
+ * DTO para recibir y validar datos de entrada al registrar o actualizar un paciente.
+ * Este DTO contiene datos personales, información de contacto, datos del tutor,
+ * datos de la obra social (si corresponde), y referencias a profesionales y escuela.
+ * Aplica validaciones estándar y una validación personalizada con {@link com.clinica.aura.models.patient.dto.valid.ValidInsurance}
+ * para garantizar coherencia entre los campos de seguro médico.
+ */
+
 @Setter
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @ValidInsurance
 public class PatientRequestDto {
-    // Datos del usuario
     @NotBlank
     @Email(message = "Formato de email inválido")
     @Pattern(
@@ -50,7 +57,7 @@ public class PatientRequestDto {
     @Schema(description = "Fecha de nacimiento del paciente", example = "2015-05-20")
     private LocalDate birthDate;
 
-    // Datos específicos del paciente - cambiar a femenino/masculino/otro
+
     @Schema(description = "Indica el genero del paciente ", example = "femenino/masculino/otro (no permite otras palabras)")
     @Pattern(regexp = "^(?i)(femenino|masculino|otro)$", message = "El sexo debe ser 'femenino', 'masculino' u 'otro'")
     private String genre;

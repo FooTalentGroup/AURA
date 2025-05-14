@@ -1,6 +1,5 @@
 package com.clinica.aura.models.patient.model;
 
-
 import com.clinica.aura.models.person.model.PersonModel;
 import com.clinica.aura.models.professional.model.ProfessionalModel;
 import com.clinica.aura.models.school.model.SchoolModel;
@@ -15,6 +14,21 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * Entidad que representa a un paciente en el sistema.
+ * Esta entidad extiende los datos personales básicos desde {@link PersonModel}
+ * a través de una relación @OneToOne compartiendo el mismo ID.
+ * Atributos destacados:
+ * - hasInsurance: indica si tiene cobertura médica.
+ * - insuranceName, insurancePlan, memberShipNumber: detalles del seguro médico.
+ * - address: dirección del paciente.
+ * - tutorName y relationToPatient: datos del adulto responsable.
+ * - genre: género del paciente.
+ * - age: edad calculada, no persistida( En la base se guarda la fecha de nacimiento, atributo que hereda de personModel).
+ * - professionals: lista de profesionales asignados (relación @ManyToMany).
+ * - schoolModel: escuela asociada (opcional, @ManyToOne).
+ * - createdAt y updatedAt: timestamps de auditoría automática.
+ */
 @Entity
 @Setter
 @Getter
@@ -27,25 +41,18 @@ public class PatientModel {
     @Id
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)//cascade elimina paciente y persona
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @MapsId
     @JoinColumn(name = "id")
     private PersonModel person;
 
-    private boolean hasInsurance; //estaba en false
-
+    private boolean hasInsurance;
     private String insuranceName;
-
-     private String address;
-
+    private String address;
     private String tutorName;
-
     private String relationToPatient;
-
     private String genre;
-
     private String insurancePlan;
-
     private String memberShipNumber;
 
     @Transient

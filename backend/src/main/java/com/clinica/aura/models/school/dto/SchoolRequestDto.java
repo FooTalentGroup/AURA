@@ -41,11 +41,6 @@ public class SchoolRequestDto {
     @NotBlank(message = "El teléfono de la escuela es obligatorio")
     private String phoneSchool;
 
-   //private List<PatientModel>patients;
-    /*comento la lista para que no salga en swagger
-     * en los model de las tablas y en los metodos persiste la relacion de
-     * forma correcta
-     * */
 
 }
 
