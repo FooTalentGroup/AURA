@@ -4,7 +4,6 @@ import com.clinica.aura.models.patient.model.PatientModel;
 import com.clinica.aura.models.patient.repository.PatientRepository;
 import com.clinica.aura.models.person.repository.PersonRepository;
 import com.clinica.aura.models.user_account.service.impl.UserDetailsServiceImpl;
-import jakarta.persistence.EntityNotFoundException;
 import com.clinica.aura.exceptions.*;
 import com.clinica.aura.config.jwt.JwtUtils;
 import com.clinica.aura.models.person.model.PersonModel;
@@ -266,7 +265,7 @@ public class ProfessionalService {
                         .tutorName(patient.getTutorName())
                         .relationToPatient(patient.getRelationToPatient())
                         .genre(patient.getGenre())
-                        .memberShipNumer(patient.getMembershipNumber())
+                        .memberShipNumber(patient.getMemberShipNumber())
                         .insurancePlan(patient.getInsurancePlan())
                         .schoolId(patient.getSchoolModel() != null ? patient.getSchoolModel().getId() : null)
                         .professionalIds(patient.getProfessionals() != null

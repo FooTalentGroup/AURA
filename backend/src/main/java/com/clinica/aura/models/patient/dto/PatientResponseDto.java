@@ -24,12 +24,11 @@ public class PatientResponseDto {
     private boolean hasInsurance;
     private String insuranceName;
     private String insurancePlan;
-    private String memberShipNumer;
+    private String memberShipNumber;
     private String address;
     private String tutorName;
     private String relationToPatient;
     private List<Long> professionalIds;
     private Long schoolId;
-
 
 }

@@ -30,7 +30,7 @@ public class PatientModel {
     @JoinColumn(name = "id")
     private PersonModel person;
 
-    private boolean hasInsurance = false;
+    private boolean hasInsurance; //estaba en false
 
     private String insuranceName;
 
@@ -44,7 +44,7 @@ public class PatientModel {
 
     private String insurancePlan;
 
-    private String membershipNumber;
+    private String memberShipNumber;
 
     @Transient
     private int age;

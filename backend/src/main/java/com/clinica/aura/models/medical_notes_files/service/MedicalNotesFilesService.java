@@ -24,11 +24,34 @@ public class MedicalNotesFilesService {
 
     private final MedicalNotesFilesRepository repository;
 
-
+    /**
+     * Constructor de la clase {@link MedicalNotesFilesService}.
+     *
+     * Inicializa el servicio con una instancia del repositorio {@link MedicalNotesFilesRepository},
+     * que será utilizado para acceder y manipular los archivos de notas médicas en la base de datos.
+     *
+     * @param repository Repositorio de archivos de notas médicas inyectado mediante constructor.
+     */
     public MedicalNotesFilesService(MedicalNotesFilesRepository repository) {
         this.repository = repository;
     }
 
+    /**
+     * Genera un reporte PDF personalizado con los datos médicos de un paciente, identificado por su DNI.
+     *
+     * El reporte incluye información básica del paciente (nombre, fecha de nacimiento, tutor, etc.) y un
+     * listado de seguimientos médicos obtenidos desde la base de datos. También se incluye un logo institucional
+     * al inicio del documento, si está disponible en los recursos.
+     *
+     * Además, se guarda un registro del archivo generado en la base de datos mediante un objeto {@link MedicalNotesFilesModel}.
+     *
+     * @param dni            DNI del paciente cuyos registros médicos se desean incluir en el reporte.
+     * @param tituloReporte  Título que se colocará en el encabezado del documento PDF y como nombre del archivo registrado.
+     * @return Un arreglo de bytes que representa el contenido binario del archivo PDF generado.
+     *
+     * @throws RuntimeException Si no se encuentran registros para el DNI proporcionado o si ocurre un error
+     *                          durante la generación del PDF (por ejemplo, al cargar el logo o escribir el documento).
+     */
     public byte[] generatePdfReport(String dni, String tituloReporte) {
         List<MedicalNotesFilesResponseDTO.MedicalFilesDTO> records = repository.findReportByDni(dni);
 
@@ -37,13 +60,13 @@ public class MedicalNotesFilesService {
         }
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        // Usa la clase Document de iTextPDF
+
         Document document = new Document();
         try {
             PdfWriter.getInstance(document, out);
             document.open();
 
-            // Insertar imagen en la esquina superior derecha
+
             try {
                 InputStream is = getClass().getClassLoader().getResourceAsStream("img/auraLogo.jpg");
                 if (is == null) {
@@ -57,7 +80,7 @@ public class MedicalNotesFilesService {
                 System.out.println("Error cargando imagen: " + e.getMessage());
             }
 
-            // Usa la clase Paragraph de iTextPDF para agregar texto
+
             Font tituloFont = new Font(Font.FontFamily.HELVETICA, 18, Font.BOLD);
             Paragraph titulo = new Paragraph(tituloReporte, tituloFont);
             titulo.setAlignment(Element.ALIGN_CENTER);
@@ -65,7 +88,7 @@ public class MedicalNotesFilesService {
 
             document.add(new Paragraph(" "));
 
-            // Agrupamos por followUpEntry (aunque estén repetidos otros datos)
+
             int i=0;
             for (MedicalNotesFilesResponseDTO.MedicalFilesDTO r : records) {
                 if(i>0) break;
@@ -79,14 +102,14 @@ public class MedicalNotesFilesService {
 
                 document.add(new Paragraph(" "));
                 document.add(new LineSeparator());
-                //
+
                 MedicalNotesFilesModel fileRecord = MedicalNotesFilesModel.builder()
                         .file_name(tituloReporte + ".pdf")
                         .patient_name(r.getName())
                         .patient_last_name(r.getLastName())
                         .uploaded_at(LocalDateTime.now())
                         .build();
-                repository.save(fileRecord); // Guarda el registro del archivo
+                repository.save(fileRecord);
                 i++;
             }
 
@@ -105,16 +128,14 @@ public class MedicalNotesFilesService {
             }
 
             document.close();
-            //aca guarda el registro de la descarga
-           // Guardar registro en la tabla medical_notes_files esto me diste vos
-
 
         } catch (Exception e) {
-            // Es importante manejar las excepciones al trabajar con iTextPDF
+
             System.err.println("Error al generar el PDF: " + e.getMessage());
-            // Considera lanzar una excepción personalizada aquí para informar mejor el error
+
             throw new RuntimeException("Error al generar el reporte PDF", e);
         }
-        return out.toByteArray(); // Envía el PDF como respuesta
+        return out.toByteArray();
    }
+
 }
