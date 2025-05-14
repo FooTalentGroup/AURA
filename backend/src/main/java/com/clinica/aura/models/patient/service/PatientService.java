@@ -99,7 +99,7 @@ public class PatientService {
         String relationToPatient = authCreateUserDto.getRelationToPatient();
         String genre = authCreateUserDto.getGenre();
         String insurancePlan = authCreateUserDto.getInsurancePlan();
-        String memberShipNumber = authCreateUserDto.getMemberShipNumber();
+        String memberShipNumer = authCreateUserDto.getMemberShipNumber();
 
         if (userRepository.findByEmail(email).isPresent()) {
             throw new EmailAlreadyExistsException("El correo " + email + " ya existe en la base de datos.");

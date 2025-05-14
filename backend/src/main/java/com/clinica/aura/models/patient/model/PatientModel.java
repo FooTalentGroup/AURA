@@ -4,12 +4,14 @@ package com.clinica.aura.models.patient.model;
 import com.clinica.aura.models.person.model.PersonModel;
 import com.clinica.aura.models.professional.model.ProfessionalModel;
 import com.clinica.aura.models.school.model.SchoolModel;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 

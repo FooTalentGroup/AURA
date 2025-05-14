@@ -76,6 +76,7 @@ public class PatientRequestDto {
             "Swiss Medical (ej: 000012345678)" +
             "Medicus(ej:1234567-01) " +
             "IOSFA(ej:123456/A) ")
+  
     @Pattern(regexp = "^[a-zA-Z0-9/-]+$", message = "El número de afiliado solo puede contener letras, números, guiones o barras.")
     private String memberShipNumber;
 

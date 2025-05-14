@@ -17,8 +17,4 @@ public class MedicalRecordsRequestDto {
     @NotNull(message = "El ID del paciente es obligatorio")
     @Schema(description = "ID del paciente al que pertenece el historial médico", example = "1", requiredMode = Schema.RequiredMode.REQUIRED)
     private Long patientId;
-
-    @NotBlank(message = "La especialidad es obligatoria")
-    @Schema(description = "Especialidad del paciente", example = "Cardiologo", requiredMode = Schema.RequiredMode.REQUIRED)
-    private String speciality;
 }

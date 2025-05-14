@@ -1,9 +1,7 @@
 package com.clinica.aura.models.medical_records.controller;
 
-import com.clinica.aura.models.medical_records.dtoResponse.MedicalRecordFilterRequest;
 import com.clinica.aura.models.medical_records.dtoResponse.MedicalRecordsResponseDto;
 import com.clinica.aura.models.medical_records.dtoRequest.MedicalRecordsRequestDto;
-import com.clinica.aura.models.medical_records.dtoRequest.MedicalRecordsRequestUpdateDto;
 import com.clinica.aura.models.medical_records.dtoResponse.MedicalRecordsSummaryDto;
 import com.clinica.aura.models.medical_records.service.MedicalRecordsService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -15,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -79,24 +76,24 @@ public class MedicalRecordsController {
         return ResponseEntity.ok("Historial con el ID "+ id +" eliminado exitosamente.");
     }
 
-    @Operation(summary = "Actualizar un historial",
-            description = "Actualiza los datos de un historial específico. Tener en cuenta que un profesional debe haber iniciado sesión para poder actualizar un historial.")
-    @PutMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody MedicalRecordsRequestUpdateDto dto) {
-        return ResponseEntity.ok(service.update(id, dto));
-    }
+//    @Operation(summary = "Actualizar un historial",
+//            description = "Actualiza los datos de un historial específico. Tener en cuenta que un profesional debe haber iniciado sesión para poder actualizar un historial.")
+//    @PutMapping("/{id}")
+//    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody MedicalRecordsRequestUpdateDto dto) {
+//        return ResponseEntity.ok(service.update(id, dto));
+//    }
 
     @GetMapping("/filter")
     public ResponseEntity<List<MedicalRecordsSummaryDto>> getHistory(
             @RequestParam(required = false) String specialty,
-            @RequestParam(required = false) Long professionalId,
-            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate, // Formato ISO Date
-            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate
+            @RequestParam(required = false) String professionalName,
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date
     ) {
         return ResponseEntity.ok(
-                service.getFilteredHistory(specialty, professionalId, startDate, endDate)
+                service.getFilteredHistory(specialty, professionalName, date)
         );
     }
+
 
 
 }
