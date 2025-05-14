@@ -62,21 +62,29 @@ export default function PatientTabs() {
         }
 
        let patientFollowEntries: FollowEntriesProps | null = null;
-        let patientDiagnosesData: PatientDiagnosesProps | null = null;
-       if (medicalRecordPatient) {
+               let patientDiagnosesData: PatientDiagnosesProps | null = null;
+        if (medicalRecordPatient) {
           const [firstDiagnosisId] = medicalRecordPatient.diagnosisIds;
-          patientFollowEntries = await api.getFollowEntriesById(medicalRecordPatient.id);
-          patientDiagnosesData = await api.getDiagnosesById(firstDiagnosisId);
-        }
-        const medicalRecordFilter = await api.getMedicalRecordFilter();
-         let medicalBackgroundsData: PatientNotesInfo | null = null;
-      try {
-          medicalBackgroundsData = await api.getMedicalBackgroundsById(patientID);
-       } catch (err: any) {
-         if (err.message.includes("no fue encontrado") || err.message.includes("404")) {
-            console.warn(`Sin antecedentes médicos para patient ${patientID}`);
-          } else {
-            throw err;
+          try {
+            patientFollowEntries = await api.getFollowEntriesById(medicalRecordPatient.id);
+          } catch (err: any) {
+            if (err.message.includes("no fue encontrado") || err.message.includes("404")) {
+              console.warn(`Sin follow entries para medicalRecord ${medicalRecordPatient.id}`);
+            } else {
+              throw err;
+            }
+          }
+          // Si tuvimos entries, intentamos traer diagnósticos (pueden faltar también)
+          if (patientFollowEntries) {
+            try {
+              patientDiagnosesData = await api.getDiagnosesById(firstDiagnosisId);
+            } catch (err: any) {
+              if (err.message.includes("no fue encontrado") || err.message.includes("404")) {
+                console.warn(`Sin diagnósticos para diagnosisId ${firstDiagnosisId}`);
+              } else {
+                throw err;
+              }
+            }
           }
        }
 
@@ -89,8 +97,8 @@ export default function PatientTabs() {
         setPatientSchool(school || null);
         setPatientDiagnoses(patientDiagnosesData);
         setFollowEntries(patientFollowEntries);
-        setMedicalRecordFilters(medicalRecordFilter);
-        setMedicalBackgrounds(medicalBackgroundsData);
+        setMedicalRecordFilters(medicalRecordFilters);
+        setMedicalBackgrounds(medicalBackgrounds);
       } catch (err) {
         console.error("Error al cargar el paciente:", err);
       }
@@ -117,12 +125,12 @@ export default function PatientTabs() {
         return <ContactTab patient={patientDB} school={patientSchool} />;
       case "diagnostico":
         if (!patientDiagnoses) {
-          return <div>Cargando datos del paciente...</div>;
+          return <div>No se encontraron diagnosticos</div>;
         }
         return <DiagnosticTab diagnoses={patientDiagnoses} />;
       case "historial":
         if (!medicalRecordFilters || !followEntries) {
-          return <div>Cargando datos del paciente...</div>;
+          return <div>No se encontro historial</div>;
         }
         return (
           <ClinicalHistoryTab
@@ -132,7 +140,7 @@ export default function PatientTabs() {
         );
       case "antecedentes":
         if (!medicalBackgrounds) {
-          return <div>Cargando datos del paciente...</div>;
+          return <div>No se encontro antecedentes</div>;
         }
         return <MedicalBackgroundTab medicalBackgrounds={medicalBackgrounds} />;
       default:
