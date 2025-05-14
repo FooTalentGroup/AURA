@@ -15,7 +15,11 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
-@Tag(name = "Clinical Report", description = "Operaciones relacionadas con los informes clínicos")
+/**
+ * Controlador REST para gestionar informes clínicos.
+ * Proporciona endpoints para crear, obtener, actualizar y eliminar informes clínicos.
+ */
+@Tag(name = "Clinical Report", description = "Endpoints para la gestión de informes clínicos")
 @RestController
 @RequestMapping("/clinical-reports")
 public class ClinicalReportController {
@@ -26,6 +30,12 @@ public class ClinicalReportController {
         this.clinicalReportService = clinicalReportService;
     }
 
+    /**
+     * Crea un nuevo informe clínico.
+     *
+     * @param requestDto Datos del informe clínico a crear.
+     * @return El informe clínico creado.
+     */
     @Operation(
             summary = "Crear un nuevo informe clínico",
             description = "Crear un nuevo informe clínico. Solo un profesional autenticado puede crear un informe."
@@ -38,6 +48,11 @@ public class ClinicalReportController {
         return ResponseEntity.ok(response);
     }
 
+    /**
+     * Obtiene todos los informes clínicos.
+     *
+     * @return Lista de todos los informes clínicos registrados.
+     */
     @Operation(
             summary = "Obtener todos los informes clínicos",
             description = "Recupera todos los informes clínicos. No requiere autorización."
@@ -48,6 +63,12 @@ public class ClinicalReportController {
         return ResponseEntity.ok(reports);
     }
 
+    /**
+     * Obtiene un informe clínico por su ID.
+     *
+     * @param id ID del informe clínico.
+     * @return El informe clínico correspondiente al ID proporcionado.
+     */
     @Operation(
             summary = "Obtener un informe clínico por ID",
             description = "Recupera un informe clínico por ID. No requiere autorización."
@@ -59,6 +80,12 @@ public class ClinicalReportController {
         return ResponseEntity.ok(report);
     }
 
+    /**
+     * Elimina un informe clínico por su ID.
+     *
+     * @param id ID del informe clínico a eliminar.
+     * @return Respuesta sin contenido si la eliminación fue exitosa.
+     */
     @Operation(
             summary = "Eliminar un informe clínico por ID",
             description = "Elimina un informe clínico por ID. Solo un profesional autenticado puede eliminar un informe."
@@ -71,6 +98,13 @@ public class ClinicalReportController {
         return ResponseEntity.noContent().build();
     }
 
+    /**
+     * Actualiza un informe clínico por su ID.
+     *
+     * @param id         ID del informe clínico a actualizar.
+     * @param requestDto Datos actualizados del informe clínico.
+     * @return El informe clínico actualizado.
+     */
     @Operation(
             summary = "Actualizar un informe clínico por ID",
             description = "Actualiza un informe clínico por ID. Solo un profesional autenticado puede actualizar un informe."

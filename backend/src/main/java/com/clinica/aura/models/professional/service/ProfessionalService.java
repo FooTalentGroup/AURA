@@ -125,13 +125,7 @@ public class ProfessionalService {
     }
 
 
-//    //listar todos los profesionales
-//    public List<ProfessionalResponseDto> getAllProfessionals() {
-//        return professionalRepository.findByDeletedFalse()
-//                .stream()
-//                .map(this::mapToDto)
-//                .toList();
-//    }
+
 
 
     // Buscar profesional por ID
@@ -222,14 +216,7 @@ public class ProfessionalService {
     }
 
 
-    //método de eliminacion tradicional
-    /*
-    public void deleteProfessional(Long id) {
-        if (!professionalRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Profesional no encontrado");
-        }
-        professionalRepository.deleteById(id);
-    }*/
+
 
     //método de eliminación logica
     public void deleteProfessional(Long id) {
@@ -255,8 +242,6 @@ public class ProfessionalService {
                         .lastName(person != null ? person.getLastName() : null)
                         .dni(person != null ? person.getDni() : null)
                         .phoneNumber(person != null ? person.getPhoneNumber() : null)
-                        // .country(person != null ? person.getCountry() : null) //cambio sugerido a eliminar  02/05/2025
-                        //  .photoUrl(person != null ? person.getPhotoUrl() : null) //cambio sugerido a eliminar  02/05/2025
                         .birthDate(person != null ? person.getBirthDate() : null)
                         .email(null) // lo dejás en null porque no tenés el usuario
                         .hasInsurance(patient.isHasInsurance())

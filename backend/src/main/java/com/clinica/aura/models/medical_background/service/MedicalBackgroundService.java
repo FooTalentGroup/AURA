@@ -97,9 +97,11 @@ public class MedicalBackgroundService {
         ProfessionalModel professional = professionalRepository.findByPerson(user.getPerson())
                 .orElseThrow(() -> new ProfessionalNotFoundException("Profesional no encontrado para el usuario con id: " + user.getPerson().getId()));
 
-        // Actualizar las alergias y discapacidades
+        // Actualizamos las alergias y discapacidades
         background.setAllergies(dto.getAllergies());
         background.setDisabilities(dto.getDisabilities());
+        //actualizamos informe medico
+        background.setSchoolReports(dto.getSchoolReports());
         background.setUpdatedBy(professional);
 
         medicalBackgroundRepository.save(background);
