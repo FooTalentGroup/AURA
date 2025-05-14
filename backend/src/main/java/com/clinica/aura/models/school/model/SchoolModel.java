@@ -9,6 +9,17 @@ import lombok.*;
 
 import java.util.List;
 
+/**
+ * Entidad que representa una institución educativa asociada a uno o más pacientes.
+ * Esta entidad se utiliza para registrar y gestionar información básica sobre escuelas.
+ * Su uso es referencial en otras entidades como {@link PatientModel}, que puede vincularse a una escuela específica.
+ *
+ * Atributos principales:
+ * - schoolName: nombre de la escuela.
+ * - emailSchool: correo electrónico institucional, utilizado para validaciones únicas.
+ * - phoneSchool: número de contacto telefónico.
+ * La entidad se encuentra mapeada a la tabla "schools" y su ID es generado automáticamente.
+ */
 @Entity
 @Getter
 @Setter
@@ -24,14 +35,10 @@ public class SchoolModel {
     @Column(name =" school_name")
     private String schoolName;
 
-    @Column(name =" school_Representative")
-    private String schoolRepresentative;
-
     @Column(name =" email_school")
     private String emailSchool;
 
     @Column(name =" phone_school")
     private String phoneSchool;
-
 
 }

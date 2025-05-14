@@ -54,8 +54,6 @@ public class SchoolController {
         schoolService.deleteSchoolById(id);
         return ResponseEntity.ok("Escuela borrada correctamente");
     }
-
-
-
+    
 
 }
