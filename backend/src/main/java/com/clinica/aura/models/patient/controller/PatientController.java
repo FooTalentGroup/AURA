@@ -60,21 +60,6 @@ public class PatientController {
         return new ResponseEntity<>(patientResponseDto, HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/{id}")
-    @Operation(summary = "Eliminar paciente", description = "Elimina un paciente del sistema junto con su usuario, roles y datos personales.")
-    public ResponseEntity<?> deletePatient(@PathVariable("id") Long id) {
-        try {
-            patientService.deletePatientById(id);
-            return ResponseEntity.ok("Paciente eliminado exitosamente.");
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.status(404).body(e.getMessage());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(500).body("Error al eliminar el paciente.");
-        }
-    }
-
-
     @GetMapping("/search/dni")
     @Operation(summary = "Buscar paciente por dni", description = "Se busca un paciente por dni deben ingresarse los" +
             " 8 caracteres exactos.")

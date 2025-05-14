@@ -459,45 +459,6 @@ public class PatientService {
     }
 
     /**
-     * Elimina completamente un paciente del sistema, incluyendo sus relaciones asociadas.
-     * Este método realiza una eliminación en múltiples pasos para asegurar que no queden relaciones huérfanas:
-     * <ul>
-     *     <li>Verifica que el paciente exista por su ID.</li>
-     *     <li>Elimina las relaciones entre el paciente y sus profesionales asociados.</li>
-     *     <li>Si existe un usuario vinculado a la persona del paciente, elimina primero sus roles y luego el usuario.</li>
-     *     <li>Elimina el registro del paciente mediante una consulta nativa.</li>
-     * </ul>
-     * Este proceso es transaccional, por lo que cualquier fallo intermedio revertirá toda la operación.
-     *
-     * @param patientId ID del paciente que se desea eliminar.
-     * @throws PatientNotFoundException Si no se encuentra un paciente con el ID proporcionado.
-     */
-    @Transactional
-    public void deletePatientById(Long patientId) {
-        PatientModel patient = patientRepository.findById(patientId)
-                .orElseThrow(() -> new PatientNotFoundException("Paciente no encontrado con ID: " + patientId));
-
-        Long personId = patient.getId();
-
-
-        patientRepository.deletePatientProfessionalRelation(patientId);
-
-       //Elimina la relación con medical
-       // medicalRecordsRepository.deleteByPatientId(patientId);
-
-
-        Optional<UserModel> userOpt = userRepository.findByPersonId(personId);
-        userOpt.ifPresent(user -> {
-            patientRepository.deleteUserRolesByUserId(user.getId());
-            patientRepository.deleteUserById(user.getId());
-        });
-
-
-        patientRepository.deletePatientByIdNative(patientId);
-        patientRepository.deletePersonById(personId);
-    }
-
-    /**
      * Recupera la información completa de un paciente a partir de su número de DNI.
      * Este método realiza lo siguiente:
      * <ul>

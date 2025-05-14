@@ -64,13 +64,11 @@ public class CommandInitializerConfig implements CommandLineRunner {
             RoleModel adminRole = roleRepository.findByEnumRole(EnumRole.ADMIN)
                     .orElseThrow(() -> new RuntimeException("❌ El rol ADMIN no está en la base de datos."));
 
+
             PersonModel person = PersonModel.builder()
                     .name("Ryan")
                     .lastName("Gonzales")
                     .phoneNumber("987654321")
-                    //.country("Perú")  // campo que se pide eliminar 02/05/2025
-                   // .birthDate(LocalDate.of(1980, 1, 1)) // campo que se pide eliminar 02/05/2025
-                  //  .photoUrl("https://i.sstatic.net/l60Hf.png") // campo que se pide eliminar 02/05/2025
                     .build();
 
             UserModel admin = UserModel.builder()
