@@ -6,10 +6,13 @@ interface Props {
 }
 
 export const PatientRow: React.FC<Props> = ({ patient, onView }) => {
-  const initial = patient.name.charAt(0).toUpperCase() + patient.lastName.charAt(0).toUpperCase();
+  const initial =
+    patient.name.charAt(0).toUpperCase() +
+    patient.lastName.charAt(0).toUpperCase();
   const nextS = patient.nextSession || "—";
   const lastS = patient.lastSession || "—";
-  const age = new Date().getFullYear() - new Date(patient.birthDate).getFullYear();
+  const age =
+    new Date().getFullYear() - new Date(patient.birthDate).getFullYear();
 
   return (
     <div className="grid grid-cols-[2fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr] items-center bg-white rounded-xl shadow-sm px-4 py-3 mb-3">
@@ -27,9 +30,8 @@ export const PatientRow: React.FC<Props> = ({ patient, onView }) => {
       </div>
 
       {/* 2. DNI + botón Ver (HC) */}
-      
+
       <span className="text-gray-700">{patient.dni}</span>
- 
 
       {/* 3. Próx. sesión */}
       <span className="text-gray-700">{nextS}</span>

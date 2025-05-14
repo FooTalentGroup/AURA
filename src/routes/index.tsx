@@ -18,6 +18,8 @@ import AdminPage from "../pages/admin/AdminPage";
 import ProfessionalPage from "../pages/Professional/ProfessionalPage";
 import { ProfessionalRegister } from "../features/professional/components/ProfessionalRegister";
 import { ReceptionistRegister } from "../features/Receptionist/components/RecepcionistRegister";
+import PatientTabs from "../pages/patientTabs/PatientTabsPage";
+import { PatientRegister } from "../features/patients/components/PatientRegister";
 
 const AppRoutes = () => {
   return (
@@ -32,9 +34,11 @@ const AppRoutes = () => {
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/patients" element={<PatientsPage />} />
+        <Route path="/patient/:id" element={<PatientTabs />} />
         <Route path="/appointments" element={<AppointmentsPage />} />
         <Route path="/Pregister" element={<ProfessionalRegister />} />
         <Route path="/Rregister" element={<ReceptionistRegister />} />
+        <Route path="/Sregister" element={<PatientRegister />} />
 
       </Route>
 
@@ -42,14 +46,12 @@ const AppRoutes = () => {
         <Route path="admin" element={<AdminPage />} />
         <Route path="/professionals" element={<ProfessionalPage />} />
       </Route>
-      
 
       <Route path="/404" element={<NotFoundPage />} />
 
       <Route path="/" element={<Navigate to="/login" replace />} />
 
       <Route path="*" element={<Navigate to="/404" replace />} />
-      
     </Routes>
   );
 };
