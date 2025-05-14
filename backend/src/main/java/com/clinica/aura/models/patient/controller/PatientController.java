@@ -41,7 +41,7 @@ public class PatientController {
     }
 
     @GetMapping
-    @Operation(summary = "Filtrar pacientes por paginación", description = "(Recordar que empieza desde 0)")
+    @Operation(summary = "Filtrar pacientes por paginación", description = "(Recordar que empieza desde 0) y size 1")
     public ResponseEntity<PaginatedResponse<PatientResponseDto>> getAllPatients
     (@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
         return ResponseEntity.ok(patientService.getAllPatients(page, size));
