@@ -49,19 +49,36 @@ export default function PatientTabs() {
         const patientID = Number(id);
         const patientData = await api.getPatientById(patientID);
         const schoolsList = await api.listSchoolsPaginated();
-        const medicalRecordPatientId = await api.getMedicalRecordByPatientId(
-          patientID
-        );
-        const patientDiagnosesId = medicalRecordPatientId.diagnosisIds[0];
-        const medicalId = medicalRecordPatientId.id;
-        const patientFollowEntries = await api.getFollowEntriesById(medicalId);
-        const patientDiagnosesData = await api.getDiagnosesById(
-          patientDiagnosesId
-        );
+            let medicalRecordPatient: { id: number; diagnosisIds: number[] } | null = null;
+       try {
+          medicalRecordPatient = await api.getMedicalRecordByPatientId(patientID);
+        } catch (err: any) {
+          // tu wrapper lanza Error('El recurso solicitado no fue encontrado') en 404
+          if (err.message.includes("no fue encontrado") || err.message.includes("404")) {
+            console.warn(`Sin historial médico para patient ${patientID}`);
+          } else {
+            throw err;
+          }
+        }
+
+       let patientFollowEntries: FollowEntriesProps | null = null;
+        let patientDiagnosesData: PatientDiagnosesProps | null = null;
+       if (medicalRecordPatient) {
+          const [firstDiagnosisId] = medicalRecordPatient.diagnosisIds;
+          patientFollowEntries = await api.getFollowEntriesById(medicalRecordPatient.id);
+          patientDiagnosesData = await api.getDiagnosesById(firstDiagnosisId);
+        }
         const medicalRecordFilter = await api.getMedicalRecordFilter();
-        const medicalBackgrounds = await api.getMedicalBackgroundsById(
-          patientID
-        );
+         let medicalBackgroundsData: PatientNotesInfo | null = null;
+      try {
+          medicalBackgroundsData = await api.getMedicalBackgroundsById(patientID);
+       } catch (err: any) {
+         if (err.message.includes("no fue encontrado") || err.message.includes("404")) {
+            console.warn(`Sin antecedentes médicos para patient ${patientID}`);
+          } else {
+            throw err;
+          }
+       }
 
         // Busco la escuela correspondiente a cada paciente
         const school = schoolsList.content.find(
@@ -73,7 +90,7 @@ export default function PatientTabs() {
         setPatientDiagnoses(patientDiagnosesData);
         setFollowEntries(patientFollowEntries);
         setMedicalRecordFilters(medicalRecordFilter);
-        setMedicalBackgrounds(medicalBackgrounds);
+        setMedicalBackgrounds(medicalBackgroundsData);
       } catch (err) {
         console.error("Error al cargar el paciente:", err);
       }
