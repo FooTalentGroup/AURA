@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import DashboardLayout from '../../../layouts/DashboardLayout';
 import { RegisterForm, Field } from '../../../components/shared/layouts/RegisterForm';
-import { validatePassword } from '../../../core/utils/passwordvalidator'; 
 import { Modal, LoadingResultModal } from '../../../layouts/Modal';
 import { useRegisterPatient } from '../hooks/useRegisterPatient';
 import type { PatientPayload } from '../types/patient.types';
@@ -13,11 +12,11 @@ const stepFields: Record<number, Field[]> = {
     { name: 'lastName', label: 'Apellido', type: 'text' },
     { name: 'birthDate', label: 'Fecha de nacimiento', type: 'date' },
     { name: 'dni', label: 'DNI', type: 'text' },
-    { name: 'genre', label: 'Sexo', type: 'select', options: [
-      { value: 'M', label: 'Masculino' },
-      { value: 'F', label: 'Femenino' },
-      { value: 'O', label: 'Otro' },
-    ]},
+{ name: 'genre', label: 'Sexo', type: 'select', options: [
+  { value: 'masculino', label: 'Masculino' },
+  { value: 'femenino', label: 'Femenino' },
+  { value: 'otro', label: 'Otro' },
+]}
   ],
   2: [
     { name: 'insuranceName', label: 'Nombre', type: 'text' },
@@ -25,10 +24,10 @@ const stepFields: Record<number, Field[]> = {
     { name: 'memberShipNumber', label: 'Nro afiliado', type: 'text' },
   ],
   3: [
-    { name: 'tutorName', label: 'Tutor', type: 'text' },
-    { name: 'relationToPatient', label: 'Parentesco', type: 'text' },
-    { name: 'tutorPhone', label: 'Teléfono tutor', type: 'tel' },
-    { name: 'tutorEmail', label: 'Email tutor', type: 'email' },
+{ name: 'phoneNumber', label: 'Teléfono tutor', type: 'tel' },
+    { name: 'email', label: 'Email tutor', type: 'email' },
+    {name: "address", label: "Dirección", type: "text"},
+
   ],
   4: [
     { name: 'schoolName', label: 'Nombre institución', type: 'text' },
@@ -42,7 +41,7 @@ export const PatientRegister: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [values, setValues] = useState<Partial<PatientPayload & { schoolName?:string; emailSchool?:string; phoneSchool?:string }>>({
     hasInsurance: true,
-    professionalId: [],
+    professionalIds: [],
   });
   const { register, loading, error } = useRegisterPatient();
   const [modalOpen, setModalOpen] = useState(false);

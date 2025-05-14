@@ -5,6 +5,7 @@ import {
 } from "../../features/auth/types/auth.types.ts";
 import { PatientPayload } from "../../features/patients/types/patient.types.ts";
 import { Patient } from "../../features/patients/types/patient.types.ts";
+import { SchoolPayload } from "../../features/patients/types/school.types.ts";
 import {
   AppointmentProps,
   FollowEntriesProps,
@@ -12,6 +13,7 @@ import {
   PatientDiagnosesProps,
   PatientNotesInfo,
   PatientProps,
+  School,
   SchoolsListResponse,
 } from "../../features/patientTabs/types/patientTabs.types.ts";
 import { Professional } from "../../features/professional/types/Professional.types.ts";
@@ -252,6 +254,29 @@ export const api = {
     request<SchoolsListResponse>(`/schools/schools?page=${page}&size=${size}`, {
       method: "GET",
     }),
+   createSchool: (data: SchoolPayload) =>
+    request<School>(
+      `/schools`,
+      {
+        method: "POST",
+        body: JSON.stringify(data),
+      }
+    ),
+
+  updateSchool: (id: number, data: SchoolPayload) =>
+    request<School>(
+      `/schools/schools/${id}`,
+      {
+        method: "PUT",
+        body: JSON.stringify(data),
+      }
+    ),
+
+  deleteSchool: (id: number) =>
+    request<void>(
+      `/schools/${id}`,
+      { method: "DELETE" }
+    ),
 
   // --- Entradas de seguimiento ---
   getFollowEntriesById: (id: number) =>

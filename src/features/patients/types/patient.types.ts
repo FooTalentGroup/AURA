@@ -12,7 +12,7 @@ export interface Patient {
   address: string;
   tutorName: string;
   relationToPatient: string;
-  professionalId: [];
+  professionalIds: [];
 }
 
 export interface PatientPayload {
@@ -30,6 +30,6 @@ export interface PatientPayload {
   address: string;
   tutorName: string;
   relationToPatient: string;
-  professionalId: number[]
+  professionalIds: number[]
     schoolId: number;
 }

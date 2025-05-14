@@ -40,11 +40,13 @@ export interface RegisterProfessionalPayload {
   name: string;
   lastName: string;
   phoneNumber: string;
-  country: string;
-  photoUrl: string;
-  birthDate: string; //  YYYY-MM-DD
+  address: string;
+  birthDate: string; 
+    locality: string;
+  cuil: string;
   licenseNumber: string;
   specialty: string;
+  patientIds:[];
 }
 
 export interface RegisterReceptionistPayload {
@@ -54,9 +56,10 @@ export interface RegisterReceptionistPayload {
   name: string;
   lastName: string;
   phoneNumber: string;
-  country: string;
-  photoUrl: string;
+  locality: string;
+  address: string;
   birthDate: string; 
+  cuil: string;
 }
 
 export interface AuthResponseRegisterDto {

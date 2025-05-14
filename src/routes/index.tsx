@@ -5,7 +5,7 @@ import AdminRoute from "./AdminRoutes";
 
 // Páginas públicas
 import LoginPage from "../pages/auth/LoginPage";
-import RegisterPage from "../pages/auth/RegisterPage";
+// import RegisterPage from "../pages/auth/RegisterPage";
 
 // Páginas privadas
 import DashboardPage from "../pages/dashboard/DashboardPage";
@@ -16,7 +16,10 @@ import ForgotPasswordForm from "../pages/auth/ForgotPasswordForm";
 import ProfilePage from "../pages/profile/ProfilePage";
 import AdminPage from "../pages/admin/AdminPage";
 import ProfessionalPage from "../pages/Professional/ProfessionalPage";
+import { ProfessionalRegister } from "../features/professional/components/ProfessionalRegister";
+import { ReceptionistRegister } from "../features/Receptionist/components/RecepcionistRegister";
 import PatientTabs from "../pages/patientTabs/PatientTabsPage";
+import { PatientRegister } from "../features/patients/components/PatientRegister";
 
 const AppRoutes = () => {
   return (
@@ -24,7 +27,7 @@ const AppRoutes = () => {
       <Route element={<PublicRoutes />}>
         <Route path="/forgot-password" element={<ForgotPasswordForm />} />
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
+        {/* <Route path="/register" element={<RegisterPage />} /> */}
       </Route>
 
       <Route element={<PrivateRoutes />}>
@@ -33,6 +36,10 @@ const AppRoutes = () => {
         <Route path="/patients" element={<PatientsPage />} />
         <Route path="/patient/:id" element={<PatientTabs />} />
         <Route path="/appointments" element={<AppointmentsPage />} />
+        <Route path="/Pregister" element={<ProfessionalRegister />} />
+        <Route path="/Rregister" element={<ReceptionistRegister />} />
+        <Route path="/Sregister" element={<PatientRegister />} />
+
       </Route>
 
       <Route element={<AdminRoute />}>

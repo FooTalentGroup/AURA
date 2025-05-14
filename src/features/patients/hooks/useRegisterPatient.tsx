@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { patientService } from '../services/patientService';
-import { schoolApi } from '../services/schoolService';
+import { schoolService } from '../services/shoolService';
 import type { PatientPayload, Patient } from '../types/patient.types';
 
 /**
@@ -21,9 +21,9 @@ export function useRegisterPatient() {
         let schoolId: number | undefined;
         // Si viene escuela opcional, la creamos primero
         if (payload.schoolName) {
-          const school = await schoolApi.createSchool({
+          const school = await schoolService.create({
             schoolName: payload.schoolName,
-            emailSchool: payload.emailSchool!, // asumimos no null si schoolName
+            emailSchool: payload.emailSchool!, 
             phoneSchool: payload.phoneSchool!,
           });
           schoolId = school.id;
@@ -44,7 +44,7 @@ export function useRegisterPatient() {
           address: payload.address,
           tutorName: payload.tutorName,
           relationToPatient: payload.relationToPatient,
-          professionalId: payload.professionalId,
+          professionalIds: payload.professionalIds,
           schoolId: schoolId ?? payload.schoolId!,
         };
         const patient = await patientService.create(finalPayload);
