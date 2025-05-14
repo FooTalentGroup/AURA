@@ -9,6 +9,17 @@ import lombok.*;
 
 import java.util.List;
 
+/**
+ * Entidad que representa una institución educativa asociada a uno o más pacientes.
+ * Esta entidad se utiliza para registrar y gestionar información básica sobre escuelas.
+ * Su uso es referencial en otras entidades como {@link PatientModel}, que puede vincularse a una escuela específica.
+ *
+ * Atributos principales:
+ * - schoolName: nombre de la escuela.
+ * - emailSchool: correo electrónico institucional, utilizado para validaciones únicas.
+ * - phoneSchool: número de contacto telefónico.
+ * La entidad se encuentra mapeada a la tabla "schools" y su ID es generado automáticamente.
+ */
 @Entity
 @Getter
 @Setter
@@ -24,25 +35,10 @@ public class SchoolModel {
     @Column(name =" school_name")
     private String schoolName;
 
-   // private String level; //paso estos 2 atributos a paciente
-
-   // private String shift; //turno
-
-    @Column(name =" school_Representative") //nombre del representante de la escuela
-    private String schoolRepresentative;   // puede ser un psicologo o director,
-                                         //nunca docentes, me lo confirmo Mayra de ux
     @Column(name =" email_school")
     private String emailSchool;
 
     @Column(name =" phone_school")
     private String phoneSchool;
 
-    //relacion 1 a n con pacientes
-    //una escuela tiene n cantidad des pacientes
-//    @OneToMany(targetEntity = PatientModel.class, fetch = FetchType.LAZY, mappedBy = "schoolModel")
-//    @JsonManagedReference
-//    private List<PatientModel> patients;
-
-    //ME TRAE LOS PACIENTES EN EL EXAMPLE
-    //Poniendo hiden en la relacion no aparecen a la hora de editar
 }

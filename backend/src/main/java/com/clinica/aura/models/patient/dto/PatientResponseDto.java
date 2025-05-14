@@ -8,6 +8,12 @@ import lombok.Setter;
 import java.time.LocalDate;
 import java.util.List;
 
+/**
+ * DTO de salida que representa los datos completos de un paciente
+ * devueltos por la API en respuestas a consultas o registros.
+ * Incluye información personal, contacto, obra social, vínculo con el tutor,
+ * IDs de profesionales asignados y la escuela asociada (si aplica).
+ */
 @Getter
 @Setter
 @Builder

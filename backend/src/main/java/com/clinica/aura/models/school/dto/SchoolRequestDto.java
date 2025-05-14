@@ -12,6 +12,22 @@ import lombok.Setter;
 
 import java.util.List;
 
+/**
+ * DTO utilizado para registrar una nueva escuela en el sistema.
+ * Esta clase encapsula los datos necesarios para crear un nuevo registro de escuela,
+ * incluyendo su nombre, correo electrónico y número telefónico.
+ * Se aplican anotaciones de validación para asegurar que los datos ingresados cumplan con
+ * los requisitos de formato y contenido establecidos:
+ * <ul>
+ *     <li><b>schoolName</b>: Nombre de la escuela. Obligatorio. Solo letras, números, espacios y el caracter °. Longitud: 6 a 30 caracteres.</li>
+ *     <li><b>emailSchool</b>: Correo electrónico válido del referente escolar. Obligatorio. Debe tener dominio válido (.com, .com.ar, etc.).</li>
+ *     <li><b>phoneSchool</b>: Número de teléfono de la escuela. Obligatorio. Solo números, entre 8 y 11 dígitos, pensado en formato argentino.</li>
+ * </ul>
+ * Este DTO se utiliza en el controlador o servicio al recibir solicitudes HTTP POST
+ * para la creación de escuelas nuevas.
+ *
+*/
+
 @Getter
 @Setter
 public class SchoolRequestDto {
@@ -41,11 +57,6 @@ public class SchoolRequestDto {
     @NotBlank(message = "El teléfono de la escuela es obligatorio")
     private String phoneSchool;
 
-   //private List<PatientModel>patients;
-    /*comento la lista para que no salga en swagger
-     * en los model de las tablas y en los metodos persiste la relacion de
-     * forma correcta
-     * */
 
 }
 

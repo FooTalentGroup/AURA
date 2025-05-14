@@ -83,6 +83,7 @@ public class PatientService {
      * @throws IllegalArgumentException Si no se encuentra el rol "PATIENT" en la base de datos.
      * @throws ProfessionalNotFoundException Si uno o más IDs de profesionales no existen.
      * @throws SchoolNotFoundException Si el ID de la escuela no existe en la base de datos.
+     * Calcula la edad actual del paciente usando la fecha de nacimiento.
      */
 
     @Transactional
@@ -206,7 +207,6 @@ public class PatientService {
      * Asocia una escuela existente a un paciente específico.
      * Este método busca al paciente por su ID y luego valida que la escuela con el ID dado exista.
      * Si ambas entidades existen, se asigna la escuela al paciente y se actualiza en la base de datos.
-     *
      * @param patientId ID del paciente al que se le asignará la escuela.
      * @param schoolId  ID de la escuela que se desea asignar al paciente.
      * @throws PatientNotFoundException Si no se encuentra un paciente con el ID proporcionado.
@@ -227,7 +227,6 @@ public class PatientService {
      * Este método consulta la base de datos utilizando paginación y transforma cada entidad
      * {@code PatientModel} en un {@code PatientResponseDto}. También incluye información asociada,
      * como datos personales, usuario (si existe), escuela y profesionales.
-     *
      * @param page Número de página (empezando desde 0).
      * @param size Cantidad de elementos por página.
      * @return {@link PaginatedResponse} que contiene una lista de {@link PatientResponseDto} junto con
@@ -241,7 +240,6 @@ public class PatientService {
                 .map(patient -> {
                     PersonModel person = patient.getPerson();
                     Optional<UserModel> userOptional = userRepository.findByPerson(person);
-
 
                     PatientResponseDto.PatientResponseDtoBuilder dtoBuilder = PatientResponseDto.builder()
                             .id(patient.getId())
@@ -260,8 +258,6 @@ public class PatientService {
                             .relationToPatient(patient.getRelationToPatient())
                             .genre(patient.getGenre())
                             .age(calculateAgeFromBirthDate(person.getBirthDate()));
-
-
 
                     if (patient.getSchoolModel() != null) {
                         dtoBuilder.schoolId(patient.getSchoolModel().getId());
@@ -293,7 +289,6 @@ public class PatientService {
      * Este método busca al paciente en la base de datos. Si no se encuentra, lanza una excepción.
      * También obtiene la persona asociada, el usuario (si existe), los profesionales vinculados y
      * la escuela, si está asignada. Además, calcula la edad actual del paciente.
-     *
      * @param id ID del paciente a buscar.
      * @return {@link PatientResponseDto} con los datos completos del paciente, incluyendo su información
      * personal, detalles de seguro, profesionales vinculados, escuela (si corresponde) y edad.
@@ -304,14 +299,9 @@ public class PatientService {
                 .orElseThrow(() -> new PatientNotFoundException("Paciente no encontrado con ID: " + id));
 
         var person = patient.getPerson();
-
-
         Long idPatient = patient.getId();
         LocalDate birthDate = personRepository.findBirthDateById(id);
-
         int currentAge= calculatorAge(idPatient, birthDate);
-
-
         var user = userRepository.findByPerson(person).orElse(null);
 
         List<Long> professionalIds = null;
@@ -400,7 +390,6 @@ public class PatientService {
             patient.setSchoolModel(null);
         }
 
-
         List<Long> profIds = requestDto.getProfessionalIds();
         if (profIds != null && !profIds.isEmpty()) {
             List<ProfessionalModel> professionals = professionalRepository.findAllById(profIds);
@@ -458,6 +447,8 @@ public class PatientService {
                 .build();
     }
 
+
+
     /**
      * Recupera la información completa de un paciente a partir de su número de DNI.
      * Este método realiza lo siguiente:
@@ -467,7 +458,6 @@ public class PatientService {
      *     <li>Calcula la edad actual del paciente usando la fecha de nacimiento.</li>
      *     <li>Retorna un objeto {@link PatientResponseDto} con toda la información consolidada.</li>
      * </ul>
-     *
      * @param dni Número de Documento Nacional de Identidad (DNI) del paciente a buscar.
      * @return {@link PatientResponseDto} con los datos del paciente correspondiente al DNI proporcionado.
      * @throws PatientNotFoundException Si no se encuentra ningún paciente con el DNI especificado.

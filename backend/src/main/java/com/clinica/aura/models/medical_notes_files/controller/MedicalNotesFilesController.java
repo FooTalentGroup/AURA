@@ -10,6 +10,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+/**
+ * Controlador encargado de exponer el endpoint para la generación y descarga
+ * de reportes médicos en formato PDF, basados en el DNI del paciente.
+ */
 
 @Tag(name = "Medical Notes Files", description = "Versión futura esta por fuera del MVP")
 @RestController

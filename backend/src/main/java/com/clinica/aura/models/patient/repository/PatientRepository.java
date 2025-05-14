@@ -12,14 +12,13 @@ import java.util.Optional;
 
 public interface PatientRepository extends JpaRepository<PatientModel, Long> {
 
-
     // se usa en el metodo buscar por dni
     Optional<PatientModel> findByPersonDni(String dni);
 
     // se usa para obtener pacientes por el ID de la escuela
     List<PatientModel> findBySchoolModelId(Long schoolId);
 
-    //name o apellido o ambos
+    // se usa en el metodo para obtener buscar por nombre
     @Query("""
     SELECT p FROM PatientModel p
     WHERE (

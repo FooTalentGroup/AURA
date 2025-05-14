@@ -6,10 +6,33 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
-
 import lombok.Setter;
-
 import java.util.List;
+
+/**
+ * DTO utilizado para actualizar los datos de una escuela en el sistema.
+ * Este objeto se emplea en operaciones de actualización de registros escolares, y contiene
+ * la información básica que se puede modificar: nombre, email y teléfono de la institución.
+ *
+ * Incluye validaciones para asegurar que los datos ingresados cumplan con el formato esperado:
+ * <ul>
+ *     <li><b>schoolName</b>: Nombre de la escuela. No puede estar en blanco.</li>
+ *     <li><b>emailSchool</b>: Dirección de correo electrónico de la escuela. Debe tener un formato válido.</li>
+ *     <li><b>phoneSchool</b>: Número telefónico de la escuela. Debe ser numérico, con entre 8 y 11 dígitos.</li>
+ * </ul>
+ *
+ * Este DTO es utilizado por el controlador o servicio al recibir solicitudes HTTP PUT o PATCH
+ * para modificar los datos de una escuela ya existente en la base de datos.
+ *
+ * Ejemplo de uso:
+ * <pre>
+ * {
+ *   "schoolName": "Escuela Técnica N°5",
+ *   "emailSchool": "tecnica5@gmail.com",
+ *   "phoneSchool": "1155667788"
+ * }
+ * @see com.clinica.aura.models.school.service.SchoolService#updateSchool(Long, SchoolRequestDtoUpdate)
+ */
 
 @Getter
 @Setter
@@ -28,8 +51,5 @@ public class SchoolRequestDtoUpdate {
     @NotBlank(message = "El teléfono de la escuela es obligatorio")
     private String phoneSchool;
 
-    //private List<PatientModel> patients;
-    /*comento la lista para que no aparezca en swagger
-    * solo quiero los campos de la escuela
-    * */
+
 }

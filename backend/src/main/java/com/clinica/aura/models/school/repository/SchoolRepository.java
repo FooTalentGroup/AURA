@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface SchoolRepository extends JpaRepository<SchoolModel, Long>{
+   /*se usa en el metodo crear escuela, se valida que no exista este mail en la base de datos
+    antes de insertarlo en la nueva escuela que se quiere crear*/
     Optional<SchoolModel> findByEmailSchool(String emailSchool);
 
 }
