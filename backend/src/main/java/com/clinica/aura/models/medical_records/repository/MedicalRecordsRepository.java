@@ -37,16 +37,13 @@ public interface MedicalRecordsRepository extends JpaRepository<MedicalRecordsMo
         WHERE (:specialty IS NULL        OR p.specialty = :specialty)
           AND (:date IS NULL             OR DATE(mr.created_at) = :date)
           AND (:professionalName IS NULL 
-               OR LOWER(CONCAT(per.name, ' ', per.last_name)) LIKE :professionalName)
+               OR LOWER(CONCAT(per.name, ' ', per.last_name)) LIKE CONCAT('%', LOWER(:professionalName), '%'))
         """,
             nativeQuery = true)
-
     List<MedicalRecordsModel> filterClinicalHistory(
             @Param("specialty")        String specialty,
             @Param("date")             LocalDate date,
             @Param("professionalName") String professionalName
     );
-
-
 
 }
