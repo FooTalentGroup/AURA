@@ -32,7 +32,7 @@ public class PatientModel {
     @JoinColumn(name = "id")
     private PersonModel person;
 
-    private boolean hasInsurance = false;
+    private boolean hasInsurance; //estaba en false
 
     private String insuranceName;
 

@@ -4,7 +4,6 @@ import com.clinica.aura.models.patient.model.PatientModel;
 import com.clinica.aura.models.patient.repository.PatientRepository;
 import com.clinica.aura.models.person.repository.PersonRepository;
 import com.clinica.aura.models.user_account.service.impl.UserDetailsServiceImpl;
-import jakarta.persistence.EntityNotFoundException;
 import com.clinica.aura.exceptions.*;
 import com.clinica.aura.config.jwt.JwtUtils;
 import com.clinica.aura.models.person.model.PersonModel;

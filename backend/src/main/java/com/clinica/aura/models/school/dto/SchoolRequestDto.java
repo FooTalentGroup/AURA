@@ -16,11 +16,13 @@ import java.util.List;
 @Setter
 public class SchoolRequestDto {
     @Pattern(
-            regexp = "^(?=(.*[A-Za-zÁÉÍÓÚÜÑáéíóúüñ]){1,25})(?=(.*\\d){0,4})[A-Za-zÁÉÍÓÚÜÑáéíóúüñ\\d\\s°]+$",
-            message = "El nombre de la escuela puede tener hasta 25 letras y un máximo de 4 números, permite el caracter °."
+            regexp = "^[A-Za-zÁÉÍÓÚÑáéíóúñ0-9°\\s]{6,30}$",
+            message = "El nombre de la escuela solo puede tener letras, números, espacios y el caracter °."
     )
     @Size(min = 6, max = 30, message = "El nombre de la escuela no puede exceder los 30 caracteres.")
-    @Schema(description = "Nombre de la escuela (máximo 25 letras y 4 números, también acepta el caracter especial °). Ejemplo: 'Jardin maternal n°5'")
+    @Schema(
+            description = "Nombre de la escuela (entre 6 y 30 caracteres). Solo letras, números, espacios y el caracter especial °. Ejemplo: 'Jardín Maternal Arcoiris °'"
+    )
     private String schoolName;
 
     @Schema(description = "Correo electrónico del referente de la escuela",

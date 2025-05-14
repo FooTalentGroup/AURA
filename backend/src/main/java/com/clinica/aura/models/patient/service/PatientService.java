@@ -27,7 +27,6 @@ import com.clinica.aura.models.user_account.repository.RoleRepository;
 import com.clinica.aura.models.user_account.repository.UserRepository;
 import com.clinica.aura.util.PaginatedResponse;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.PersistenceContext;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -53,8 +52,7 @@ public class PatientService {
     private final JwtUtils jwtUtils;
     private final RoleRepository roleRepository;
     private final PatientRepository patientRepository;
-
-    private final PersonRepository personRepository;//n
+    private final PersonRepository personRepository;
     private final MedicalRecordsRepository medicalRecordsRepository;
     private final ProfessionalRepository professionalRepository;
 
@@ -65,6 +63,27 @@ public class PatientService {
     @Autowired
     private SchoolRepository schoolRepository;
 
+    /**
+     * Crea un nuevo paciente en el sistema junto con su usuario asociado.
+     * Este método realiza múltiples validaciones previas:
+     * <ul>
+     *     <li>Verifica que el correo electrónico no esté ya registrado.</li>
+     *     <li>Verifica que el DNI no esté ya registrado.</li>
+     *     <li>Valida la existencia del rol "PATIENT".</li>
+     *     <li>Valida la existencia de los profesionales referenciados (si los hay).</li>
+     *     <li>Valida la existencia de la escuela referenciada (si hay).</li>
+     * </ul>
+     * Luego crea las entidades {@code PersonModel}, {@code PatientModel} y {@code UserModel},
+     * las asocia entre sí, y las persiste en la base de datos.
+     *
+     * @param authCreateUserDto DTO con los datos del nuevo paciente.
+     * @return {@link PatientResponseDto} con los datos del paciente creado.
+     * @throws EmailAlreadyExistsException Si el correo electrónico ya está registrado.
+     * @throws DniAlreadyExistsException Si el DNI ya existe en el sistema.
+     * @throws IllegalArgumentException Si no se encuentra el rol "PATIENT" en la base de datos.
+     * @throws ProfessionalNotFoundException Si uno o más IDs de profesionales no existen.
+     * @throws SchoolNotFoundException Si el ID de la escuela no existe en la base de datos.
+     */
 
     @Transactional
     public PatientResponseDto createUser(@Valid PatientRequestDto authCreateUserDto) {
@@ -90,7 +109,6 @@ public class PatientService {
             throw new DniAlreadyExistsException("El DNI " + dni + " ya está registrado en la base de datos.");
         }
 
-
         Optional<RoleModel> professionalRole = roleRepository.findByEnumRole(EnumRole.PATIENT);
         if (professionalRole.isEmpty()) {
             throw new IllegalArgumentException("El rol especificado no está configurado en la base de datos.");
@@ -114,9 +132,8 @@ public class PatientService {
                 .tutorName(tutorName)
                 .relationToPatient(relationToPatient)
                 .genre(genre)
-                .memberShipNumber(memberShipNumer)
+                .memberShipNumber(memberShipNumber)
                 .build();
-
 
 
         List<Long> profIds = authCreateUserDto.getProfessionalIds();
@@ -184,7 +201,16 @@ public class PatientService {
                 .build();
     }
 
-    //Asignar en ael atributo schoolId de paciente el id de la escuela
+    /**
+     * Asocia una escuela existente a un paciente específico.
+     * Este método busca al paciente por su ID y luego valida que la escuela con el ID dado exista.
+     * Si ambas entidades existen, se asigna la escuela al paciente y se actualiza en la base de datos.
+     *
+     * @param patientId ID del paciente al que se le asignará la escuela.
+     * @param schoolId  ID de la escuela que se desea asignar al paciente.
+     * @throws PatientNotFoundException Si no se encuentra un paciente con el ID proporcionado.
+     * @throws SchoolNotFoundException Si no se encuentra una escuela con el ID proporcionado.
+     */
     public void assignSchoolToPatient(Long patientId, Long schoolId) {
         PatientModel patient = patientRepository.findById(patientId).orElseThrow(() -> new PatientNotFoundException("Paciente no encontrado con ID: " + patientId));
         SchoolModel school = entityManager.find(SchoolModel.class, schoolId);
@@ -195,9 +221,17 @@ public class PatientService {
         patientRepository.save(patient);
     }
 
-
-
-    //LISTADO DE PACIENTES NUEVO
+    /**
+     * Recupera una lista paginada de todos los pacientes registrados en el sistema.
+     * Este método consulta la base de datos utilizando paginación y transforma cada entidad
+     * {@code PatientModel} en un {@code PatientResponseDto}. También incluye información asociada,
+     * como datos personales, usuario (si existe), escuela y profesionales.
+     *
+     * @param page Número de página (empezando desde 0).
+     * @param size Cantidad de elementos por página.
+     * @return {@link PaginatedResponse} que contiene una lista de {@link PatientResponseDto} junto con
+     * información de paginación como número de página, tamaño, total de páginas y total de elementos.
+     */
     public PaginatedResponse<PatientResponseDto> getAllPatients(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<PatientModel> patientsPage = patientRepository.findAll(pageable);
@@ -253,21 +287,30 @@ public class PatientService {
     }
 
 
-    //buscar pacientes por id
+    /**
+     * Recupera la información detallada de un paciente específico a partir de su ID.
+     * Este método busca al paciente en la base de datos. Si no se encuentra, lanza una excepción.
+     * También obtiene la persona asociada, el usuario (si existe), los profesionales vinculados y
+     * la escuela, si está asignada. Además, calcula la edad actual del paciente.
+     *
+     * @param id ID del paciente a buscar.
+     * @return {@link PatientResponseDto} con los datos completos del paciente, incluyendo su información
+     * personal, detalles de seguro, profesionales vinculados, escuela (si corresponde) y edad.
+     * @throws PatientNotFoundException Si no se encuentra un paciente con el ID proporcionado.
+     */
     public PatientResponseDto getPatientById(Long id) {
         var patient = patientRepository.findById(id)
                 .orElseThrow(() -> new PatientNotFoundException("Paciente no encontrado con ID: " + id));
 
         var person = patient.getPerson();
 
-        //trae el id
+
         Long idPatient = patient.getId();
-        //busca la fecha de nacimiento en base al id
         LocalDate birthDate = personRepository.findBirthDateById(id);
 
         int currentAge= calculatorAge(idPatient, birthDate);
 
-        // busca el usuario a partir de la persona
+
         var user = userRepository.findByPerson(person).orElse(null);
 
         List<Long> professionalIds = null;
@@ -304,22 +347,40 @@ public class PatientService {
         return dtoBuilder.build();
     }
 
-
-    //editar paciente por id
+    /**
+     * Actualiza la información de un paciente existente, incluyendo sus datos personales, información médica,
+     * profesionales asociados, escuela asignada y el correo electrónico del usuario vinculado.
+     * <p>
+     * Realiza varias validaciones:
+     * <ul>
+     *     <li>Verifica que el paciente con el ID especificado exista.</li>
+     *     <li>Verifica que la escuela referenciada exista, si se proporciona un ID de escuela.</li>
+     *     <li>Valida la existencia de los profesionales indicados por ID.</li>
+     *     <li>Verifica que el usuario vinculado a la persona también exista.</li>
+     * </ul>
+     * Luego actualiza y guarda los cambios en la base de datos.
+     *
+     * @param id ID del paciente que se desea actualizar.
+     * @param requestDto DTO con los datos actualizados del paciente.
+     * @return {@link PatientResponseDto} con la información actualizada del paciente.
+     * @throws PatientNotFoundException Si no se encuentra un paciente con el ID proporcionado.
+     * @throws SchoolNotFoundException Si el ID de la escuela proporcionado no existe.
+     * @throws ProfessionalNotFoundException Si uno o más profesionales especificados no existen.
+     * @throws UserNotFoundException Si no se encuentra el usuario vinculado a la persona del paciente.
+     */
     public PatientResponseDto updatePatient(Long id, PatientRequestDto requestDto) {
         var patient = patientRepository.findById(id)
                 .orElseThrow(() -> new PatientNotFoundException("Paciente no encontrado con ID: " + id));
 
         var person = patient.getPerson();
 
-        // se actualizan datos de la persona
+
         person.setName(requestDto.getName());
         person.setLastName(requestDto.getLastName());
         person.setPhoneNumber(requestDto.getPhoneNumber());
         person.setDni(requestDto.getDni());
         person.setBirthDate(requestDto.getBirthDate());
 
-        //se  actualizan datos del paciente
         patient.setInsuranceName(requestDto.getInsuranceName());
         patient.setHasInsurance(requestDto.isHasInsurance());
         patient.setInsurancePlan(requestDto.getInsurancePlan());
@@ -336,7 +397,6 @@ public class PatientService {
         }else{
             patient.setSchoolModel(null);
         }
-        //busca la escuela por ID y asignarla
 
 
         List<Long> profIds = requestDto.getProfessionalIds();
@@ -353,18 +413,14 @@ public class PatientService {
             patient.setProfessionals(new ArrayList<>());
         }
 
-
-        // Actualizar solo el email en la tabla usuario
         Optional<UserModel> optionalUser = userRepository.findByPerson(person);
         UserModel user = optionalUser.orElseThrow(() -> new UserNotFoundException("Usuario no encontrado para el paciente con ID: " + id));
 
         user.setEmail(requestDto.getEmail());
 
-        // Guardar cambios
         patientRepository.save(patient);
-        userRepository.save(user); // importante guardar el user también
+        userRepository.save(user);
 
-        // traer los ids de los profesionales
         List<Long> professionalIds = null;
         if (patient.getProfessionals() != null) {
             professionalIds = patient.getProfessionals().stream()
@@ -372,9 +428,8 @@ public class PatientService {
                     .toList();
         }
 
-        //trae el id del paciente
+
         Long idPatient = patient.getId();
-        //busca la fecha de nacimiento en base al id
         LocalDate birthDate = personRepository.findBirthDateById(id);
 
         int currentAge= calculatorAge(idPatient, birthDate);
@@ -401,7 +456,20 @@ public class PatientService {
                 .build();
     }
 
-    //eliminar paciente por id
+    /**
+     * Elimina completamente un paciente del sistema, incluyendo sus relaciones asociadas.
+     * Este método realiza una eliminación en múltiples pasos para asegurar que no queden relaciones huérfanas:
+     * <ul>
+     *     <li>Verifica que el paciente exista por su ID.</li>
+     *     <li>Elimina las relaciones entre el paciente y sus profesionales asociados.</li>
+     *     <li>Si existe un usuario vinculado a la persona del paciente, elimina primero sus roles y luego el usuario.</li>
+     *     <li>Elimina el registro del paciente mediante una consulta nativa.</li>
+     * </ul>
+     * Este proceso es transaccional, por lo que cualquier fallo intermedio revertirá toda la operación.
+     *
+     * @param patientId ID del paciente que se desea eliminar.
+     * @throws PatientNotFoundException Si no se encuentra un paciente con el ID proporcionado.
+     */
     @Transactional
     public void deletePatientById(Long patientId) {
         PatientModel patient = patientRepository.findById(patientId)
@@ -409,25 +477,38 @@ public class PatientService {
 
         Long personId = patient.getId();
 
-        // Elimina la relacion con profesionales
+
         patientRepository.deletePatientProfessionalRelation(patientId);
 
        //Elimina la relación con medical
        // medicalRecordsRepository.deleteByPatientId(patientId);
 
-        // Elimina el usuario y sus roles
+
         Optional<UserModel> userOpt = userRepository.findByPersonId(personId);
         userOpt.ifPresent(user -> {
             patientRepository.deleteUserRolesByUserId(user.getId());
             patientRepository.deleteUserById(user.getId());
         });
 
-        //Elimina paciente y persona
+
         patientRepository.deletePatientByIdNative(patientId);
         patientRepository.deletePersonById(personId);
     }
 
-    //buscar paciente por dni exacto
+    /**
+     * Recupera la información completa de un paciente a partir de su número de DNI.
+     * Este método realiza lo siguiente:
+     * <ul>
+     *     <li>Busca el paciente mediante el DNI asociado a la persona.</li>
+     *     <li>Obtiene los datos personales, información médica y vínculos (escuela y profesionales).</li>
+     *     <li>Calcula la edad actual del paciente usando la fecha de nacimiento.</li>
+     *     <li>Retorna un objeto {@link PatientResponseDto} con toda la información consolidada.</li>
+     * </ul>
+     *
+     * @param dni Número de Documento Nacional de Identidad (DNI) del paciente a buscar.
+     * @return {@link PatientResponseDto} con los datos del paciente correspondiente al DNI proporcionado.
+     * @throws PatientNotFoundException Si no se encuentra ningún paciente con el DNI especificado.
+     */
     public PatientResponseDto getPatientByDni(String dni) {
         var patient = patientRepository.findByPersonDni(dni)
                 .orElseThrow(() -> new PatientNotFoundException("Paciente no encontrado con DNI: " + dni));
@@ -444,9 +525,8 @@ public class PatientService {
 
         Long schoolId = patient.getSchoolModel() != null ? patient.getSchoolModel().getId() : null;
 
-        //trae el id
+
         Long idPatient = patient.getId();
-        //busca la fecha de nacimiento en base al id
         LocalDate birthDate = personRepository.findBirthDateByDni(dni);
 
         int currentAge= calculatorAge(idPatient, birthDate);
@@ -474,7 +554,20 @@ public class PatientService {
     }
 
 
-    //buscar paciente por nombre
+    /**
+     * Busca y devuelve una lista de pacientes que coincidan con el nombre y apellido proporcionados.
+     * Este método:
+     * <ul>
+     *     <li>Consulta la base de datos por pacientes cuyo nombre y apellido coincidan (búsqueda personalizada).</li>
+     *     <li>Mapea cada entidad encontrada a un {@link PatientResponseDto}, incluyendo datos personales,
+     *         profesionales asignados, escuela, y edad calculada.</li>
+     * </ul>
+     *
+     * @param name      Nombre del paciente.
+     * @param sureName  Apellido del paciente.
+     * @return Lista de {@link PatientResponseDto} con los pacientes encontrados.
+     * @throws PatientNotFoundException Si no se encuentra ningún paciente con el nombre y apellido especificados.
+     */
     public List<PatientResponseDto> getPatientsByName(String name, String sureName) {
         List<PatientModel> patients = patientRepository.searchByFullName(name, sureName);
 
@@ -518,6 +611,15 @@ public class PatientService {
         }).toList();
     }
 
+    /**
+     * Calcula la edad actual de un paciente a partir de su fecha de nacimiento.
+     * Este método también verifica que el paciente exista en la base de datos mediante su ID.
+     * Si el paciente no existe, lanza una excepción.
+     * @param id  ID del paciente que se desea validar en la base de datos.
+     * @param age Fecha de nacimiento del paciente.
+     * @return Edad del paciente en años.
+     * @throws PatientNotFoundException Si no se encuentra un paciente con el ID proporcionado.
+     */
     private int calculatorAge(Long id, LocalDate age){
         personRepository.findById(id).orElseThrow(()->
                 new PatientNotFoundException("El paciente no se encuentra en la base de datos"));
@@ -525,6 +627,13 @@ public class PatientService {
         return Period.between(age, currentDate).getYears();
     }
 
+    /**
+     * Calcula la edad actual en años a partir de una fecha de nacimiento.
+     * Este método es utilizado en funcionalidades de listado y búsqueda, donde pueden retornar múltiples resultados.
+     * Si la fecha de nacimiento es {@code null}, retorna 0.
+     * @param birthDate Fecha de nacimiento del paciente.
+     * @return Edad del paciente en años. Retorna 0 si la fecha de nacimiento es {@code null}.
+     */
     private int calculateAgeFromBirthDate(LocalDate birthDate) {
         if (birthDate == null) return 0;
         return Period.between(birthDate, LocalDate.now()).getYears();

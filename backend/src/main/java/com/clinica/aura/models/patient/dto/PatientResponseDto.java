@@ -31,5 +31,4 @@ public class PatientResponseDto {
     private List<Long> professionalIds;
     private Long schoolId;
 
-
 }

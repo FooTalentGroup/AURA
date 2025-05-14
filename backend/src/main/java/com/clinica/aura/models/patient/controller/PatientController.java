@@ -30,7 +30,8 @@ public class PatientController {
 
     @Operation(summary = "Registrar nuevo paciente", description = """
             Registra un nuevo paciente, el campo professionalIds es opcional y se lo puede dejar en blanco, pero
-            si se lo llena se debe asegurar de que sean ids de profesionales existentes en la base de datos
+            si se lo llena se debe asegurar de que sean ids de profesionales existentes en la base de datos.
+                
             """)
     @PostMapping(value = "/register")
     @Tag(name = "Patient")
@@ -39,8 +40,6 @@ public class PatientController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-
-    //Nuevo filtrado de lista de pacientes
     @GetMapping
     @Operation(summary = "Filtrar pacientes por paginación", description = "(Recordar que empieza desde 0)")
     public ResponseEntity<PaginatedResponse<PatientResponseDto>> getAllPatients
@@ -55,7 +54,7 @@ public class PatientController {
     }
 
     @PatchMapping("/{id}")
-    @Operation(summary = "Actualizar paciente", description = "Actualiza los datos de un paciente específico. No olvidar de cambiar los campos de example sino quedaran asi en la bd al ejecutar la prueba")
+    @Operation(summary = "Actualizar paciente", description = "Actualiza los datos de un paciente específico. No olvidar de cambiar los campos de example sino quedaran asi en la base de datos al ejecutar la prueba")
     public ResponseEntity<PatientResponseDto> updatePatient(@PathVariable("id") Long id, @RequestBody @Valid PatientRequestDto request) {
         PatientResponseDto patientResponseDto =  patientService.updatePatient(id, request);
         return new ResponseEntity<>(patientResponseDto, HttpStatus.CREATED);
@@ -75,7 +74,7 @@ public class PatientController {
         }
     }
 
-    //dni exacto
+
     @GetMapping("/search/dni")
     @Operation(summary = "Buscar paciente por dni", description = "Se busca un paciente por dni deben ingresarse los" +
             " 8 caracteres exactos.")
@@ -109,7 +108,5 @@ public class PatientController {
         patientService.assignSchoolToPatient(patientId, schoolId);
         return ResponseEntity.ok("Escuela asignada al paciente correctamente");
     }
-
-
 
 }
