@@ -5,7 +5,9 @@ import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.constraints.Pattern;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.hibernate.TypeMismatchException;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -16,6 +18,7 @@ import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingPathVariableException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -365,6 +368,52 @@ public class GlobalExceptionController {
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .header("X-Content-Type-Options", "nosniff")
                 .header("X-Conflict-Error", "true")
+                .body(errorResponse);
+    }
+
+    //Maneja Ids no proporcionados
+    @ExceptionHandler(MissingPathVariableException.class)
+    public ResponseEntity<ErrorResponse> handleMissingPathVariable(MissingPathVariableException ex, WebRequest request) {
+
+        String paramName = ex.getParameter().getParameterName();
+        String userMessage = "Falta un parámetro requerido en la solicitud";
+        String detailMessage = String.format("Parámetro faltante: %s", paramName);
+
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .errorCode("PARAM-001")
+                .message(userMessage)
+                .details(List.of(detailMessage))
+                .timestamp(Instant.now())
+                .path(getSanitizedPath(request))
+                .build();
+
+        log.warn("Missing Param - Path: {} | Param: {}",
+                errorResponse.getPath(),
+                paramName);
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .header("X-Content-Type-Options", "nosniff")
+                .body(errorResponse);
+    }
+
+    @ExceptionHandler(TypeMismatchException.class)
+    public ResponseEntity<ErrorResponse> handleTypeMismatch(TypeMismatchException ex, WebRequest request) {
+
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .errorCode("TYPE-001")
+                .message("El parámetro proporcionado no es del tipo correcto")
+                .details(List.of(sanitizeErrorMessage(ex.getMessage())))
+                .timestamp(Instant.now())
+                .path(getSanitizedPath(request))
+                .build();
+
+        log.warn("Type Mismatch - Path: {} | IP: {} | Mensaje: {}",
+                errorResponse.getPath(),
+                request.getHeader("X-Forwarded-For"),
+                ex.getMessage());
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .header("X-Content-Type-Options", "nosniff")
                 .body(errorResponse);
     }
 
