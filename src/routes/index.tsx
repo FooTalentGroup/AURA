@@ -16,6 +16,7 @@ import ForgotPasswordForm from "../pages/auth/ForgotPasswordForm";
 import ProfilePage from "../pages/profile/ProfilePage";
 import AdminPage from "../pages/admin/AdminPage";
 import ProfessionalPage from "../pages/Professional/ProfessionalPage";
+import PatientTabs from "../pages/patientTabs/PatientTabsPage";
 
 const AppRoutes = () => {
   return (
@@ -30,6 +31,7 @@ const AppRoutes = () => {
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/patients" element={<PatientsPage />} />
+        <Route path="/patient/:id" element={<PatientTabs />} />
         <Route path="/appointments" element={<AppointmentsPage />} />
       </Route>
 
@@ -37,14 +39,12 @@ const AppRoutes = () => {
         <Route path="admin" element={<AdminPage />} />
         <Route path="/professionals" element={<ProfessionalPage />} />
       </Route>
-      
 
       <Route path="/404" element={<NotFoundPage />} />
 
       <Route path="/" element={<Navigate to="/login" replace />} />
 
       <Route path="*" element={<Navigate to="/404" replace />} />
-      
     </Routes>
   );
 };

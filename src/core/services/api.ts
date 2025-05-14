@@ -1,14 +1,25 @@
-import { AuthResponseRegisterDto,
+import {
+  AuthResponseRegisterDto,
   RegisterProfessionalPayload,
-  UserResponse,  } from "../../features/auth/types/auth.types.ts";
+  UserResponse,
+} from "../../features/auth/types/auth.types.ts";
 import { PatientPayload } from "../../features/patients/types/patient.types.ts";
 import { Patient } from "../../features/patients/types/patient.types.ts";
+import {
+  AppointmentProps,
+  FollowEntriesProps,
+  MedicalRecordPatientIdProps,
+  PatientDiagnosesProps,
+  PatientNotesInfo,
+  PatientProps,
+  SchoolsListResponse,
+} from "../../features/patientTabs/types/patientTabs.types.ts";
 import { Professional } from "../../features/professional/types/Professional.types.ts";
 
 // --- Payload y modelos ---
 export interface SuspendRequestDto {
   duration: number;
-  unit: 'HOURS' | 'DAYS' | 'WEEKS' | 'MONTHS';
+  unit: "HOURS" | "DAYS" | "WEEKS" | "MONTHS";
 }
 
 export interface ReceptionistRequestDto {
@@ -54,9 +65,6 @@ export interface MedicalRecordPayload {
   previousConditions: string;
 }
 
-
-
-
 export interface Paginated<T> {
   content: T[];
   currentPage: number;
@@ -79,11 +87,11 @@ export async function request<T>(
   });
 
   const response = await fetch(`${BASE_URL}${endpoint}`, {
-    mode: 'cors',
-    credentials: 'include',
+    mode: "cors",
+    credentials: "include",
     ...options,
     headers,
-  })
+  });
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
@@ -97,9 +105,6 @@ export async function request<T>(
 
   return response.json() as Promise<T>;
 }
-
-
-
 
 // --- Endpoints exportados ---
 export const api = {
@@ -127,8 +132,6 @@ export const api = {
       body: JSON.stringify(data),
     }),
 
-
-
   getCurrentUser: () =>
     request<UserResponse>(`/auth/me`, {
       method: "GET",
@@ -136,7 +139,7 @@ export const api = {
 
   // --- Pacientes ---
   getPatientById: (id: number) =>
-    request<Patient>(`/patients/${id}`, { method: "GET" }),
+    request<PatientProps>(`/patients/${id}`, { method: "GET" }),
 
   createPatient: (data: PatientPayload) =>
     request<Patient>(`/patients/register`, {
@@ -154,10 +157,9 @@ export const api = {
     request<void>(`/patients/${id}`, { method: "DELETE" }),
 
   listPatientsPaginated: (page: number = 0, size: number = 10) =>
-    request<Paginated<Patient>>(
-      `/patients?page=${page}&size=${size}`,
-      { method: "GET" }
-    ),
+    request<Paginated<Patient>>(`/patients?page=${page}&size=${size}`, {
+      method: "GET",
+    }),
 
   searchPatientByName: (nombre: string) =>
     request<Patient[]>(
@@ -166,14 +168,18 @@ export const api = {
     ),
 
   searchPatientByDni: (dni: string) =>
-    request<Patient>(
-      `/patients/buscar/dni?dni=${encodeURIComponent(dni)}`,
-      { method: "GET" }
-    ),
+    request<Patient>(`/patients/buscar/dni?dni=${encodeURIComponent(dni)}`, {
+      method: "GET",
+    }),
 
   // --- Historial médico ---
   getMedicalRecordById: (id: number) =>
     request<MedicalRecord>(`/medical-records/${id}`, { method: "GET" }),
+
+  getMedicalRecordByPatientId: (id: number) =>
+    request<MedicalRecordPatientIdProps>(`/medical-records/patient/${id}`, {
+      method: "GET",
+    }),
 
   createMedicalRecord: (data: MedicalRecordPayload) =>
     request<MedicalRecord>(`/medical-records/create`, {
@@ -190,23 +196,20 @@ export const api = {
   deleteMedicalRecord: (id: number) =>
     request<void>(`/medical-records/${id}`, { method: "DELETE" }),
 
-  listMedicalRecordsPaginated: (
-    page: number = 0,
-    size: number = 10
-  ) =>
+  listMedicalRecordsPaginated: (page: number = 0, size: number = 10) =>
     request<Paginated<MedicalRecord>>(
       `/medical-records?page=${page}&size=${size}`,
       { method: "GET" }
     ),
 
+  getMedicalRecordFilter: () =>
+    request<AppointmentProps[]>(`/medical-records/filter`, { method: "GET" }),
+
   // --- Recepcionistas ---
   getReceptionistById: (id: number) =>
     request<Receptionist>(`/receptionist/${id}`, { method: "GET" }),
 
-  updateReceptionist: (
-    id: number,
-    data: ReceptionistUpdateDto
-  ) =>
+  updateReceptionist: (id: number, data: ReceptionistUpdateDto) =>
     request<Receptionist>(`/receptionist/${id}`, {
       method: "PATCH",
       body: JSON.stringify(data),
@@ -215,10 +218,7 @@ export const api = {
   deleteReceptionist: (id: number) =>
     request<void>(`/receptionist/${id}`, { method: "DELETE" }),
 
-  listReceptionistsPaginated: (
-    page: number = 0,
-    size: number = 10
-  ) =>
+  listReceptionistsPaginated: (page: number = 0, size: number = 10) =>
     request<Paginated<Receptionist>>(
       `/receptionist?page=${page}&size=${size}`,
       { method: "GET" }
@@ -229,13 +229,8 @@ export const api = {
     request<UserResponse>(`/user/${id}`, { method: "GET" }),
 
   // --- Profesionales ---
-  
 
-
-  listProfessionalsPaginated: (
-    page: number = 0,
-    size: number = 10
-  ) =>
+  listProfessionalsPaginated: (page: number = 0, size: number = 10) =>
     request<Paginated<Professional>>(
       `/professionals?page=${page}&size=${size}`,
       { method: "GET" }
@@ -248,8 +243,27 @@ export const api = {
     ),
 
   getPatientsByProfessional: (professionalId: number) =>
-    request<Patient[]>(
-      `/professionals/${professionalId}/patients`,
-      { method: "GET" }
-    ),
+    request<Patient[]>(`/professionals/${professionalId}/patients`, {
+      method: "GET",
+    }),
+
+  // --- Escuelas ---
+  listSchoolsPaginated: (page: number = 0, size: number = 10) =>
+    request<SchoolsListResponse>(`/schools/schools?page=${page}&size=${size}`, {
+      method: "GET",
+    }),
+
+  // --- Entradas de seguimiento ---
+  getFollowEntriesById: (id: number) =>
+    request<FollowEntriesProps>(`/follow-up-entries/${id}`, { method: "GET" }),
+
+  // --- Diagnóstico de pacientes
+  getDiagnosesById: (id: number) =>
+    request<PatientDiagnosesProps>(`/diagnoses/${id}`, { method: "GET" }),
+
+  // --- Antecedentes Médicos
+  getMedicalBackgroundsById: (id: number) =>
+    request<PatientNotesInfo>(`/medical-backgrounds/patient/${id}`, {
+      method: "GET",
+    }),
 };
