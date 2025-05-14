@@ -22,10 +22,14 @@ export interface PatientPayload {
   lastName: string;
   phoneNumber: string;
   birthDate: string;
+  genre: string;
   hasInsurance: boolean;
   insuranceName: string;
-  school: string;
+  insurancePlan: string;
+  memberShipNumber: string;
   address: string;
   tutorName: string;
   relationToPatient: string;
-  professionalId: number[]}
+  professionalId: number[]
+    schoolId: number;
+}
