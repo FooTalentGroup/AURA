@@ -30,7 +30,7 @@ React.FC<PageContainerProps> = ({
   addLabel,
   children
 }) => {
-  const { isAdmin, isReceptionist} = useContextAuth();
+  const { isAdmin, isProfessional} = useContextAuth();
   return (
     
     <DashboardLayout>
@@ -51,7 +51,7 @@ React.FC<PageContainerProps> = ({
               />
             <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-lg" />
           </div>
-          {isAdmin || isReceptionist  ? (<button
+          {isAdmin || isProfessional  ? (<button
             onClick={onAdd}
             className="h-12 bg-[#0072C3] hover:bg-[#005A9E] text-white px-5 rounded-full flex items-center space-x-2 transition"
             >

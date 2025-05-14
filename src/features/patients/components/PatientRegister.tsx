@@ -24,7 +24,8 @@ const stepFields: Record<number, Field[]> = {
     { name: 'memberShipNumber', label: 'Nro afiliado', type: 'text' },
   ],
   3: [
-{ name: 'phoneNumber', label: 'Teléfono tutor', type: 'tel' },
+    { name: 'tutorName', label: 'nombre del tutor', type: 'text' },
+    { name: 'phoneNumber', label: 'Teléfono tutor', type: 'tel' },
     { name: 'email', label: 'Email tutor', type: 'email' },
     {name: "address", label: "Dirección", type: "text"},
 
