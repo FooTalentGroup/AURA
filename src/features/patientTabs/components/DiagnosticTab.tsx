@@ -1,5 +1,6 @@
 import { PencilIcon } from "../../../components/shared/ui/Icons";
 import { DiagnosticTabProps } from "../types/patientTabs.types";
+import { formatDate } from "../utils/utils";
 
 function DiagnosticTab({ diagnoses }: DiagnosticTabProps) {
   return (
@@ -15,7 +16,7 @@ function DiagnosticTab({ diagnoses }: DiagnosticTabProps) {
           <div className="">
             <label className="font-semibold text-blue-600">Fecha</label>
             <p className="py-2 px-3 text-gray-600 bg-blue-50/80 rounded-md mt-2">
-              {diagnoses.date}
+              {formatDate(diagnoses.date)}
             </p>
           </div>
 
