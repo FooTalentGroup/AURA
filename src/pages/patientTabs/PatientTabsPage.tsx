@@ -12,7 +12,6 @@ import {
 } from "../../features/patientTabs/types/patientTabs.types";
 import {
   ArrowLeftIcon,
-  EmailIcon,
   PlusIcon,
 } from "../../components/shared/ui/Icons";
 import { Link, useNavigate, useParams } from "react-router-dom";
@@ -112,15 +111,15 @@ export default function PatientTabs() {
 
   // Renderizar el contenido según la pestaña activa
   const renderTabContent = () => {
-    switch (activeTab) {
+    switch (activeTab) { 
       case "paciente":
         if (!patientDB) {
-          return <div>Cargando datos del paciente...</div>;
+          return <div>No se encontraron datos de paciente</div>;
         }
         return <PatientInfoTab patient={patientDB} />;
       case "contacto":
         if (!patientDB || !patientSchool) {
-          return <div>Cargando datos del paciente...</div>;
+          return <div>No se encontraron datos de contacto</div>;
         }
         return <ContactTab patient={patientDB} school={patientSchool} />;
       case "diagnostico":
@@ -171,10 +170,7 @@ export default function PatientTabs() {
             )}
           </div>
           <div className="flex gap-3">
-            <button className="flex items-center gap-2 px-4 py-2 border border-black rounded-full text-blue-600 hover:bg-blue-50 cursor-pointer">
-              <EmailIcon />
-              Crear Informe
-            </button>
+            
             <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 cursor-pointer">
               <PlusIcon />
               Agregar registro

@@ -38,9 +38,9 @@ const stepFields: Record<number, Field[]> = {
       label: "Relacion",
       type: "select",
       options: [
-        { value: "masculino", label: "Masculino" },
-        { value: "femenino", label: "Femenino" },
-        { value: "otro", label: "Otro" },
+        { value: "padre", label: "Padre" },
+        { value: "Madre", label: "Madre" },
+        { value: "tutor", label: "Tutor" },
       ],
     },
     { name: "phoneNumber", label: "Teléfono", type: "tel" },

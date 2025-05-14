@@ -18,23 +18,24 @@ export function usePatients(page = 0, size = 20) {
    * - Query sólo dígitos: búsqueda parcial de DNI (filtrado local)
    * - Otro texto: busca por nombre (API)
    */
-  const load = useCallback(async (query?: string) => {
+  const load = useCallback(async (query?: string,  patientsOverride?: Patient[]) => {
     setLoading(true);
     setError(null);
 
-    try {
+  try {
+      if (patientsOverride) {
+        setPatients(patientsOverride);
+        return;
+      }
+
       let data: Patient[];
 
       if (!query) {
-        // Lista paginada del backend
         data = await patientService.list(page, size);
       } else if (/^\d+$/.test(query)) {
-        // Búsqueda parcial por DNI
-        // Obtenemos un lote amplio de pacientes y filtramos localmente
-        const all = await patientService.list(0, 1000); // ajusta 1000 según tu volumen de datos
+        const all = await patientService.list(0, 1000);
         data = all.filter(p => p.dni.includes(query));
       } else {
-        // Búsqueda por nombre via API
         data = await patientService.searchByName(query);
       }
 
@@ -45,7 +46,9 @@ export function usePatients(page = 0, size = 20) {
     } finally {
       setLoading(false);
     }
-  }, [page, size]);
+  },
+  [page, size]
+);
 
   // Al montar o cambiar página/tamaño, cargamos sin filtro
   useEffect(() => {
