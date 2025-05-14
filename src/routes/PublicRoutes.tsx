@@ -21,7 +21,7 @@ const PublicRoutes: React.FC = () => {
 
   // 3) Si ya está autenticado, redirigimos al dashboard
   if (state.isAuthenticated) {
-    return <Navigate to="/dashboard" replace />;
+    return <Navigate to="/patients" replace />;
   }
 
   // 4) Si ruta privada y no autenticado, mostramos login (o quizá otra ruta)

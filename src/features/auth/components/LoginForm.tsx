@@ -27,7 +27,7 @@ export const LoginForm: React.FC = () => {
     if (!canSubmit) return;
 
     const success = await login(trimmedEmail, password);
-    if (success) navigate('/dashboard');
+    if (success) navigate("/patients");
   };
 
   return (
