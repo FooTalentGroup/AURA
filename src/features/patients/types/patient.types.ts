@@ -28,4 +28,5 @@ export interface PatientPayload {
   address: string;
   tutorName: string;
   relationToPatient: string;
-  professionalId: number[]}
+  professionalId: number[];
+}
