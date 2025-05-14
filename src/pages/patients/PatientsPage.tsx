@@ -17,7 +17,9 @@ const PatientsPage: React.FC = () => {
   const handleAdd = () => {
   navigate("/Sregister");
   };
-  const handleView = (id: number) => { console.log('Ver paciente', id);};
+  const handleView = (id: number) => { 
+    navigate(`/patient/${id}`);
+    };
 
   return (
     <PageContainer
