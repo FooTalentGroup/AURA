@@ -64,7 +64,6 @@ function ContactTab({ patient, school }: ContactTabProps) {
               {school.schoolName}
             </p>
           </div>
-
           <div className="col-span-2">
             <label className="font-semibold text-blue-600">
               Correo electrónico

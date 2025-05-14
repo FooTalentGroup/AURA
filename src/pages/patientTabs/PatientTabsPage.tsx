@@ -22,6 +22,7 @@ import ContactTab from "../../features/patientTabs/components/ContactTab";
 import DiagnosticTab from "../../features/patientTabs/components/DiagnosticTab";
 import ClinicalHistoryTab from "../../features/patientTabs/components/ClinicalHistoryTab";
 import MedicalBackgroundTab from "../../features/patientTabs/components/MedicalBackgroundTab";
+import Loader from "../../components/shared/ui/Loader";
 
 // Componente principal
 export default function PatientTabs() {
@@ -125,35 +126,43 @@ export default function PatientTabs() {
   return (
     <DashboardLayout>
       <section className="bg-white rounded-2xl shadow-sm">
-        {!patientDB ? (
-          <div className="p-4">Cargando datos del paciente...</div>
-        ) : (
-          <>
-            <div className="p-4 border-b-2 border-gray-300/90 flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <Link to="#" onClick={() => navigate(-1)} title="Atrás">
-                  <ArrowLeftIcon />
-                </Link>
+        <div className="p-4 border-b-2 border-gray-300/90 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <Link to="#" onClick={() => navigate(-1)} title="Atrás">
+              <ArrowLeftIcon />
+            </Link>
+            {!patientDB ? (
+              <p className="text-xl">Cargando paciente...</p>
+            ) : (
+              <>
                 <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-medium">
-                  {patientDB.name.charAt(0).toUpperCase()}
-                  {patientDB.lastName.charAt(0).toUpperCase()}
+                  {patientDB?.name.charAt(0).toUpperCase()}
+                  {patientDB?.lastName.charAt(0).toUpperCase()}
                 </div>
                 <h2 className="text-2xl font-medium text-gray-800">
-                  {patientDB.name} {patientDB.lastName}
+                  {patientDB?.name} {patientDB?.lastName}
                 </h2>
-              </div>
-              <div className="flex gap-3">
-                <button className="flex items-center gap-2 px-4 py-2 border border-black rounded-full text-blue-600 hover:bg-blue-50 cursor-pointer">
-                  <EmailIcon />
-                  Crear Informe
-                </button>
-                <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 cursor-pointer">
-                  <PlusIcon />
-                  Agregar registro
-                </button>
-              </div>
-            </div>
+              </>
+            )}
+          </div>
+          <div className="flex gap-3">
+            <button className="flex items-center gap-2 px-4 py-2 border border-black rounded-full text-blue-600 hover:bg-blue-50 cursor-pointer">
+              <EmailIcon />
+              Crear Informe
+            </button>
+            <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 cursor-pointer">
+              <PlusIcon />
+              Agregar registro
+            </button>
+          </div>
+        </div>
 
+        {!patientDB ? (
+          <div className="flex justify-center items-center h-96">
+            <Loader />
+          </div>
+        ) : (
+          <>
             <header className="mt-4 px-6">
               <nav className="flex">
                 {tabs.map((tab) => (
@@ -173,6 +182,7 @@ export default function PatientTabs() {
             </header>
 
             {/* Contenido de la pestaña activa */}
+
             <main className="px-6 pb-6">{renderTabContent()}</main>
           </>
         )}

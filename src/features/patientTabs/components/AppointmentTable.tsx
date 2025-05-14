@@ -1,5 +1,6 @@
 import { useState, FC } from "react";
 import { AppointmentTableProps } from "../types/patientTabs.types";
+import { formatDate, getSpecialtyBackgroundColor } from "../utils/utils";
 
 const AppointmentTable: FC<AppointmentTableProps> = ({ appointments }) => {
   const [filters, setFilters] = useState({
@@ -7,40 +8,6 @@ const AppointmentTable: FC<AppointmentTableProps> = ({ appointments }) => {
     specialty: "",
     professional: "",
   });
-
-  // Formateo de fecha
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    const day = date.getDate().toString().padStart(2, "0");
-    const monthNames = [
-      "Ene",
-      "Feb",
-      "Mar",
-      "Abr",
-      "May",
-      "Jun",
-      "Jul",
-      "Ago",
-      "Sep",
-      "Oct",
-      "Nov",
-      "Dic",
-    ];
-    const month = monthNames[date.getMonth()];
-    const year = date.getFullYear();
-    return `${day} ${month} ${year}`;
-  };
-
-  // Función para obtener el color de fondo según la especialidad
-  const getSpecialtyBackgroundColor = (specialty: string) => {
-    const lowerCaseSpecialty = specialty.toLowerCase();
-    if (lowerCaseSpecialty === "medicina") {
-      return "bg-orange-100";
-    } else if (lowerCaseSpecialty === "psicóloga") {
-      return "bg-purple-100";
-    }
-    return "bg-gray-100";
-  };
 
   return (
     <div className="bg-white mx-auto py-4 rounded-xl">
