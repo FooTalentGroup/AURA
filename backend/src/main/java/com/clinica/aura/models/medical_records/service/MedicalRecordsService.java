@@ -25,7 +25,9 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -57,8 +59,22 @@ public class MedicalRecordsService {
         response.setUpdatedAt(record.getUpdatedAt());
         response.setPatientId(record.getPatients().getId());
         response.setProfessionalId(record.getCreatedBy().getId());
-        response.setDiagnosisIds(record.getDiagnoses().stream().map(DiagnosesModel::getId).toList());
-        response.setFollowUpIds(record.getFollowUps().stream().map(FollowUpEntriesModel::getId).toList());
+
+        // Maneja el caso donde getDiagnoses() puede ser null
+        List<Long> diagnosisIds = Optional.ofNullable(record.getDiagnoses())
+                .orElse(Collections.emptyList())
+                .stream()
+                .map(DiagnosesModel::getId)
+                .toList();
+        response.setDiagnosisIds(diagnosisIds);
+
+        // Maneja el caso donde getFollowUps() puede ser null
+        List<Long> followUpIds = Optional.ofNullable(record.getFollowUps())
+                .orElse(Collections.emptyList())
+                .stream()
+                .map(FollowUpEntriesModel::getId)
+                .toList();
+        response.setFollowUpIds(followUpIds);
 
         return response;
     }
