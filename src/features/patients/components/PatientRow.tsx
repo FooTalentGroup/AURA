@@ -43,7 +43,7 @@ export const PatientRow: React.FC<Props> = ({ patient, onView }) => {
       <span className="text-gray-700">{patient.tutorName}</span>
 
       {/* 6. Relación (tutorRelation) */}
-      <span className="text-gray-700">{patient.tutorRelation}</span>
+      <span className="text-gray-700">{patient.relationToPatient}</span>
 
       {/* 7. Teléfono */}
       <span className="text-gray-700">{patient.phoneNumber}</span>

@@ -43,8 +43,8 @@ const stepFields: Record<number, Field[]> = {
         { value: "otro", label: "Otro" },
       ],
     },
-    { name: "phoneNumber", label: "Teléfono tutor", type: "tel" },
-    { name: "email", label: "Email tutor", type: "email" },
+    { name: "phoneNumber", label: "Teléfono", type: "tel" },
+    { name: "email", label: "Correo Electrónico", type: "email" },
     { name: "address", label: "Dirección", type: "text" },
   ],
   4: [
