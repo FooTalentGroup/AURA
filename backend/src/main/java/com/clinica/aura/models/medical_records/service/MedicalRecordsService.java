@@ -100,7 +100,6 @@ public class MedicalRecordsService {
         for (MedicalRecordsModel record : records) {
             MedicalRecordsResponseDto dto = new MedicalRecordsResponseDto();
             dto.setId(record.getId());
-           //dto.setSpecialty(record.getSpecialty());
             dto.setCreatedAt(record.getCreatedAt());
             dto.setUpdatedAt(record.getUpdatedAt());
             dto.setPatientId(record.getPatients().getId());
@@ -111,31 +110,6 @@ public class MedicalRecordsService {
         }
         return response;
     }
-
-//    public MedicalRecordsResponseDto update(Long id, MedicalRecordsRequestUpdateDto dto) {
-//        MedicalRecordsModel record = medicalRecordsRepository.findById(id)
-//                .orElseThrow(() -> new EntityNotFoundException("Registro no encontrado"));
-//
-//        // Obtener profesional autenticado
-//        ProfessionalModel professional = securityUtil.getAuthenticatedProfessional();
-//
-//        // Actualizar campos
-//        record.setSpecialty(dto.getSpeciality());
-//        record.setUpdatedBy(professional);
-//        medicalRecordsRepository.save(record);
-//
-//        // Construir respuesta
-//        MedicalRecordsResponseDto response = new MedicalRecordsResponseDto();
-//        response.setId(record.getId());
-//        response.setSpecialty(record.getSpecialty());
-//        response.setCreatedAt(record.getCreatedAt());
-//        response.setUpdatedAt(record.getUpdatedAt());
-//        response.setPatientId(record.getPatients().getId());
-//        response.setProfessionalId(record.getCreatedBy().getId());
-//
-//        return response;
-//    }
-
 
     public void delete(Long id) {
         MedicalRecordsModel record = medicalRecordsRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Registro no encontrado"));
@@ -185,8 +159,4 @@ public class MedicalRecordsService {
                 ))
                 .toList();
     }
-
-
-
-
 }

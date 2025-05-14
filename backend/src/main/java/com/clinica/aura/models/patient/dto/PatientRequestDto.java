@@ -1,6 +1,6 @@
 package com.clinica.aura.models.patient.dto;
 
-import com.clinica.aura.models.school.model.SchoolModel;
+import com.clinica.aura.models.patient.dto.valid.ValidInsurance;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 import lombok.*;
@@ -12,6 +12,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@ValidInsurance
 public class PatientRequestDto {
     // Datos del usuario
     @NotBlank
@@ -49,59 +50,22 @@ public class PatientRequestDto {
     @Schema(description = "Fecha de nacimiento del paciente", example = "2015-05-20")
     private LocalDate birthDate;
 
-    // Datos específicos del paciente                                //cambiar a femenino/masculino/otro
+    // Datos específicos del paciente - cambiar a femenino/masculino/otro
     @Schema(description = "Indica el genero del paciente ", example = "femenino/masculino/otro (no permite otras palabras)")
     @Pattern(regexp = "^(?i)(femenino|masculino|otro)$", message = "El sexo debe ser 'femenino', 'masculino' u 'otro'")
     private String genre;
 
-   @Schema(description = "Indica si el paciente tiene seguro médico", example = "true")
+    @Schema(description = "Indica si el paciente tiene seguro médico", example = "true")
     private boolean hasInsurance;
-    @Pattern(
-            regexp = "^[a-zA-Z0-9]{3,20}$",
-            message = "Debe tener entre 3 y 20 caracteres, solo letras y números."
-    )
-    @Schema(description = "Nombre de la obra social (si tiene).Debe tener entre 3 y 20 caracteres, solo letras y números.)", example = "OSDE")
+
+    @Schema(description = "Nombre de la obra social (si tiene). Si no tiene, debe ser 'Particular'", example = "OSDE")
     private String insuranceName;
-    @Pattern(
-            regexp = "^[a-zA-Z0-9]{3,20}$",
-            message = "Debe tener entre 3 y 20 caracteres, solo letras y números."
-    )
+
     @Schema(description = "Nombre del plan obra social del paciente", example = "210")
     private String insurancePlan;
-    @Size(min = 5, max = 20, message = "El número de afiliado debe tener entre 5 y 20 caracteres.")
-    @Pattern(regexp = "^[a-zA-Z0-9/-]+$", message = "El número de afiliado solo puede contener letras, números, guiones o barras.")
-    @Schema(description = "Número de afiliado en la obra social. El número de afiliado solo puede contener letras, números, guiones o barras." +
-            "El número de afiliado, se conforma de distintas maneras según la obra social del paciente. A continuación se dejan varios ejemplos." +
-            "OSDE (ej: 156150-06)" +
-            "Swiss Medical (ej: 000012345678)" +
-            "Medicus(ej:1234567-01) " +
-            "IOSFA(ej:123456/A) ")
-  
-    @Pattern(regexp = "^[a-zA-Z0-9/-]+$", message = "El número de afiliado solo puede contener letras, números, guiones o barras.")
+
+    @Schema(description = "Número de afiliado en la obra social. Ej: OSDE (156150-06), Swiss Medical (000012345678), etc.")
     private String memberShipNumber;
-
-//    @Schema(hidden = true)
-//    @AssertTrue(message = "Datos de obra social inválidos")
-//    public boolean isInsuranceValid() {
-//        if (hasInsurance) {
-//            return insuranceName != null && insurancePlan != null && memberShipNumber != null &&
-//                    insuranceName.matches("^[a-zA-Z0-9]{3,20}$") &&
-//                    insurancePlan.matches("^[a-zA-Z0-9]{3,20}$") &&
-//                    memberShipNumber.matches("^[a-zA-Z0-9/-]{5,20}$");
-//        } else {
-//            // Asignar valores por defecto si no tiene obra social
-//            insuranceName = "Particular";
-//            insurancePlan = null;
-//            memberShipNumber = null;
-//            return true;
-
-//        }
-    //este metodo funciona solo para obra social falsa, osea paciente particular
-// private boolean hasInsurance; //estaba en false. esto esta asi en model
-//    en service esta esto
- //   .hasInsurance(Boolean.valueOf(patient.isHasInsurance()))
-//    }
-    //tuve que borrar toda la base porque creaba una segunda columna llamda member_ship
 
 
     @Schema(description = "Dirección del paciente", example = "Av. Libertador 1925, CABA")

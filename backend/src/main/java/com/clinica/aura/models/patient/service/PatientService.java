@@ -88,6 +88,7 @@ public class PatientService {
     @Transactional
     public PatientResponseDto createUser(@Valid PatientRequestDto authCreateUserDto) {
 
+
         String email = authCreateUserDto.getEmail();
         String username = authCreateUserDto.getName();
         String lastName = authCreateUserDto.getLastName();
@@ -99,7 +100,7 @@ public class PatientService {
         String relationToPatient = authCreateUserDto.getRelationToPatient();
         String genre = authCreateUserDto.getGenre();
         String insurancePlan = authCreateUserDto.getInsurancePlan();
-        String memberShipNumer = authCreateUserDto.getMemberShipNumber();
+        String memberShipNumber = authCreateUserDto.getMemberShipNumber();
 
         if (userRepository.findByEmail(email).isPresent()) {
             throw new EmailAlreadyExistsException("El correo " + email + " ya existe en la base de datos.");
@@ -127,7 +128,7 @@ public class PatientService {
                 .person(personEntity)
                 .hasInsurance(authCreateUserDto.isHasInsurance())
                 .insuranceName(authCreateUserDto.getInsuranceName())
-                .insurancePlan(authCreateUserDto.getInsurancePlan())
+                .insurancePlan(insurancePlan)
                 .address(address)
                 .tutorName(tutorName)
                 .relationToPatient(relationToPatient)
@@ -183,7 +184,7 @@ public class PatientService {
                 .phoneNumber(personEntity.getPhoneNumber())
                 .birthDate(personEntity.getBirthDate())
                 .dni(personEntity.getDni())
-                .hasInsurance(patientModel.getInsuranceName() != null && !patientModel.getInsuranceName().isBlank())
+                .hasInsurance(patientModel.isHasInsurance())
                 .insuranceName(patientModel.getInsuranceName())
                 .insurancePlan(patientModel.getInsurancePlan())
                 .memberShipNumber(patientModel.getMemberShipNumber())
@@ -369,6 +370,7 @@ public class PatientService {
      * @throws UserNotFoundException Si no se encuentra el usuario vinculado a la persona del paciente.
      */
     public PatientResponseDto updatePatient(Long id, PatientRequestDto requestDto) {
+
         var patient = patientRepository.findById(id)
                 .orElseThrow(() -> new PatientNotFoundException("Paciente no encontrado con ID: " + id));
 
