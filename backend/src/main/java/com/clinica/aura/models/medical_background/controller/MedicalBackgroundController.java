@@ -14,7 +14,11 @@ import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 import java.util.List;
 
-@Tag(name = "Medical Background", description = "Operaciones relacionadas con los antecedentes médicos")
+/**
+ * Controlador REST para gestionar antecedentes médicos.
+ * Proporciona endpoints para crear, obtener, actualizar y eliminar antecedentes médicos.
+ */
+@Tag(name = "Medical Background", description = "Endpoints para la gestión de antecedentes médicos")
 @RestController
 @RequestMapping("/medical-backgrounds")
 public class MedicalBackgroundController {
@@ -24,8 +28,13 @@ public class MedicalBackgroundController {
     public MedicalBackgroundController(MedicalBackgroundService medicalBackgroundService) {
         this.medicalBackgroundService = medicalBackgroundService;
     }
+/**
+ * Crea un nuevo antecedente médico.
+ *
+ * @param dto Datos del antecedente médico a crear.
+ * @return El antecedente médico creado.
+ */
 
-    // Crear antecedentes médicos
     @Operation(
             summary = "Crea un nuevo antecedente médico",
             description = "Solo un profesional autenticado puede crear antecedentes médicos."
@@ -36,7 +45,12 @@ public class MedicalBackgroundController {
         return new ResponseEntity<>(createdBackground, HttpStatus.CREATED);
     }
 
-    // Obtener antecedentes médicos por ID
+    /**
+     * Obtiene un antecedente médico por su ID.
+     *
+     * @param id ID del antecedente médico.
+     * @return El antecedente médico encontrado.
+     */
     @Operation(summary = "Obtener todos los antecedentes médicos por ID")
     @GetMapping("/{id}")
     public ResponseEntity<MedicalBackgroundResponseDto> getById(@PathVariable Long id) {
@@ -44,7 +58,12 @@ public class MedicalBackgroundController {
         return new ResponseEntity<>(background, HttpStatus.OK);
     }
 
-    // Obtener antecedentes médicos por ID de paciente
+    /**
+     * Obtiene los antecedentes médicos asociados a un paciente específico.
+     *
+     * @param patientId ID del paciente.
+     * @return El antecedente médico del paciente.
+     */
     @Operation(summary = "Obtener todos los antecedentes médicos por ID de paciente")
     @GetMapping("/patient/{patientId}")
     public ResponseEntity<MedicalBackgroundResponseDto> getByPatientId(@PathVariable Long patientId) {
@@ -52,7 +71,11 @@ public class MedicalBackgroundController {
         return new ResponseEntity<>(background, HttpStatus.OK);
     }
 
-    // Obtener todos los antecedentes médicos
+    /**
+     * Obtiene todos los antecedentes médicos del sistema.
+     *
+     * @return Lista de todos los antecedentes médicos.
+     */
     @Operation(summary = "Obtener todos los antecedentes médicos")
     @GetMapping
     public ResponseEntity<List<MedicalBackgroundResponseDto>> getAll() {
@@ -60,7 +83,13 @@ public class MedicalBackgroundController {
         return new ResponseEntity<>(backgrounds, HttpStatus.OK);
     }
 
-    // Actualizar antecedentes médicos
+    /**
+     * Actualiza un antecedente médico existente.
+     *
+     * @param id  ID del antecedente médico a actualizar.
+     * @param dto Datos actualizados del antecedente médico.
+     * @return El antecedente médico actualizado.
+     */
     @Operation(
             summary = "Actualizar un antecedente médico por ID",
             description = "Solo un profesional autenticado puede actualizar antecedentes médicos."
@@ -72,7 +101,12 @@ public class MedicalBackgroundController {
         return new ResponseEntity<>(updatedBackground, HttpStatus.OK);
     }
 
-    // Eliminar antecedentes médicos
+    /**
+     * Elimina un antecedente médico por su ID.
+     *
+     * @param id ID del antecedente médico a eliminar.
+     * @return Respuesta sin contenido si la eliminación fue exitosa.
+     */
     @Operation(
             summary = "Eliminar un antecedente médico por ID",
             description = "Solo un profesional autenticado puede eliminar antecedentes médicos."
