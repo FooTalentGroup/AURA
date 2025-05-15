@@ -106,7 +106,7 @@ const [success, setSuccess] = useState(false);
         <LoadingResultModal
           loading={loading}
           success={success}
-          errorMessage={error}
+          errorMessage={error ?? undefined}
           message="¡Listo! El usuario ya está registrado."
           onSecondaryAction={{
             label: 'Registrar otro',

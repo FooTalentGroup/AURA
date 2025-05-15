@@ -13,14 +13,14 @@ function ClinicalHistoryTab({
           <div className="p-4 rounded-md">
             <div className="mb-6">
               <label className="font-semibold">Observaciones</label>
-              <p className="text-gray-700 mt-2">{followEntries.observations}</p>
+              <p className="text-gray-700 mt-2">{followEntries?.observations}</p>
             </div>
 
             <div className="mb-6">
               <label className="font-semibold">Intervenciones realizadas</label>
               <div className="mt-2">
                 <p className="text-gray-700 mt-2">
-                  {followEntries.interventions}
+                  {followEntries?.interventions}
                 </p>
               </div>
             </div>
@@ -31,7 +31,7 @@ function ClinicalHistoryTab({
               </label>
               <div className="mt-2">
                 <p className="text-gray-700 mt-2">
-                  {followEntries.nextSessionInstructions}
+                  {followEntries?.nextSessionInstructions}
                 </p>
               </div>
             </div>

@@ -17,25 +17,25 @@ function ContactTab({ patient, school }: ContactTabProps) {
               Nombre y apellido
             </label>
             <p className="py-2 px-3 text-gray-600 bg-blue-50/80 rounded-md mt-2">
-              {patient.tutorName}
+              {patient?.tutorName}
             </p>
           </div>
           <div>
             <label className="font-semibold text-blue-600">Relación</label>
             <p className="py-2 px-3 text-gray-600 bg-blue-50/80 rounded-md mt-2">
-              {patient.relationToPatient}
+              {patient?.relationToPatient}
             </p>
           </div>
           <div>
             <label className="font-semibold text-blue-600">Teléfono</label>
             <p className="py-2 px-3 text-gray-600 bg-blue-50/80 rounded-md mt-2">
-              {patient.phoneNumber}
+              {patient?.phoneNumber}
             </p>
           </div>
           <div className="col-span-2">
             <label className="font-semibold text-blue-600">Domicilio</label>
             <p className="py-2 px-3 text-gray-600 bg-blue-50/80 rounded-md mt-2">
-              {patient.address}
+              {patient?.address}
             </p>
           </div>
           <div className="col-span-2">
@@ -43,7 +43,7 @@ function ContactTab({ patient, school }: ContactTabProps) {
               Correo electrónico
             </label>
             <p className="py-2 px-3 text-gray-600 bg-blue-50/80 rounded-md mt-2">
-              {patient.email}
+              {patient?.email}
             </p>
           </div>
         </form>
@@ -61,7 +61,7 @@ function ContactTab({ patient, school }: ContactTabProps) {
           <div className="col-span-2">
             <label className="font-semibold text-blue-600">Nombre</label>
             <p className="py-2 px-3 text-gray-600 bg-blue-50/80 rounded-md mt-2">
-              {school.schoolName}
+              {school?.schoolName}
             </p>
           </div>
           <div className="col-span-2">
@@ -69,13 +69,13 @@ function ContactTab({ patient, school }: ContactTabProps) {
               Correo electrónico
             </label>
             <p className="py-2 px-3 text-gray-600 bg-blue-50/80 rounded-md mt-2">
-              {school.emailSchool}
+              {school?.emailSchool}
             </p>
           </div>
           <div className="col-span-2">
             <label className="font-semibold text-blue-600">Teléfono</label>
             <p className="py-2 px-3 text-gray-600 bg-blue-50/80 rounded-md mt-2">
-              {school.phoneSchool}
+              {school?.phoneSchool}
             </p>
           </div>
         </form>

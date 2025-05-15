@@ -5,7 +5,7 @@ export interface AuthState {
   user: CurrentUser | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  error: string | null;
+  error: string | null | undefined;
 }
 
 export type AuthAction =

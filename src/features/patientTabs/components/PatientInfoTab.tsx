@@ -19,7 +19,7 @@ function PatientInfoTab({ patient }: PatientTabsProps) {
               Nombre y Apellido
             </label>
             <p className="py-2 px-3 text-gray-600 bg-blue-50/80 rounded-md mt-2">
-              {patient.name} {patient.lastName}
+              {patient?.name} {patient?.lastName}
             </p>
           </div>
           <div>
@@ -27,25 +27,25 @@ function PatientInfoTab({ patient }: PatientTabsProps) {
               Fecha de nacimiento
             </label>
             <p className="py-2 px-3 text-gray-600 bg-blue-50/80 rounded-md mt-2">
-              {patient.birthDate}
+              {patient?.birthDate}
             </p>
           </div>
           <div>
             <label className="font-semibold text-blue-600">Edad</label>
             <p className="py-2 px-3 text-gray-600 bg-blue-50/80 rounded-md mt-2">
-              {patient.age}
+              {patient?.age}
             </p>
           </div>
           <div>
             <label className="font-semibold text-blue-600">DNI</label>
             <p className="py-2 px-3 text-gray-600 bg-blue-50/80 rounded-md mt-2">
-              {patient.dni}
+              {patient?.dni}
             </p>
           </div>
           <div>
             <label className="font-semibold text-blue-600">Sexo</label>
             <p className="capitalize py-2 px-3 text-gray-600 bg-blue-50/80 rounded-md mt-2">
-              {patient.genre}
+              {patient?.genre}
             </p>
           </div>
         </form>
@@ -63,13 +63,13 @@ function PatientInfoTab({ patient }: PatientTabsProps) {
           <div>
             <label className="font-semibold text-blue-600">Nombre</label>
             <p className="py-2 px-3 text-gray-600 bg-blue-50/80 rounded-md mt-2">
-              {patient.insuranceName}
+              {patient?.insuranceName}
             </p>
           </div>
           <div>
             <label className="font-semibold text-blue-600">Plan</label>
             <p className="py-2 px-3 text-gray-600 bg-blue-50/80 rounded-md mt-2">
-              {patient.insurancePlan}
+              {patient?.insurancePlan}
             </p>
           </div>
           <div className="col-span-2">
@@ -77,7 +77,7 @@ function PatientInfoTab({ patient }: PatientTabsProps) {
               Número de afiliado
             </label>
             <p className="py-2 px-3 text-gray-600 bg-blue-50/80 rounded-md mt-2">
-              {patient.memberShipNumber == null && "Particular"}
+              {patient?.memberShipNumber == null && "Particular"}
             </p>
           </div>
         </form>

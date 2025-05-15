@@ -52,7 +52,7 @@ export const RegisterForm: React.FC<GenericFormLayoutProps> = ({
     if (isLast && onSubmit) {
       onSubmit();
     } else {
-      onNext();
+      onNext?.();
     }
   };
 

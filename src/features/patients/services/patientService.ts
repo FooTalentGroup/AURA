@@ -1,4 +1,5 @@
 import { api } from "../../../core/services/api";
+import { PatientProps } from "../../patientTabs/types/patientTabs.types";
 import { Patient, PatientPayload } from "../types/patient.types";
 
 export const patientService = {
@@ -13,7 +14,7 @@ export const patientService = {
   },
 
   /** Obtiene un paciente por su ID */
-  getById: (id: number): Promise<Patient> =>
+  getById: (id: number): Promise<PatientProps> =>
     api.getPatientById(id),
 
   /** Crea un nuevo paciente */
