@@ -6,7 +6,7 @@ import { useState } from "react";
 interface Props {
   patient: Patient;
   onView: (id: number) => void;
-  onDelete: (id: number) => Promise<void>;
+  onDelete?: (id: number) => Promise<void>;
 }
 
 export const PatientRow: React.FC<Props> = ({ patient, onView, onDelete }) => {
@@ -24,6 +24,9 @@ export const PatientRow: React.FC<Props> = ({ patient, onView, onDelete }) => {
   const handleDelete = async () => {
     setDeleting(true);
     try {
+      if (!onDelete) {
+        throw new Error("No se puede eliminar el paciente");
+      }
       await onDelete(patient.id);
       setConfirmOpen(false);
       setMenuOpen(false);

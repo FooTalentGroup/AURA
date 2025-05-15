@@ -95,7 +95,7 @@ export const ReceptionistRegister: React.FC = () => {
           <LoadingResultModal
             loading={loading}
             success={success}
-            errorMessage={error || undefined}
+            errorMessage={error ?? undefined}
             message="¡Listo! La recepcionista ya está registrada."
             onSecondaryAction={{
               label: 'Registrar otra',

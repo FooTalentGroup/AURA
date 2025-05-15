@@ -112,7 +112,7 @@ export interface AppointmentProps {
 }
 
 export interface AppointmentTableProps {
-  appointments: AppointmentProps[];
+  appointments?: AppointmentProps[];
 }
 
 export interface PatientNotesInfo {
@@ -136,16 +136,16 @@ export interface TabButtonProps {
 }
 
 export interface PatientTabsProps {
-  patient: PatientProps;
+  patient?: PatientProps;
 }
 
 export interface ContactTabProps {
-  patient: PatientProps;
-  school: SchoolProps;
+  patient?: PatientProps;
+  school?: SchoolProps;
 }
 
 export interface DiagnosticTabProps {
-  diagnoses: DiagnosesProps;
+  diagnoses?: DiagnosesProps;
 }
 
 export interface MedicalBackgroundTabProps {
@@ -153,8 +153,8 @@ export interface MedicalBackgroundTabProps {
 }
 
 export interface ClinicalHistoryTabProps {
-  medicalFilters: AppointmentProps[];
-  followEntries: FollowEntriesProps;
+  medicalFilters?: AppointmentProps[];
+  followEntries?: FollowEntriesProps;
 }
 
 export const tabs: TabItem[] = [

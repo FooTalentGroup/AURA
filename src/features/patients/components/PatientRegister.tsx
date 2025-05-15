@@ -152,7 +152,7 @@ export const PatientRegister: React.FC = () => {
           <LoadingResultModal
             loading={loading}
             success={success}
-            errorMessage={error || undefined}
+            errorMessage={error ?? undefined}
             message="¡Paciente registrado con éxito!"
             onSecondaryAction={{
               label: "Registrar otro",

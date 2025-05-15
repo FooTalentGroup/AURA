@@ -121,18 +121,18 @@ export default function PatientTabs() {
     switch (activeTab) { 
       case "paciente":
         if (!patientDB) {
-          return (<PatientInfoTab patient={[]} />    
+          return (<PatientInfoTab patient={undefined} />    
           )
         }
         return <PatientInfoTab patient={patientDB} />;
       case "contacto":
         if (!patientDB || !patientSchool) {
-          return <ContactTab patient={[]} school={[]} />;
+          return <ContactTab patient={undefined} school={undefined} />;
         }
         return <ContactTab patient={patientDB} school={patientSchool} />;
       case "diagnostico":
         if (!patientDiagnoses) {
-        return <DiagnosticTab diagnoses={[]} />;
+        return <DiagnosticTab diagnoses={undefined} />;
         }
         return <DiagnosticTab diagnoses={patientDiagnoses} />;
       case "historial":
@@ -140,7 +140,7 @@ export default function PatientTabs() {
           return (
              <ClinicalHistoryTab
         medicalFilters={[]}
-        followEntries={[]}
+        followEntries={undefined}
       />
           )
         }

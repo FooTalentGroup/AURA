@@ -16,7 +16,7 @@ function DiagnosticTab({ diagnoses }: DiagnosticTabProps) {
           <div className="">
             <label className="font-semibold text-blue-600">Fecha</label>
             <p className="py-2 px-3 text-gray-600 bg-blue-50/80 rounded-md mt-2">
-              {formatDate(diagnoses.date)}
+              {formatDate(diagnoses?.date || "")}
             </p>
           </div>
 
@@ -25,17 +25,17 @@ function DiagnosticTab({ diagnoses }: DiagnosticTabProps) {
               Id del Profesional
             </label>
             <p className="py-2 px-3 text-gray-600 bg-blue-50/80 rounded-md mt-2">
-              {diagnoses.idProfessional}
+              {diagnoses?.idProfessional}
             </p>
           </div>
           <div className="col-span-2 ">
             <label className="font-semibold text-blue-600">Título</label>
             <p className="py-2 px-3 text-gray-600 bg-blue-50/80 rounded-md mt-2">
-              {diagnoses.title}
+              {diagnoses?.title}
             </p>
           </div>
           <div className="col-span-2 px-3 rounded-md">
-            <div>{diagnoses.details}</div>
+            <div>{diagnoses?.details}</div>
           </div>
         </form>
       </article>

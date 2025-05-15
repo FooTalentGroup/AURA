@@ -11,7 +11,7 @@ interface PageContainerProps {
   onQueryChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onAdd: () => void;
   addLabel: string;
-  count: number;    
+  count?: number;    
   children: React.ReactNode;
 }
 

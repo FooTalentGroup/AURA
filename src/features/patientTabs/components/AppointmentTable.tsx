@@ -21,7 +21,7 @@ const AppointmentTable: FC<AppointmentTableProps> = ({ appointments }) => {
           >
             <option value="">Fecha</option>
             {/* Opciones de fechas únicas desde los datos */}
-            {[...new Set(appointments.map((app) => app.createdAt))].map(
+            {[...new Set(appointments?.map((app) => app.createdAt))].map(
               (date) => (
                 <option key={date} value={date}>
                   {formatDate(date)}
@@ -50,7 +50,7 @@ const AppointmentTable: FC<AppointmentTableProps> = ({ appointments }) => {
           >
             <option value="">Especialidad</option>
             {/* Opciones de especialidades únicas desde los datos */}
-            {[...new Set(appointments.map((app) => app.specialty))].map(
+            {[...new Set(appointments?.map((app) => app.specialty))].map(
               (specialty) => (
                 <option key={specialty} value={specialty}>
                   {specialty}
@@ -79,7 +79,7 @@ const AppointmentTable: FC<AppointmentTableProps> = ({ appointments }) => {
           >
             <option value="">Profesional</option>
             {/* Opciones de profesionales únicos desde los datos */}
-            {[...new Set(appointments.map((app) => app.professionalName))].map(
+            {[...new Set(appointments?.map((app) => app.professionalName))].map(
               (professional) => (
                 <option key={professional} value={professional}>
                   {professional}
@@ -103,8 +103,7 @@ const AppointmentTable: FC<AppointmentTableProps> = ({ appointments }) => {
 
       {/* Lista de citas */}
       <div className="text-sm rounded-lg overflow-hidden px-4">
-        {appointments
-          .filter((app) => {
+        {appointments?.filter((app) => {
             return (
               (filters.date === "" || app.createdAt === filters.date) &&
               (filters.specialty === "" ||
