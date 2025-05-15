@@ -22,8 +22,7 @@ import DiagnosticTab from "../../features/patientTabs/components/DiagnosticTab";
 import ClinicalHistoryTab from "../../features/patientTabs/components/ClinicalHistoryTab";
 import MedicalBackgroundTab from "../../features/patientTabs/components/MedicalBackgroundTab";
 import Loader from "../../components/shared/ui/Loader";
-
-
+import RegisterClinicalRecordModal from "../../features/patientTabs/components/ClinicalObservationModal";
 
 // Componente principal
 export default function PatientTabs() {
@@ -42,11 +41,7 @@ export default function PatientTabs() {
   >(null);
   const [medicalBackgrounds, setMedicalBackgrounds] =
     useState<PatientNotesInfo>();
-
-
-
-
-
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchPatient = async () => {
@@ -55,11 +50,10 @@ export default function PatientTabs() {
         const patientID = Number(id);
         const patientData = await api.getPatientById(patientID);
         const schoolsList = await api.listSchoolsPaginated();
-            let medicalRecordPatient: { id: number; diagnosisIds: number[] } | null = null;
-       try {
+        let medicalRecordPatient: { id: number; diagnosisIds: number[] } | null = null;
+        try {
           medicalRecordPatient = await api.getMedicalRecordByPatientId(patientID);
         } catch (err: any) {
-          // tu wrapper lanza Error('El recurso solicitado no fue encontrado') en 404
           if (err.message.includes("no fue encontrado") || err.message.includes("404")) {
             console.warn(`Sin historial médico para patient ${patientID}`);
           } else {
@@ -67,8 +61,8 @@ export default function PatientTabs() {
           }
         }
 
-       let patientFollowEntries: FollowEntriesProps | null = null;
-               let patientDiagnosesData: PatientDiagnosesProps | null = null;
+        let patientFollowEntries: FollowEntriesProps | null = null;
+        let patientDiagnosesData: PatientDiagnosesProps | null = null;
         if (medicalRecordPatient) {
           const [firstDiagnosisId] = medicalRecordPatient.diagnosisIds;
           try {
@@ -80,7 +74,6 @@ export default function PatientTabs() {
               throw err;
             }
           }
-          // Si tuvimos entries, intentamos traer diagnósticos (pueden faltar también)
           if (patientFollowEntries) {
             try {
               patientDiagnosesData = await api.getDiagnosesById(firstDiagnosisId);
@@ -92,9 +85,8 @@ export default function PatientTabs() {
               }
             }
           }
-       }
+        }
 
-        // Busco la escuela correspondiente a cada paciente
         const school = schoolsList.content.find(
           (item) => item.id === patientData.schoolId
         );
@@ -118,43 +110,26 @@ export default function PatientTabs() {
 
   // Renderizar el contenido según la pestaña activa
   const renderTabContent = () => {
-    switch (activeTab) { 
+    switch (activeTab) {
       case "paciente":
-        if (!patientDB) {
-          return (<PatientInfoTab patient={undefined} />    
-          )
-        }
-        return <PatientInfoTab patient={patientDB} />;
+        return <PatientInfoTab patient={patientDB || undefined} />;
       case "contacto":
-        if (!patientDB || !patientSchool) {
-          return <ContactTab patient={undefined} school={undefined} />;
-        }
-        return <ContactTab patient={patientDB} school={patientSchool} />;
+        return <ContactTab patient={patientDB || undefined} school={patientSchool || undefined} />;
       case "diagnostico":
-        if (!patientDiagnoses) {
-        return <DiagnosticTab diagnoses={undefined} />;
-        }
-        return <DiagnosticTab diagnoses={patientDiagnoses} />;
+        return <DiagnosticTab diagnoses={patientDiagnoses || undefined} />;
       case "historial":
-        if (!medicalRecordFilters || !followEntries) {
-          return (
-             <ClinicalHistoryTab
-        medicalFilters={[]}
-        followEntries={undefined}
-      />
-          )
-        }
-      return (
-      <ClinicalHistoryTab
-        medicalFilters={medicalRecordFilters }
-        followEntries={followEntries }
-      />
-    );
+        return (
+          <ClinicalHistoryTab
+            medicalFilters={medicalRecordFilters || []}
+            followEntries={followEntries || undefined}
+          />
+        );
       case "antecedentes":
-        if (!medicalBackgrounds) {
-          return <div>No se encontro antecedentes</div>;
-        }
-        return <MedicalBackgroundTab medicalBackgrounds={medicalBackgrounds} />;
+        return medicalBackgrounds ? (
+          <MedicalBackgroundTab medicalBackgrounds={medicalBackgrounds} />
+        ) : (
+          <div>No se encontraron antecedentes</div>
+        );
       default:
         return null;
     }
@@ -173,18 +148,20 @@ export default function PatientTabs() {
             ) : (
               <>
                 <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-medium">
-                  {patientDB?.name.charAt(0).toUpperCase()}
-                  {patientDB?.lastName.charAt(0).toUpperCase()}
+                  {patientDB.name.charAt(0).toUpperCase()}
+                  {patientDB.lastName.charAt(0).toUpperCase()}
                 </div>
                 <h2 className="text-2xl font-medium text-gray-800">
-                  {patientDB?.name} {patientDB?.lastName}
+                  {patientDB.name} {patientDB.lastName}
                 </h2>
               </>
             )}
           </div>
           <div className="flex gap-3">
-            
-            <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 cursor-pointer">
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 cursor-pointer"
+            >
               <PlusIcon />
               Agregar registro
             </button>
@@ -216,10 +193,15 @@ export default function PatientTabs() {
             </header>
 
             {/* Contenido de la pestaña activa */}
-
             <main className="px-6 pb-6">{renderTabContent()}</main>
           </>
         )}
+        {/* Modal de registro clínico */}
+        <RegisterClinicalRecordModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+        patientId={Number(id)}
+        />
       </section>
     </DashboardLayout>
   );
