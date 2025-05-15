@@ -28,9 +28,9 @@ const navigate = useNavigate();
     const chooseType = (type: "administrativo" | "profesional") => {
     setIsModalOpen(false);
     if (type === "administrativo") {
-      navigate("/Pregister");
+         navigate("/Rregister");
     } else {
-      navigate("/Rregister");
+         navigate("/Pregister");
     }
   };
 

@@ -165,12 +165,12 @@ export const api = {
 
   searchPatientByName: (nombre: string) =>
     request<Patient[]>(
-      `/patients/buscar/nombre?nombre=${encodeURIComponent(nombre)}`,
+      `/patients/search/name?name=${encodeURIComponent(nombre)}`,
       { method: "GET" }
     ),
 
   searchPatientByDni: (dni: string) =>
-    request<Patient>(`/patients/buscar/dni?dni=${encodeURIComponent(dni)}`, {
+    request<Patient>(`/patients/search/dni?dni=${encodeURIComponent(dni)}`, {
       method: "GET",
     }),
 
@@ -285,6 +285,11 @@ export const api = {
   // --- Diagnóstico de pacientes
   getDiagnosesById: (id: number) =>
     request<PatientDiagnosesProps>(`/diagnoses/${id}`, { method: "GET" }),
+  createDiagnosis: (data: PatientDiagnosesProps) =>
+    request<PatientDiagnosesProps>(`/diagnoses/create`, {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
 
   // --- Antecedentes Médicos
   getMedicalBackgroundsById: (id: number) =>

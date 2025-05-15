@@ -12,7 +12,6 @@ import {
 } from "../../features/patientTabs/types/patientTabs.types";
 import {
   ArrowLeftIcon,
-  EmailIcon,
   PlusIcon,
 } from "../../components/shared/ui/Icons";
 import { Link, useNavigate, useParams } from "react-router-dom";
@@ -23,6 +22,8 @@ import DiagnosticTab from "../../features/patientTabs/components/DiagnosticTab";
 import ClinicalHistoryTab from "../../features/patientTabs/components/ClinicalHistoryTab";
 import MedicalBackgroundTab from "../../features/patientTabs/components/MedicalBackgroundTab";
 import Loader from "../../components/shared/ui/Loader";
+
+
 
 // Componente principal
 export default function PatientTabs() {
@@ -42,6 +43,11 @@ export default function PatientTabs() {
   const [medicalBackgrounds, setMedicalBackgrounds] =
     useState<PatientNotesInfo>();
 
+
+
+
+
+
   useEffect(() => {
     const fetchPatient = async () => {
       try {
@@ -49,19 +55,44 @@ export default function PatientTabs() {
         const patientID = Number(id);
         const patientData = await api.getPatientById(patientID);
         const schoolsList = await api.listSchoolsPaginated();
-        const medicalRecordPatientId = await api.getMedicalRecordByPatientId(
-          patientID
-        );
-        const patientDiagnosesId = medicalRecordPatientId.diagnosisIds[0];
-        const medicalId = medicalRecordPatientId.id;
-        const patientFollowEntries = await api.getFollowEntriesById(medicalId);
-        const patientDiagnosesData = await api.getDiagnosesById(
-          patientDiagnosesId
-        );
-        const medicalRecordFilter = await api.getMedicalRecordFilter();
-        const medicalBackgrounds = await api.getMedicalBackgroundsById(
-          patientID
-        );
+            let medicalRecordPatient: { id: number; diagnosisIds: number[] } | null = null;
+       try {
+          medicalRecordPatient = await api.getMedicalRecordByPatientId(patientID);
+        } catch (err: any) {
+          // tu wrapper lanza Error('El recurso solicitado no fue encontrado') en 404
+          if (err.message.includes("no fue encontrado") || err.message.includes("404")) {
+            console.warn(`Sin historial médico para patient ${patientID}`);
+          } else {
+            throw err;
+          }
+        }
+
+       let patientFollowEntries: FollowEntriesProps | null = null;
+               let patientDiagnosesData: PatientDiagnosesProps | null = null;
+        if (medicalRecordPatient) {
+          const [firstDiagnosisId] = medicalRecordPatient.diagnosisIds;
+          try {
+            patientFollowEntries = await api.getFollowEntriesById(medicalRecordPatient.id);
+          } catch (err: any) {
+            if (err.message.includes("no fue encontrado") || err.message.includes("404")) {
+              console.warn(`Sin follow entries para medicalRecord ${medicalRecordPatient.id}`);
+            } else {
+              throw err;
+            }
+          }
+          // Si tuvimos entries, intentamos traer diagnósticos (pueden faltar también)
+          if (patientFollowEntries) {
+            try {
+              patientDiagnosesData = await api.getDiagnosesById(firstDiagnosisId);
+            } catch (err: any) {
+              if (err.message.includes("no fue encontrado") || err.message.includes("404")) {
+                console.warn(`Sin diagnósticos para diagnosisId ${firstDiagnosisId}`);
+              } else {
+                throw err;
+              }
+            }
+          }
+       }
 
         // Busco la escuela correspondiente a cada paciente
         const school = schoolsList.content.find(
@@ -72,7 +103,7 @@ export default function PatientTabs() {
         setPatientSchool(school || null);
         setPatientDiagnoses(patientDiagnosesData);
         setFollowEntries(patientFollowEntries);
-        setMedicalRecordFilters(medicalRecordFilter);
+        setMedicalRecordFilters(medicalRecordFilters);
         setMedicalBackgrounds(medicalBackgrounds);
       } catch (err) {
         console.error("Error al cargar el paciente:", err);
@@ -87,35 +118,41 @@ export default function PatientTabs() {
 
   // Renderizar el contenido según la pestaña activa
   const renderTabContent = () => {
-    switch (activeTab) {
+    switch (activeTab) { 
       case "paciente":
         if (!patientDB) {
-          return <div>Cargando datos del paciente...</div>;
+          return (<PatientInfoTab patient={[]} />    
+          )
         }
         return <PatientInfoTab patient={patientDB} />;
       case "contacto":
         if (!patientDB || !patientSchool) {
-          return <div>Cargando datos del paciente...</div>;
+          return <ContactTab patient={[]} school={[]} />;
         }
         return <ContactTab patient={patientDB} school={patientSchool} />;
       case "diagnostico":
         if (!patientDiagnoses) {
-          return <div>Cargando datos del paciente...</div>;
+        return <DiagnosticTab diagnoses={[]} />;
         }
         return <DiagnosticTab diagnoses={patientDiagnoses} />;
       case "historial":
         if (!medicalRecordFilters || !followEntries) {
-          return <div>Cargando datos del paciente...</div>;
+          return (
+             <ClinicalHistoryTab
+        medicalFilters={[]}
+        followEntries={[]}
+      />
+          )
         }
-        return (
-          <ClinicalHistoryTab
-            medicalFilters={medicalRecordFilters}
-            followEntries={followEntries}
-          />
-        );
+      return (
+      <ClinicalHistoryTab
+        medicalFilters={medicalRecordFilters }
+        followEntries={followEntries }
+      />
+    );
       case "antecedentes":
         if (!medicalBackgrounds) {
-          return <div>Cargando datos del paciente...</div>;
+          return <div>No se encontro antecedentes</div>;
         }
         return <MedicalBackgroundTab medicalBackgrounds={medicalBackgrounds} />;
       default:
@@ -146,10 +183,7 @@ export default function PatientTabs() {
             )}
           </div>
           <div className="flex gap-3">
-            <button className="flex items-center gap-2 px-4 py-2 border border-black rounded-full text-blue-600 hover:bg-blue-50 cursor-pointer">
-              <EmailIcon />
-              Crear Informe
-            </button>
+            
             <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 cursor-pointer">
               <PlusIcon />
               Agregar registro
