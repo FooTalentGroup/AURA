@@ -69,6 +69,7 @@ public class CommandInitializerConfig implements CommandLineRunner {
                     .name("Ryan")
                     .lastName("Gonzales")
                     .phoneNumber("987654321")
+                    .dni("12345678")
                     .build();
 
             UserModel admin = UserModel.builder()

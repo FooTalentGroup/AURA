@@ -12,4 +12,7 @@ import lombok.Setter;
 public class UserResponseDto {
     private String name;
     private String lastName;
+    private String dni;
+    private String phone;
+    private String email;
 }

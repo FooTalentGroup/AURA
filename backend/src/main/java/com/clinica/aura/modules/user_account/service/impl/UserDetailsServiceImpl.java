@@ -2,6 +2,7 @@ package com.clinica.aura.modules.user_account.service.impl;
 
 import com.clinica.aura.config.jwt.JwtUtils;
 import com.clinica.aura.modules.professional.repository.ProfessionalRepository;
+import com.clinica.aura.modules.user_account.Enum.EnumRole;
 import com.clinica.aura.modules.user_account.dtoRequest.AuthLoginRequestDto;
 import com.clinica.aura.modules.user_account.dtoRequest.SuspendRequestDto;
 import com.clinica.aura.modules.user_account.dtoResponse.AuthResponseDto;
@@ -94,17 +95,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             throw new DisabledException("Usuario suspendido hasta: " + userEntity.getSuspensionEnd());
         }
 
-//        if (!userDetails.isEnabled()) {
-//            throw new DisabledException("Usuario suspendido hasta: " +
-//                    ((UserModel) userDetails).getSuspensionEnd());
-//        }
-//        if (!userDetails.isAccountNonLocked()) {
-//            throw new LockedException("Cuenta bloqueada");
-//        }
-
-//        if (userDetails == null) {
-//            throw new BadCredentialsException("Usuario no encontrado");
-//        }
 
         if (!passwordEncoder.matches(password, userDetails.getPassword())) {
             throw new BadCredentialsException("Contraseña incorrecta");
@@ -114,11 +104,24 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     }
 
-    public UserResponseDto getUserById(Long userId) {
-        UserModel user = userRepository.findById(userId)
-                .orElseThrow(() -> new UsernameNotFoundException("El Id del usuario " + userId + " no existe"));
-        return new UserResponseDto(user.getPerson().getName(), user.getPerson().getLastName());
+
+    public List<UserResponseDto> getUsersByRoleAdmin() {
+        List<UserModel> users = userRepository.findUsersByRolesEnumRole(EnumRole.ADMIN);
+        List<UserResponseDto> userResponseDtos = new ArrayList<>();
+
+        users.forEach(user -> {
+            userResponseDtos.add(new UserResponseDto(
+                    user.getPerson().getName(),
+                    user.getPerson().getLastName(),
+                    user.getPerson().getDni(),
+                    user.getPerson().getPhoneNumber(),
+                    user.getEmail()
+            ));
+        });
+
+        return userResponseDtos;
     }
+
 
     public UserMeResponseDto getCurrentUser(String email) {
         UserModel user = userRepository.findByEmail(email)
@@ -127,6 +130,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         return UserMeResponseDto.builder()
                 .id(user.getId())
                 .email(user.getEmail())
+                .name(user.getPerson().getName())
+                .lastName(user.getPerson().getLastName())
+                .birthDate(user.getPerson().getBirthDate())
+                .dni(user.getPerson().getDni())
                 .roles(user.getRoles().stream()
                         .map(role -> role.getEnumRole().name())
                         .toList())

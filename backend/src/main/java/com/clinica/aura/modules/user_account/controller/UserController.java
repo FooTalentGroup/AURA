@@ -10,16 +10,18 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/user")
 @RequiredArgsConstructor
-@Tag(name = "User", description = "Controlador de usuarios")
+@Tag(name = "Admin Users", description = "Se encuentran los usuarios administradores")
 public class UserController {
 
     private final UserDetailsServiceImpl userDetailsService;
 
-    @GetMapping("/{id}")
-    public ResponseEntity<UserResponseDto> getUserById(@PathVariable Long id) {
-        return ResponseEntity.ok(userDetailsService.getUserById(id));
+    @GetMapping("/all_admin")
+    public ResponseEntity<List<UserResponseDto>> getUserById() {
+        return ResponseEntity.ok(userDetailsService.getUsersByRoleAdmin());
     }
 }

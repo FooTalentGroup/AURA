@@ -1,6 +1,7 @@
 package com.clinica.aura.modules.user_account.repository;
 
 import com.clinica.aura.modules.person.model.PersonModel;
+import com.clinica.aura.modules.user_account.Enum.EnumRole;
 import com.clinica.aura.modules.user_account.models.UserModel;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -16,4 +17,6 @@ public interface UserRepository extends JpaRepository<UserModel, Long> {
     Optional<UserModel> findByPersonId(Long personId);
 
     List<UserModel> findAllBySuspensionEndBefore(LocalDateTime now);
+
+    List<UserModel> findUsersByRolesEnumRole(EnumRole enumRole);
 }
