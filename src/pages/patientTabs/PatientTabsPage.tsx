@@ -23,6 +23,8 @@ import ClinicalHistoryTab from "../../features/patientTabs/components/ClinicalHi
 import MedicalBackgroundTab from "../../features/patientTabs/components/MedicalBackgroundTab";
 import Loader from "../../components/shared/ui/Loader";
 
+
+
 // Componente principal
 export default function PatientTabs() {
   const navigate = useNavigate();
@@ -40,6 +42,11 @@ export default function PatientTabs() {
   >(null);
   const [medicalBackgrounds, setMedicalBackgrounds] =
     useState<PatientNotesInfo>();
+
+
+
+
+
 
   useEffect(() => {
     const fetchPatient = async () => {
@@ -114,29 +121,35 @@ export default function PatientTabs() {
     switch (activeTab) { 
       case "paciente":
         if (!patientDB) {
-          return <div>No se encontraron datos de paciente</div>;
+          return (<PatientInfoTab patient={[]} />    
+          )
         }
         return <PatientInfoTab patient={patientDB} />;
       case "contacto":
         if (!patientDB || !patientSchool) {
-          return <div>No se encontraron datos de contacto</div>;
+          return <ContactTab patient={[]} school={[]} />;
         }
         return <ContactTab patient={patientDB} school={patientSchool} />;
       case "diagnostico":
         if (!patientDiagnoses) {
-          return <div>No se encontraron diagnosticos</div>;
+        return <DiagnosticTab diagnoses={[]} />;
         }
         return <DiagnosticTab diagnoses={patientDiagnoses} />;
       case "historial":
         if (!medicalRecordFilters || !followEntries) {
-          return <div>No se encontro historial</div>;
+          return (
+             <ClinicalHistoryTab
+        medicalFilters={[]}
+        followEntries={[]}
+      />
+          )
         }
-        return (
-          <ClinicalHistoryTab
-            medicalFilters={medicalRecordFilters}
-            followEntries={followEntries}
-          />
-        );
+      return (
+      <ClinicalHistoryTab
+        medicalFilters={medicalRecordFilters }
+        followEntries={followEntries }
+      />
+    );
       case "antecedentes":
         if (!medicalBackgrounds) {
           return <div>No se encontro antecedentes</div>;

@@ -35,7 +35,7 @@ React.FC<PageContainerProps> = ({
 }) => {
   const { isAdmin, isProfessional} = useContextAuth();
   const [isFocused, setIsFocused] = useState(false);
-  const bgClass = isFocused ? 'bg-white border border-gray-300 focus:ring-2 focus:ring-[#0F62FE14]' : 'bg-[#0F62FE14]';
+  const bgClass = isFocused ? 'bg-white border border-gray-300 md:w-86 focus:ring-2 focus:ring-[#0F62FE14]' : 'bg-[#0F62FE14] md:w-86';
   const iconColor = isFocused ? 'text-gray-600' : 'text-[#0072C3]';
   return (
     <DashboardLayout>
@@ -55,7 +55,7 @@ React.FC<PageContainerProps> = ({
           </div>
 
           <div className="flex items-center space-x-4 w-full md:w-auto">
-            <div className="relative w-full md:w-64 ">
+            <div className="relative w-full focus:md:w-96 ">
               <input
                 type="text"
                 value={query}

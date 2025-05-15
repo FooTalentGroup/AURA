@@ -285,6 +285,11 @@ export const api = {
   // --- Diagnóstico de pacientes
   getDiagnosesById: (id: number) =>
     request<PatientDiagnosesProps>(`/diagnoses/${id}`, { method: "GET" }),
+  createDiagnosis: (data: PatientDiagnosesProps) =>
+    request<PatientDiagnosesProps>(`/diagnoses/create`, {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
 
   // --- Antecedentes Médicos
   getMedicalBackgroundsById: (id: number) =>
