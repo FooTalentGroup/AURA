@@ -2,11 +2,11 @@ package com.clinica.aura.util;
 
 import com.clinica.aura.exceptions.ProfessionalNotFoundException;
 import com.clinica.aura.exceptions.UnauthorizedAccessException;
-import com.clinica.aura.models.person.model.PersonModel;
-import com.clinica.aura.models.professional.model.ProfessionalModel;
-import com.clinica.aura.models.professional.repository.ProfessionalRepository;
-import com.clinica.aura.models.user_account.models.UserModel;
-import com.clinica.aura.models.user_account.repository.UserRepository;
+import com.clinica.aura.modules.person.model.PersonModel;
+import com.clinica.aura.modules.professional.model.ProfessionalModel;
+import com.clinica.aura.modules.professional.repository.ProfessionalRepository;
+import com.clinica.aura.modules.user_account.models.UserModel;
+import com.clinica.aura.modules.user_account.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

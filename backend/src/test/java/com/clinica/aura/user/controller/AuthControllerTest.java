@@ -1,10 +1,10 @@
 package com.clinica.aura.user.controller;
 
 import com.clinica.aura.config.jwt.JwtUtils;
-import com.clinica.aura.models.user_account.controller.AuthController;
-import com.clinica.aura.models.user_account.dtoRequest.AuthLoginRequestDto;
-import com.clinica.aura.models.user_account.dtoResponse.AuthResponseDto;
-import com.clinica.aura.models.user_account.service.impl.UserDetailsServiceImpl;
+import com.clinica.aura.modules.user_account.controller.AuthController;
+import com.clinica.aura.modules.user_account.dtoRequest.AuthLoginRequestDto;
+import com.clinica.aura.modules.user_account.dtoResponse.AuthResponseDto;
+import com.clinica.aura.modules.user_account.service.impl.UserDetailsServiceImpl;
 import com.clinica.aura.exceptions.GlobalExceptionController;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import static org.hamcrest.Matchers.startsWith;
