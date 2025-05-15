@@ -11,8 +11,8 @@ interface PageContainerProps {
   onQueryChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onAdd: () => void;
   addLabel: string;
+  count: number;    
   children: React.ReactNode;
-   count: number;    
 }
 
 
@@ -33,7 +33,7 @@ React.FC<PageContainerProps> = ({
    count,
   children
 }) => {
-  const { isAdmin, isProfessional} = useContextAuth();
+  const { isAdmin} = useContextAuth();
   const [isFocused, setIsFocused] = useState(false);
   const bgClass = isFocused ? 'bg-white border border-gray-300 md:w-86 focus:ring-2 focus:ring-[#0F62FE14]' : 'bg-[#0F62FE14] md:w-86';
   const iconColor = isFocused ? 'text-gray-600' : 'text-[#0072C3]';

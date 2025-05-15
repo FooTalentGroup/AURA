@@ -57,8 +57,8 @@ const isDni = /^\d{0,9}$/.test(onlyDigits);
       query={query}
       onQueryChange={handleSearchChange}
       onAdd={handleAdd}
-      count={filteredPatients.length}
       addLabel="Agregar paciente"
+      count={filteredPatients.length}
     >
       <div className="grid grid-cols-[2fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr] items-end text-sm text-gray-500 mb-4 px-4">
         <span className="font-medium text-gray-700">Paciente</span>
