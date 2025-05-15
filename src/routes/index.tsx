@@ -10,7 +10,6 @@ import LoginPage from "../pages/auth/LoginPage";
 // Páginas privadas
 import DashboardPage from "../pages/dashboard/DashboardPage";
 import PatientsPage from "../pages/patients/PatientsPage";
-import AppointmentsPage from "../pages/appointments/AppointmentsPage";
 import NotFoundPage from "../pages/NotFoundPage";
 import ForgotPasswordForm from "../pages/auth/ForgotPasswordForm";
 import ProfilePage from "../pages/profile/ProfilePage";
@@ -35,7 +34,6 @@ const AppRoutes = () => {
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/patients" element={<PatientsPage />} />
         <Route path="/patient/:id" element={<PatientTabs />} />
-        <Route path="/appointments" element={<AppointmentsPage />} />
         <Route path="/Pregister" element={<ProfessionalRegister />} />
         <Route path="/Rregister" element={<ReceptionistRegister />} />
         <Route path="/Sregister" element={<PatientRegister />} />

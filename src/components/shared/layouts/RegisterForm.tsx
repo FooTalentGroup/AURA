@@ -19,7 +19,7 @@ export interface GenericFormLayoutProps {
   fields: Field[];
   values: Record<string, any>;
   onChange: (name: string, value: any) => void;
-  onNext: () => void;
+  onNext?: () => void;
   onBack?: () => void;
   onSubmit?: () => void;
   extraAction?: React.ReactNode;         

@@ -159,7 +159,7 @@ export const PatientRegister: React.FC = () => {
               callback: () => {
                 setModalOpen(false);
                 setCurrentStep(1);
-                setValues({ hasInsurance: true, professionalId: [] });
+                setValues({ hasInsurance: true, professionalIds: [] });
                 setSuccess(false);
               },
             }}
