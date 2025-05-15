@@ -1,20 +1,19 @@
 package com.clinica.aura.config;
 
-import com.clinica.aura.entities.person.model.PersonModel;
-import com.clinica.aura.entities.user_account.Enum.EnumPermission;
-import com.clinica.aura.entities.user_account.Enum.EnumRole;
-import com.clinica.aura.entities.user_account.models.PermissionModel;
-import com.clinica.aura.entities.user_account.models.RoleModel;
-import com.clinica.aura.entities.user_account.models.UserModel;
-import com.clinica.aura.entities.user_account.repository.PermissionRepository;
-import com.clinica.aura.entities.user_account.repository.RoleRepository;
-import com.clinica.aura.entities.user_account.repository.UserRepository;
+import com.clinica.aura.modules.person.model.PersonModel;
+import com.clinica.aura.modules.user_account.Enum.EnumPermission;
+import com.clinica.aura.modules.user_account.Enum.EnumRole;
+import com.clinica.aura.modules.user_account.models.PermissionModel;
+import com.clinica.aura.modules.user_account.models.RoleModel;
+import com.clinica.aura.modules.user_account.models.UserModel;
+import com.clinica.aura.modules.user_account.repository.PermissionRepository;
+import com.clinica.aura.modules.user_account.repository.RoleRepository;
+import com.clinica.aura.modules.user_account.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -65,13 +64,11 @@ public class CommandInitializerConfig implements CommandLineRunner {
             RoleModel adminRole = roleRepository.findByEnumRole(EnumRole.ADMIN)
                     .orElseThrow(() -> new RuntimeException("❌ El rol ADMIN no está en la base de datos."));
 
+
             PersonModel person = PersonModel.builder()
                     .name("Ryan")
                     .lastName("Gonzales")
                     .phoneNumber("987654321")
-                    .country("Perú")
-                    .birthDate(LocalDate.of(1980, 1, 1))
-                    .photoUrl("https://i.sstatic.net/l60Hf.png")
                     .build();
 
             UserModel admin = UserModel.builder()
