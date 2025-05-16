@@ -23,6 +23,7 @@ public class DiagnosesModel {
 
 
     private String title;
+    @Column(columnDefinition = "TEXT")
     private String details;
 
     @ManyToOne(targetEntity = MedicalRecordsModel.class, fetch = FetchType.LAZY)
