@@ -97,11 +97,7 @@ export const LoginForm: React.FC = () => {
         </button>
       </div>
 
-      <div className="text-left">
-        <a href="/forgot-password" className="text-sm text-blue-600 hover:underline">
-          Olvidé mi contraseña
-        </a>
-      </div>
+    
 
       <button
         type="submit"

@@ -22,24 +22,28 @@ const PatientsPage: React.FC = () => {
     const q = e.target.value;
     setQuery(q);
     const trimmed = q.trim();
-console.log("Buscando:", JSON.stringify(trimmed), "→ isDni?", /^\d{0,9}$/.test(trimmed));
-    if (trimmed === "") {
+    if (!trimmed) {
       reload("");
       return;
     }
 
-    const onlyDigits = trimmed.replace(/\D/g, ""); 
-const isDni = /^\d{0,9}$/.test(onlyDigits);
-    try {if (isDni) {
-  const p = await patientService.searchByDni(onlyDigits);
-  setFilteredPatients(p ? [p] : []);
-} else {
-  const byName = await patientService.searchByName(trimmed);
-  setFilteredPatients(byName);
-}
-    } catch (err) {
-      console.error("Error al buscar pacientes:", err);
-      setFilteredPatients([]);
+    if (/^\d+$/.test(trimmed)) {
+      try {
+        const patient = await patientService.searchByDni(trimmed);
+        setFilteredPatients(patient ? [patient] : []);
+      } catch (error) {
+        console.error("Error searching by DNI:", error);
+        setFilteredPatients([]);
+      }
+    } else {
+      // Cualquier otra cosa => búsqueda por nombre
+      try {
+        const byName = await patientService.searchByName(trimmed);
+        setFilteredPatients(byName);
+      } catch (error) {
+        console.error("Error searching by name:", error);
+        setFilteredPatients([]);
+      }
     }
   };
 
