@@ -3,6 +3,7 @@ import DashboardLayout from "../../layouts/DashboardLayout";
 import ToggleSwitch from "../../components/shared/ui/ToggleSwitch";
 import {
   ChevronRightIcon,
+  CloseIcon,
   QuestionIcon,
   SquareArrowUpRightIcon,
   UsersIcon,
@@ -98,31 +99,24 @@ function ProfilePage() {
 
   return (
     <DashboardLayout>
-      <section className="bg-white pt-8 pb-12 px-4 rounded-2xl">
-        <header className="flex justify-end items-center gap-4 mb-6">
-          <h1 className="text-2xl">Modo Admin</h1>
-          <ToggleSwitch isOn={switchState} onChange={setSwitchState} />
+      <section className="bg-white pt-5 pb-12 rounded-2xl">
+        <header className="flex justify-between items-center px-6 gap-4 mb-5">
+          <h1 className="text-3xl">Perfil</h1>
+          <button>
+            <CloseIcon />
+          </button>
         </header>
-        <article className="border border-gray-400 grid grid-cols-8 rounded-lg">
+        <hr className="text-gray-400" />
+        <article className="grid grid-cols-8 rounded-lg px-6">
           <article className="p-8 col-span-5">
-            <header className="flex justify-between items-center mb-12">
-              <h2 className="text-2xl">Información de la cuenta</h2>
-              <div className="flex gap-4">
-                <button className="text-red-600 py-2 px-5 border border-red-600 rounded-4xl hover:bg-gray-200 cursor-pointer">
-                  Cerrar sesión
-                </button>
-                <button className="text-white py-2 px-5 bg-blue-500 rounded-4xl hover:bg-blue-700 cursor-pointer">
-                  Editar
-                </button>
-              </div>
+            <header className="flex flex-col items-center mb-12">
+              <span className="mb-4 flex justify-center items-center text-3xl font-bold bg-sky-200 text-blue-400 w-20 h-20 rounded-full">
+                FD
+              </span>
+              <h2 className="text-2xl">Bienvenido, Federico</h2>
             </header>
             <div>
               <header className="flex justify-between items-center mb-12">
-                <img
-                  className="h-14 w-14 object-cover rounded-full"
-                  src="https://plus.unsplash.com/premium_photo-1661580574627-9211124e5c3f?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8ZG9jdG9yYXxlbnwwfHwwfHx8MA%3D%3D"
-                  alt=""
-                />
                 <h2 className="text-lg flex items-center gap-2">
                   <UsersIcon /> Rol: Profesional
                 </h2>
