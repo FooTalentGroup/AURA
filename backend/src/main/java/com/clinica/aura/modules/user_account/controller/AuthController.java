@@ -7,6 +7,7 @@ import com.clinica.aura.modules.receptionist.dtoRequest.ReceptionistRequestDto;
 import com.clinica.aura.modules.receptionist.service.ReceptionistService;
 import com.clinica.aura.modules.user_account.dtoRequest.AuthLoginRequestDto;
 import com.clinica.aura.modules.user_account.dtoRequest.SuspendRequestDto;
+import com.clinica.aura.modules.user_account.dtoRequest.UserMeRequestDto;
 import com.clinica.aura.modules.user_account.dtoResponse.AuthResponseDto;
 import com.clinica.aura.modules.user_account.dtoResponse.AuthResponseRegisterDto;
 import com.clinica.aura.modules.user_account.dtoResponse.UserMeResponseDto;
@@ -129,6 +130,16 @@ public class AuthController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
         return ResponseEntity.ok(userDetailsService.getCurrentUser(email));
+    }
+
+    @Operation(summary = "Actualizar el usuario actual", description = """
+            Actualiza los datos del usuario autenticado.
+            """)
+    @PreAuthorize("isAuthenticated()")
+    @PutMapping("/me/{userId}")
+    public ResponseEntity<UserMeResponseDto> updateCurrentUser(@PathVariable Long userId, @RequestBody UserMeRequestDto userMeRequestDto) {
+        UserMeResponseDto userMeResponseDto = userDetailsService.updateCurrentUser(userId, userMeRequestDto);
+        return ResponseEntity.ok(userMeResponseDto);
     }
 
     @Operation(summary = "Cerrar sesión", description = """

@@ -5,6 +5,7 @@ import com.clinica.aura.modules.professional.repository.ProfessionalRepository;
 import com.clinica.aura.modules.user_account.Enum.EnumRole;
 import com.clinica.aura.modules.user_account.dtoRequest.AuthLoginRequestDto;
 import com.clinica.aura.modules.user_account.dtoRequest.SuspendRequestDto;
+import com.clinica.aura.modules.user_account.dtoRequest.UserMeRequestDto;
 import com.clinica.aura.modules.user_account.dtoResponse.AuthResponseDto;
 import com.clinica.aura.modules.user_account.dtoResponse.UserMeResponseDto;
 import com.clinica.aura.modules.user_account.dtoResponse.UserResponseDto;
@@ -138,6 +139,18 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                         .map(role -> role.getEnumRole().name())
                         .toList())
                 .build();
+    }
+
+    public UserMeResponseDto updateCurrentUser(Long id, UserMeRequestDto userMeRequest) {
+        UserModel user = userRepository.findById(id)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuario con el id " + id + " no encontrado"));
+        user.setEmail(userMeRequest.getEmail());
+        user.getPerson().setName(userMeRequest.getName());
+        user.getPerson().setLastName(userMeRequest.getLastName());
+        user.getPerson().setDni(userMeRequest.getDni());
+        user.getPerson().setBirthDate(userMeRequest.getBirthDate());
+        userRepository.save(user);
+        return getCurrentUser(user.getEmail());
     }
 
 
