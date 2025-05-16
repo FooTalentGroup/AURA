@@ -1,5 +1,14 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import DashboardLayout from "../../layouts/DashboardLayout";
+import Loader from "../../components/shared/ui/Loader";
+import { ArrowLeftIcon, PlusIcon } from "../../components/shared/ui/Icons";
+import RegisterClinicalRecordModal from "../../features/patientTabs/components/ClinicalObservationModal";
+import ClinicalHistoryTab from "../../features/patientTabs/components/ClinicalHistoryTab";
+import PatientInfoTab from "../../features/patientTabs/components/PatientInfoTab";
+import ContactTab from "../../features/patientTabs/components/ContactTab";
+import DiagnosticTab from "../../features/patientTabs/components/DiagnosticTab";
+import MedicalBackgroundTab from "../../features/patientTabs/components/MedicalBackgroundTab";
 import {
   AppointmentProps,
   FollowEntriesProps,
@@ -10,199 +19,142 @@ import {
   TabId,
   tabs,
 } from "../../features/patientTabs/types/patientTabs.types";
-import {
-  ArrowLeftIcon,
-  PlusIcon,
-} from "../../components/shared/ui/Icons";
-import { Link, useNavigate, useParams } from "react-router-dom";
 import { api } from "../../core/services/api";
-import PatientInfoTab from "../../features/patientTabs/components/PatientInfoTab";
-import ContactTab from "../../features/patientTabs/components/ContactTab";
-import DiagnosticTab from "../../features/patientTabs/components/DiagnosticTab";
-import ClinicalHistoryTab from "../../features/patientTabs/components/ClinicalHistoryTab";
-import MedicalBackgroundTab from "../../features/patientTabs/components/MedicalBackgroundTab";
-import Loader from "../../components/shared/ui/Loader";
 
-
-
-// Componente principal
-export default function PatientTabs() {
+export default function PatientTabsPage() {
   const navigate = useNavigate();
   const { id } = useParams();
+  const patientID = Number(id);
+
+  // --- State ---
   const [activeTab, setActiveTab] = useState<TabId>("paciente");
-  const [patientDB, setPatient] = useState<PatientProps | null>(null);
-  const [patientSchool, setPatientSchool] = useState<SchoolProps | null>(null);
+  const [patient, setPatient] = useState<PatientProps | null>(null);
+  const [school, setSchool] = useState<SchoolProps | null>(null);
+  const [diagnoses, setDiagnoses] = useState<PatientDiagnosesProps | null>(
+    null
+  );
   const [followEntries, setFollowEntries] = useState<FollowEntriesProps | null>(
     null
   );
-  const [patientDiagnoses, setPatientDiagnoses] =
-    useState<PatientDiagnosesProps | null>(null);
-  const [medicalRecordFilters, setMedicalRecordFilters] = useState<
-    AppointmentProps[] | null
-  >(null);
-  const [medicalBackgrounds, setMedicalBackgrounds] =
-    useState<PatientNotesInfo>();
+  const [appointments, setAppointments] = useState<AppointmentProps[]>([]);
+  const [backgrounds, setBackgrounds] = useState<PatientNotesInfo | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
+  // --- Fetch all patient-related data ---
+  const fetchPatient = useCallback(async () => {
+    if (!patientID) return;
+    try {
+      // 1) Paciente
+      const p = await api.getPatientById(patientID);
+      setPatient(p);
 
+      // 2) Escuela
+      const schools = await api.listSchoolsPaginated();
+      setSchool(schools.content.find((s) => s.id === p.schoolId) || null);
 
-
-
-
-  useEffect(() => {
-    const fetchPatient = async () => {
+      // 3) Medical Record → citas (appointments) y follow entries
+      let record;
       try {
-        if (!id) return;
-        const patientID = Number(id);
-        const patientData = await api.getPatientById(patientID);
-        const schoolsList = await api.listSchoolsPaginated();
-            let medicalRecordPatient: { id: number; diagnosisIds: number[] } | null = null;
-       try {
-          medicalRecordPatient = await api.getMedicalRecordByPatientId(patientID);
-        } catch (err: any) {
-          // tu wrapper lanza Error('El recurso solicitado no fue encontrado') en 404
-          if (err.message.includes("no fue encontrado") || err.message.includes("404")) {
-            console.warn(`Sin historial médico para patient ${patientID}`);
-          } else {
-            throw err;
-          }
-        }
-
-       let patientFollowEntries: FollowEntriesProps | null = null;
-               let patientDiagnosesData: PatientDiagnosesProps | null = null;
-        if (medicalRecordPatient) {
-          const [firstDiagnosisId] = medicalRecordPatient.diagnosisIds;
-          try {
-            patientFollowEntries = await api.getFollowEntriesById(medicalRecordPatient.id);
-          } catch (err: any) {
-            if (err.message.includes("no fue encontrado") || err.message.includes("404")) {
-              console.warn(`Sin follow entries para medicalRecord ${medicalRecordPatient.id}`);
-            } else {
-              throw err;
-            }
-          }
-          // Si tuvimos entries, intentamos traer diagnósticos (pueden faltar también)
-          if (patientFollowEntries) {
-            try {
-              patientDiagnosesData = await api.getDiagnosesById(firstDiagnosisId);
-            } catch (err: any) {
-              if (err.message.includes("no fue encontrado") || err.message.includes("404")) {
-                console.warn(`Sin diagnósticos para diagnosisId ${firstDiagnosisId}`);
-              } else {
-                throw err;
-              }
-            }
-          }
-       }
-
-        // Busco la escuela correspondiente a cada paciente
-        const school = schoolsList.content.find(
-          (item) => item.id === patientData.schoolId
-        );
-
-        setPatient(patientData);
-        setPatientSchool(school || null);
-        setPatientDiagnoses(patientDiagnosesData);
-        setFollowEntries(patientFollowEntries);
-        setMedicalRecordFilters(medicalRecordFilters);
-        setMedicalBackgrounds(medicalBackgrounds);
-      } catch (err) {
-        console.error("Error al cargar el paciente:", err);
+        record = await api.getMedicalRecordByPatientId(patientID);
+      } catch {
+        console.warn(`Sin historial médico para patient ${patientID}`);
       }
-    };
-    fetchPatient();
-  }, [id]);
+      if (record) {
+        // Turnos asociados a la historia
+        const appts = await api.getMedicalRecordFilter(); // o bien api.getAppointmentsByMedicalRecordId(record.id) si lo tienes
+        setAppointments(appts);
 
-  const handleTabChange = (tabId: TabId) => {
-    setActiveTab(tabId);
-  };
+        // Follow-up entries
+        try {
+          const fe = await api.getFollowEntriesById(record.id);
+          setFollowEntries(fe);
+        } catch {
+          console.warn(`Sin follow entries para record ${record.id}`);
+        }
 
-  // Renderizar el contenido según la pestaña activa
-  const renderTabContent = () => {
-    switch (activeTab) { 
-      case "paciente":
-        if (!patientDB) {
-          return (<PatientInfoTab patient={undefined} />    
-          )
+        // Diagnósticos del paciente (tomando el primer diagnosisId)
+        if (record.diagnosisIds?.length) {
+          try {
+            const diag = await api.getDiagnosesById(record.diagnosisIds[0]);
+            setDiagnoses(diag);
+          } catch {
+            console.warn(
+              `Sin diagnósticos para diagnosisId ${record.diagnosisIds[0]}`
+            );
+          }
         }
-        return <PatientInfoTab patient={patientDB} />;
-      case "contacto":
-        if (!patientDB || !patientSchool) {
-          return <ContactTab patient={undefined} school={undefined} />;
-        }
-        return <ContactTab patient={patientDB} school={patientSchool} />;
-      case "diagnostico":
-        if (!patientDiagnoses) {
-        return <DiagnosticTab diagnoses={undefined} />;
-        }
-        return <DiagnosticTab diagnoses={patientDiagnoses} />;
-      case "historial":
-        if (!medicalRecordFilters || !followEntries) {
-          return (
-             <ClinicalHistoryTab
-        medicalFilters={[]}
-        followEntries={undefined}
-      />
-          )
-        }
-      return (
-      <ClinicalHistoryTab
-        medicalFilters={medicalRecordFilters }
-        followEntries={followEntries }
-      />
-    );
-      case "antecedentes":
-        if (!medicalBackgrounds) {
-          return <div>No se encontro antecedentes</div>;
-        }
-        return <MedicalBackgroundTab medicalBackgrounds={medicalBackgrounds} />;
-      default:
-        return null;
+      }
+
+      // 4) Antecedentes médicos
+      try {
+        const bg = await api.getMedicalBackgroundsById(patientID);
+        setBackgrounds(bg);
+      } catch {
+        console.warn(`Sin antecedentes para patient ${patientID}`);
+      }
+    } catch (err) {
+      console.error("Error al cargar datos del paciente:", err);
     }
+  }, [patientID]);
+
+  // Carga inicial y recarga cuando cambie patientID
+  useEffect(() => {
+    fetchPatient();
+  }, [fetchPatient]);
+
+  // Al crear un nuevo registro clínico en el modal
+  const handleSuccess = () => {
+    fetchPatient();
+    setIsModalOpen(false);
   };
 
   return (
     <DashboardLayout>
       <section className="bg-white rounded-2xl shadow-sm">
+        {/* Header */}
         <div className="p-4 border-b-2 border-gray-300/90 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Link to="#" onClick={() => navigate(-1)} title="Atrás">
               <ArrowLeftIcon />
             </Link>
-            {!patientDB ? (
+            {!patient ? (
               <p className="text-xl">Cargando paciente...</p>
             ) : (
               <>
                 <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-medium">
-                  {patientDB?.name.charAt(0).toUpperCase()}
-                  {patientDB?.lastName.charAt(0).toUpperCase()}
+                  {patient.name.charAt(0).toUpperCase()}
+                  {patient.lastName.charAt(0).toUpperCase()}
                 </div>
                 <h2 className="text-2xl font-medium text-gray-800">
-                  {patientDB?.name} {patientDB?.lastName}
+                  {patient.name} {patient.lastName}
                 </h2>
               </>
             )}
           </div>
-          <div className="flex gap-3">
-            
-            <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 cursor-pointer">
-              <PlusIcon />
-              Agregar registro
-            </button>
-          </div>
+
+          {/* Botón + Agregar registro */}
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700"
+          >
+            <PlusIcon /> Agregar registro
+          </button>
         </div>
 
-        {!patientDB ? (
+        {/* Contenido */}
+        {!patient ? (
           <div className="flex justify-center items-center h-96">
             <Loader />
           </div>
         ) : (
           <>
+            {/* Pestañas */}
             <header className="mt-4 px-6">
               <nav className="flex">
                 {tabs.map((tab) => (
                   <button
                     key={tab.id}
-                    onClick={() => handleTabChange(tab.id)}
+                    onClick={() => setActiveTab(tab.id)}
                     className={`relative px-8 py-4 rounded-t-2xl font-medium transition-colors cursor-pointer ${
                       activeTab === tab.id
                         ? "bg-gray-200/60 text-blue-600 after:content-[''] after:absolute after:bottom-0 after:left-1/2 after:-translate-x-1/2 after:w-16 after:h-0.5 after:bg-blue-600"
@@ -215,11 +167,48 @@ export default function PatientTabs() {
               </nav>
             </header>
 
-            {/* Contenido de la pestaña activa */}
-
-            <main className="px-6 pb-6">{renderTabContent()}</main>
+            {/* Tab content */}
+            <main className="px-6 pb-6">
+              {activeTab === "paciente" && (
+                <PatientInfoTab
+                  patient={patient}
+                  onUpdate={(updated) => setPatient(updated)}
+                />
+              )}
+              {activeTab === "contacto" && (
+                <ContactTab
+                  patient={patient}
+                  school={school!}
+                  onUpdatePatient={setPatient}
+                  onUpdateSchool={setSchool}
+                />
+              )}
+              {activeTab === "diagnostico" && (
+                <DiagnosticTab diagnoses={diagnoses!} />
+              )}
+              {activeTab === "historial" && (
+                <ClinicalHistoryTab
+                  medicalFilters={appointments}
+                  followEntries={followEntries!}
+                />
+              )}
+              {activeTab === "antecedentes" &&
+                (backgrounds ? (
+                  <MedicalBackgroundTab medicalBackgrounds={backgrounds} />
+                ) : (
+                  <div>No se encontraron antecedentes</div>
+                ))}
+            </main>
           </>
         )}
+
+        {/* Modal de registro clínico */}
+        <RegisterClinicalRecordModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onSuccess={handleSuccess}
+          patientId={patientID}
+        />
       </section>
     </DashboardLayout>
   );

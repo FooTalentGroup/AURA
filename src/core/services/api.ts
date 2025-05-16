@@ -133,6 +133,10 @@ export const api = {
       method: "POST",
       body: JSON.stringify(data),
     }),
+  getProfessionalById: (id: number) =>
+  request<Professional>(`/professionals/${id}`, {
+    method: "GET",
+  }),
 
   getCurrentUser: () =>
     request<UserResponse>(`/auth/me`, {
@@ -151,7 +155,7 @@ export const api = {
 
   updatePatient: (id: number, data: PatientPayload) =>
     request<Patient>(`/patients/${id}`, {
-      method: "PUT",
+      method: "PATCH",
       body: JSON.stringify(data),
     }),
 
@@ -296,4 +300,13 @@ export const api = {
     request<PatientNotesInfo>(`/medical-backgrounds/patient/${id}`, {
       method: "GET",
     }),
+ createFollowUpEntry: (data: {
+  medicalRecordId: number;
+  observations: string;
+  interventions: string;
+  nextSessionInstructions: string;
+}) => request<FollowEntriesProps>("/follow-up-entries/create", {
+  method: "POST",
+  body: JSON.stringify(data),
+}),
 };
