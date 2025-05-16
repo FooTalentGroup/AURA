@@ -6,12 +6,14 @@ import { api } from "../../../core/services/api";
 interface Props {
   isOpen: boolean;
   onClose: () => void;
+    onSuccess: () => void;
   patientId: number;
 }
 
 export default function RegisterClinicalRecordModal({
   isOpen,
   onClose,
+  onSuccess,
   patientId,
 }: Props) {
   // 1) Datos del profesional
@@ -63,7 +65,7 @@ export default function RegisterClinicalRecordModal({
         interventions,
         nextSessionInstructions: indications,
       });
-      onClose();
+     onSuccess();
     } catch (err: any) {
       setSubmitError(err.message || "Error al guardar el registro clínico");
     } finally {
