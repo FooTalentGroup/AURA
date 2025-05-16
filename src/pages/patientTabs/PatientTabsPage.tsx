@@ -169,12 +169,19 @@ export default function PatientTabsPage() {
 
             {/* Tab content */}
             <main className="px-6 pb-6">
-              {activeTab === "paciente" && <PatientInfoTab
-  patient={patient}
-  onUpdate={(updated) => setPatient(updated)}
-/>}
+              {activeTab === "paciente" && (
+                <PatientInfoTab
+                  patient={patient}
+                  onUpdate={(updated) => setPatient(updated)}
+                />
+              )}
               {activeTab === "contacto" && (
-                <ContactTab patient={patient} school={school!} />
+                <ContactTab
+                  patient={patient}
+                  school={school!}
+                  onUpdatePatient={setPatient}
+                  onUpdateSchool={setSchool}
+                />
               )}
               {activeTab === "diagnostico" && (
                 <DiagnosticTab diagnoses={diagnoses!} />
@@ -185,13 +192,12 @@ export default function PatientTabsPage() {
                   followEntries={followEntries!}
                 />
               )}
-              {activeTab === "antecedentes" && (
-                backgrounds ? (
+              {activeTab === "antecedentes" &&
+                (backgrounds ? (
                   <MedicalBackgroundTab medicalBackgrounds={backgrounds} />
                 ) : (
                   <div>No se encontraron antecedentes</div>
-                )
-              )}
+                ))}
             </main>
           </>
         )}
