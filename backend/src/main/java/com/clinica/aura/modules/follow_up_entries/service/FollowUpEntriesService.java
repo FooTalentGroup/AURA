@@ -66,6 +66,7 @@ public class FollowUpEntriesService {
 
         response.setMedicalRecordId(record.getMedicals().getId());
 
+        response.setProfessionalId(record.getUpdatedBy().getId());
         response.setCreatedAt(record.getCreatedAt());
         response.setUpdatedAt(record.getUpdatedAt());
 
@@ -119,7 +120,7 @@ public class FollowUpEntriesService {
                 followUpEntriesModel.getNextSessionInstructions(),
                 followUpEntriesModel.getCreatedAt(),
                 followUpEntriesModel.getUpdatedAt(),
-                followUpEntriesModel.getCreatedBy().getId(),
+                followUpEntriesModel.getUpdatedBy().getId(),
                 followUpEntriesModel.getMedicals().getId()
         );
     }

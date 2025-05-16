@@ -19,7 +19,7 @@ public class DiagnosesMapper {
         DiagnosesResponseDto dto = new DiagnosesResponseDto();
         dto.setId(diagnosesModel.getId());
         dto.setDate(diagnosesModel.getCreatedAt());
-        dto.setIdProfessional(diagnosesModel.getCreatedBy().getId());
+        dto.setIdProfessional(diagnosesModel.getUpdatedBy().getId());
         dto.setTitle(diagnosesModel.getTitle());
         dto.setDetails(diagnosesModel.getDetails());
         dto.setMedicalRecordId(diagnosesModel.getMedicalRecord().getId());
