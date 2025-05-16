@@ -155,7 +155,7 @@ export const api = {
 
   updatePatient: (id: number, data: PatientPayload) =>
     request<Patient>(`/patients/${id}`, {
-      method: "PUT",
+      method: "PATCH",
       body: JSON.stringify(data),
     }),
 

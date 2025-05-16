@@ -169,7 +169,10 @@ export default function PatientTabsPage() {
 
             {/* Tab content */}
             <main className="px-6 pb-6">
-              {activeTab === "paciente" && <PatientInfoTab patient={patient} />}
+              {activeTab === "paciente" && <PatientInfoTab
+  patient={patient}
+  onUpdate={(updated) => setPatient(updated)}
+/>}
               {activeTab === "contacto" && (
                 <ContactTab patient={patient} school={school!} />
               )}
