@@ -16,5 +16,4 @@ public class UserMeRequestDto {
     private String lastName;
     private LocalDate birthDate;
     private String dni;
-    private List<String> roles;
 }
