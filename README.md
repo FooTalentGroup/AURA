@@ -1,4 +1,4 @@
-# React + TypeScript + Vite
+# AURA
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
@@ -52,4 +52,4 @@ export default tseslint.config({
   },
 })
 ```
-[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/AuraFTG/aura-frontend)
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/AuraFTG/aura-frontend) for more information.
