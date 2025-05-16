@@ -1,101 +1,96 @@
-import { useState } from "react";
 import DashboardLayout from "../../layouts/DashboardLayout";
-import ToggleSwitch from "../../components/shared/ui/ToggleSwitch";
+import { CloseIcon, QuestionIcon } from "../../components/shared/ui/Icons";
+import { useEffect, useState } from "react";
+import { api } from "../../core/services/api";
+import { EditableForm } from "../../components/shared/ui/EditableForm";
+import ProfileList from "../../features/profile/components/ProfileList";
+import InformationHelp from "../../features/profile/components/InformationHelp";
 import {
-  ChevronRightIcon,
-  CloseIcon,
-  QuestionIcon,
-  SquareArrowUpRightIcon,
-  UsersIcon,
-} from "../../components/shared/ui/Icons";
-
-interface ProfileFormProps {
-  title: string;
-  type?: string;
-  id: string;
-  placeholder: string;
-}
-
-const ProfileForm = ({
-  title,
-  type = "text",
-  id,
-  placeholder,
-}: ProfileFormProps) => {
-  return (
-    <div className="">
-      <form action="">
-        <div className="relative w-full">
-          <input
-            type={type}
-            id={id}
-            placeholder={placeholder}
-            className="bg-white autofill:bg-white peer w-full border border-gray-400 rounded-sm px-3 pt-4 pb-2 text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
-            required
-          />
-          <label className="absolute left-3 -top-3 text-gray-500 text-sm bg-white px-1 peer-placeholder-shown:-top-3 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-500 transition-all duration-200">
-            {title}
-          </label>
-        </div>
-      </form>
-    </div>
-  );
-};
-
-const ProfileList = () => {
-  return (
-    <ul className="[&>li>a]:rounded-md [&>li>a]:bg-gray-200/60 [&>li>a]:p-5 [&>li>a]:mb-4 [&>li>a]:flex [&>li>a]:justify-between [&>li>a]:hover:px-7 [&>li>a]:transition-all [&>li>a]:duration-300">
-      <li>
-        <a href="#">
-          ¿Cómo registrar un nuevo paciente?
-          <ChevronRightIcon />
-        </a>
-      </li>
-      <li>
-        <a href="#">
-          ¿Dónde veo mi agenda de turnos?
-          <ChevronRightIcon />
-        </a>
-      </li>
-      <li>
-        <a href="#">
-          ¿Dónde veo los historiales clínicos?
-          <ChevronRightIcon />
-        </a>
-      </li>
-      <li>
-        <a href="#">
-          ¿Cómo registro una observación?
-          <ChevronRightIcon />
-        </a>
-      </li>
-      <li>
-        <a href="#">
-          Se me cerró la sesión ¿Qué hago?
-          <ChevronRightIcon />
-        </a>
-      </li>
-    </ul>
-  );
-};
-
-const InformationHelp = () => {
-  return (
-    <a href="#" className="flex bg-blue-200/50 p-4 rounded-xl mt-6">
-      <div className="w-11/12 text-xs">
-        <h2 className="font-medium">¿Esta Información fue de utilidad?</h2>
-        <p>
-          Si no es así, visita la documentación de este software para más
-          información.
-        </p>
-      </div>
-      <SquareArrowUpRightIcon />
-    </a>
-  );
-};
+  CurrentUserProps,
+  UserUpdateData,
+} from "../../features/profile/types/profile.type";
 
 function ProfilePage() {
-  const [switchState, setSwitchState] = useState(false);
+  const [userData, setUserData] = useState<CurrentUserProps | undefined>(
+    undefined
+  );
+
+  const personalFields = [
+    { key: "name", label: "Nombre" },
+    { key: "lastName", label: "Apellido" },
+    { key: "birthDate", label: "Fecha de nacimiento", type: "date" },
+    { key: "dni", label: "DNI" },
+  ];
+
+  const contactFields = [
+    { key: "email", label: "Correo electrónico", type: "email" },
+    { key: "phoneNumber", label: "Teléfono" },
+    { key: "address", label: "Dirección" },
+  ];
+
+  const handleSavePersonalInfo = (updatedData: UserUpdateData) => {
+    const updateData: UserUpdateData = {
+      name: updatedData.name || userData?.name,
+      email: updatedData.email || updatedData?.email,
+      lastName: updatedData.lastName || userData?.lastName,
+      birthDate: updatedData.birthDate || userData?.birthDate || "",
+      dni: updatedData.dni || userData?.dni || "",
+    };
+
+    console.log("Actualizando información básica:", updateData);
+
+    if (!userData) return;
+
+    api
+      .updateCurrentUser(userData.id, updateData)
+      .then((res) => {
+        setUserData(res);
+      })
+      .catch((error) => {
+        if (error.response) {
+          console.error("Error al actualizar datos:", error.response.data);
+        } else {
+          console.error("Error al actualizar datos:", error.message);
+        }
+      });
+  };
+
+  const handleSaveContactInfo = (updatedData: Partial<CurrentUserProps>) => {
+    const updateData: UserUpdateData = {
+      name: updatedData.name || userData?.name,
+      email: updatedData.email || updatedData?.email,
+      lastName: updatedData.lastName || userData?.lastName,
+      birthDate: updatedData.birthDate || userData?.birthDate || "",
+      dni: updatedData.dni || userData?.dni || "",
+
+      // TODO: Adrián hay que descomentar estás opciones si backend las agrega
+      // phoneNumber: updatedData.phoneNumber || userData?.phoneNumber || "",
+      // address: updatedData.address || userData?.address || "",
+    };
+
+    if (!userData) return;
+
+    api
+      .updateCurrentUser(userData.id, updateData)
+      .then((res) => {
+        setUserData({ ...userData, ...updateData });
+      })
+      .catch((error) => {
+        console.error("Error al actualizar datos de contacto:", error);
+      });
+  };
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const user = await api.getCurrentUser();
+        setUserData(user);
+      } catch (err) {
+        console.error("Error al cargar el usuario:", err);
+      }
+    };
+    fetchUser();
+  }, []);
 
   return (
     <DashboardLayout>
@@ -111,47 +106,30 @@ function ProfilePage() {
           <article className="p-8 col-span-5">
             <header className="flex flex-col items-center mb-12">
               <span className="mb-4 flex justify-center items-center text-3xl font-bold bg-sky-200 text-blue-400 w-20 h-20 rounded-full">
-                FD
+                {userData?.name.charAt(0).toUpperCase()}
+                {userData?.lastName.charAt(0).toUpperCase()}
               </span>
-              <h2 className="text-2xl">Bienvenido, Federico</h2>
+              <h2 className="text-2xl">Bienvenido, {userData?.name}</h2>
             </header>
-            <div>
-              <header className="flex justify-between items-center mb-12">
-                <h2 className="text-lg flex items-center gap-2">
-                  <UsersIcon /> Rol: Profesional
-                </h2>
-              </header>
-              <div className="grid grid-cols-2 gap-y-8 gap-x-20">
-                <ProfileForm title="Nombre" id="nombre" placeholder="Analía" />
-                <ProfileForm
-                  title="Apellido"
-                  id="apellido"
-                  placeholder="López"
+            {userData ? (
+              <article className="flex flex-col gap-8">
+                <EditableForm
+                  title="Información básica"
+                  fields={personalFields}
+                  data={userData}
+                  onSave={handleSavePersonalInfo}
                 />
-                <ProfileForm
-                  title="Email"
-                  type="email"
-                  id="email"
-                  placeholder="analia.lopez@gmail.com"
+
+                <EditableForm
+                  title="Información de contacto"
+                  fields={contactFields}
+                  data={userData}
+                  onSave={handleSaveContactInfo}
                 />
-                <ProfileForm
-                  title="Contraseña"
-                  type="password"
-                  id="password"
-                  placeholder="**************"
-                />
-                <ProfileForm
-                  title="Teléfono"
-                  id="telefono"
-                  placeholder="+549 011 7953 1654"
-                />
-                <ProfileForm
-                  title="Especialidad"
-                  id="especialidad"
-                  placeholder="Fonoaudiología"
-                />
-              </div>
-            </div>
+              </article>
+            ) : (
+              <p>Cargando datos del usuario...</p>
+            )}
           </article>
           <article className="border-l border-gray-400 p-8 col-span-3">
             <header className="flex justify-between items-center mb-8">
