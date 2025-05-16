@@ -3,6 +3,7 @@ import com.clinica.aura.modules.patient.dto.PatientResponseDto;
 import com.clinica.aura.modules.patient.model.PatientModel;
 import com.clinica.aura.modules.patient.repository.PatientRepository;
 import com.clinica.aura.modules.person.repository.PersonRepository;
+import com.clinica.aura.modules.professional.dtoRequest.ProfessionalRequestUpdateDto;
 import com.clinica.aura.modules.user_account.service.impl.UserDetailsServiceImpl;
 import com.clinica.aura.exceptions.*;
 import com.clinica.aura.config.jwt.JwtUtils;
@@ -185,7 +186,7 @@ public class ProfessionalService {
 
 
     //metodo para hacer update a profesional
-    public ProfessionalResponseDto updateProfessional(Long id, @Valid ProfessionalRequestDto dto) {
+    public ProfessionalResponseDto updateProfessional(Long id, @Valid ProfessionalRequestUpdateDto dto) {
         ProfessionalModel existing = professionalRepository.findById(id)
                 .orElseThrow(() -> new ProfessionalNotFoundException("Profesional no encontrado con ID: " + id));
 
