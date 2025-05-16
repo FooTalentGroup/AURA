@@ -51,5 +51,5 @@ export default tseslint.config({
     ...reactDom.configs.recommended.rules,
   },
 })
-[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/AuraFTG/aura-frontend)
 ```
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/AuraFTG/aura-frontend)
