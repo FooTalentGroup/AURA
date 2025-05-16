@@ -1,6 +1,7 @@
 package com.clinica.aura.modules.professional.controller;
 
 import com.clinica.aura.modules.patient.dto.PatientResponseDto;
+import com.clinica.aura.modules.professional.dtoRequest.ProfessionalRequestUpdateDto;
 import com.clinica.aura.modules.professional.dtoResponse.ProfessionalResponseDto;
 import com.clinica.aura.modules.professional.service.ProfessionalService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -96,7 +97,7 @@ public class ProfessionalController {
     @PreAuthorize("hasRole('ADMIN') or hasRole('PROFESSIONAL')")
     public ResponseEntity<ProfessionalResponseDto> updateProfessional(
             @PathVariable Long id,
-            @Valid @RequestBody ProfessionalRequestDto requestDto) {
+            @Valid @RequestBody ProfessionalRequestUpdateDto requestDto) {
         return ResponseEntity.ok(professionalService.updateProfessional(id, requestDto));
     }
 
