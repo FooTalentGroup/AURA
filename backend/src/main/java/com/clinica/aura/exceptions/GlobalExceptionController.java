@@ -41,12 +41,19 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class GlobalExceptionController {
 
+    /**
+     * Manejador de excepciones para errores de validación en los argumentos de los métodos del controlador.
+     * Captura instancias de {@link MethodArgumentNotValidException} generadas por anotaciones como {@code @Valid}.
+     *
+     * @param ex      la excepción lanzada cuando un argumento anotado con {@code @Valid} falla la validación
+     * @param request el objeto {@link WebRequest} asociado a la solicitud HTTP que provocó la excepción
+     * @return una respuesta con código 400 (Bad Request) que contiene detalles del error en un objeto {@link ErrorResponse}
+     */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidationExceptions(
             MethodArgumentNotValidException ex,
             WebRequest request) {
 
-        // 1. Sanitizar nombres de campos sensibles y manejar mensajes nulos
         List<String> sanitizedDetails = ex.getBindingResult().getFieldErrors().stream()
                 .map(error -> {
                     String fieldName = sanitizeFieldName(error.getField());
@@ -54,10 +61,9 @@ public class GlobalExceptionController {
                             .orElse("Validation constraint violated");
                     return String.format("%s: %s", fieldName, message);
                 })
-                .sorted(Comparator.comparing(detail -> detail.split(":")[0])) // Orden consistente
+                .sorted(Comparator.comparing(detail -> detail.split(":")[0]))
                 .toList();
 
-        // 2. Construir respuesta estándar con metadata
         ErrorResponse errorResponse = ErrorResponse.builder()
                 .errorCode("VALIDATION-001")
                 .message("Errores de validación en la solicitud")
@@ -66,7 +72,6 @@ public class GlobalExceptionController {
                 .path(getSanitizedPath(request))
                 .build();
 
-        // 3. Logging estructurado seguro
         log.warn("Validation Error - Path: {} | IP: {} | Errors: {}",
                 errorResponse.getPath(),
                 request.getHeader("X-Forwarded-For"),
@@ -74,22 +79,27 @@ public class GlobalExceptionController {
                         .map(detail -> detail.replaceAll("(\r\n|\n|\r)", ""))
                         .collect(Collectors.joining("; ")));
 
-        // 4. Respuesta con headers de seguridad
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .header("X-Content-Type-Options", "nosniff")
                 .header("X-Validation-Error", "true")
                 .body(errorResponse);
     }
 
+    /**
+     * Manejador de excepciones para errores de lectura del cuerpo de la solicitud HTTP.
+     * Captura instancias de {@link HttpMessageNotReadableException} cuando el contenido JSON no puede ser deserializado.
+     *
+     * @param ex      la excepción lanzada al fallar la lectura o deserialización del cuerpo de la solicitud
+     * @param request el objeto {@link WebRequest} asociado a la solicitud HTTP que provocó la excepción
+     * @return una respuesta con código 400 (Bad Request) que contiene detalles del error en un objeto {@link ErrorResponse}
+     */
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ErrorResponse> handleHttpMessageNotReadable(
             HttpMessageNotReadableException ex,
             WebRequest request) {
 
-        // 1. Parseo inteligente del mensaje de error
         String rootCauseMessage = extractRootCauseMessage(ex);
 
-        // 2. Construcción de respuesta segura y estandarizada
         ErrorResponse errorResponse = ErrorResponse.builder()
                 .errorCode("PARSE-001")
                 .message("Cuerpo de solicitud inválido")
@@ -101,30 +111,34 @@ public class GlobalExceptionController {
                 .path(getSanitizedPath(request))
                 .build();
 
-        // 3. Logging estructurado con contexto
         log.warn("JSON Parse Error - Path: {} | IP: {} | ErrorType: {}",
                 errorResponse.getPath(),
                 request.getHeader("X-Forwarded-For"),
                 classifyJsonError(rootCauseMessage));
 
-        // 4. Respuesta con headers de seguridad
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .header("X-Content-Type-Options", "nosniff")
                 .header("Accept", "application/json")
                 .body(errorResponse);
     }
 
+    /**
+     * Manejador de excepciones para parámetros requeridos ausentes en la solicitud.
+     * Captura instancias de {@link MissingServletRequestParameterException} cuando falta un parámetro obligatorio.
+     *
+     * @param ex      la excepción lanzada cuando un parámetro requerido no está presente en la solicitud
+     * @param request el objeto {@link WebRequest} asociado a la solicitud HTTP que provocó la excepción
+     * @return una respuesta con código 400 (Bad Request) que contiene detalles del error en un objeto {@link ErrorResponse}
+     */
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public ResponseEntity<ErrorResponse> handleMissingParams(
             MissingServletRequestParameterException ex,
             WebRequest request) {
 
-        // 1. Construcción del mensaje amigable y detalle técnico
         String paramName = sanitizeParamName(ex.getParameterName());
         String userMessage = "Falta un parámetro requerido en la solicitud";
         String detailMessage = String.format("Parámetro faltante: %s (%s)", paramName, ex.getParameterType());
 
-        // 2. Construcción del error
         ErrorResponse errorResponse = ErrorResponse.builder()
                 .errorCode("PARAM-001")
                 .message(userMessage)
@@ -133,25 +147,31 @@ public class GlobalExceptionController {
                 .path(getSanitizedPath(request))
                 .build();
 
-        // 3. Logging estructurado
         log.warn("Missing Param - Path: {} | Param: {} | Type: {}",
                 errorResponse.getPath(),
                 paramName,
                 ex.getParameterType());
 
-        // 4. Respuesta con headers de seguridad
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .header("X-Content-Type-Options", "nosniff")
                 .body(errorResponse);
     }
 
 
+    /**
+     * Manejador de excepciones para violaciones de restricciones declaradas en parámetros o propiedades.
+     * Captura instancias de {@link ConstraintViolationException}, típicamente producidas por validaciones
+     * de parámetros de métodos con anotaciones como {@code @NotNull}, {@code @Min}, etc.
+     *
+     * @param ex      la excepción lanzada cuando una restricción de validación es violada
+     * @param request el objeto {@link WebRequest} asociado a la solicitud HTTP que provocó la excepción
+     * @return una respuesta con código 400 (Bad Request) que contiene detalles del error en un objeto {@link ErrorResponse}
+     */
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<ErrorResponse> handleConstraintViolation(
             ConstraintViolationException ex,
             WebRequest request) {
 
-        // 1. Procesar y sanitizar violaciones
         List<String> sanitizedDetails = ex.getConstraintViolations().stream()
                 .map(violation -> {
                     String path = sanitizePropertyPath(violation.getPropertyPath().toString());
@@ -162,7 +182,6 @@ public class GlobalExceptionController {
                 .sorted(Comparator.comparing(detail -> detail.split(":")[0])) // Ordenar por propiedad
                 .toList();
 
-        // 2. Construcción de respuesta estándar
         ErrorResponse errorResponse = ErrorResponse.builder()
                 .errorCode("VALIDATION-002")
                 .message("Violaciones de restricción en los parámetros")
@@ -171,13 +190,11 @@ public class GlobalExceptionController {
                 .path(getSanitizedPath(request))
                 .build();
 
-        // 3. Logging estructurado
         log.warn("ConstraintViolation - Path: {} | IP: {} | Violations: {}",
                 errorResponse.getPath(),
                 request.getHeader("X-Forwarded-For"),
                 String.join("; ", sanitizedDetails));
 
-        // 4. Respuesta con headers seguros
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .header("X-Content-Type-Options", "nosniff")
                 .header("X-Validation-Error", "true")
@@ -185,6 +202,15 @@ public class GlobalExceptionController {
     }
 
 
+    /**
+     * Manejador de excepciones para solicitudes con métodos HTTP no permitidos.
+     * Captura instancias de {@link HttpRequestMethodNotSupportedException} cuando se utiliza un método HTTP
+     * que no está soportado por el endpoint solicitado (por ejemplo, enviar un POST donde solo se permite GET).
+     *
+     * @param ex      la excepción lanzada cuando un método HTTP no es soportado
+     * @param request el objeto {@link WebRequest} asociado a la solicitud HTTP que provocó la excepción
+     * @return una respuesta con código 405 (Method Not Allowed) que contiene detalles del error en un objeto {@link ErrorResponse}
+     */
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<ErrorResponse> handleMethodNotSupported(
             HttpRequestMethodNotSupportedException ex,
@@ -208,7 +234,14 @@ public class GlobalExceptionController {
                 .body(errorResponse);
     }
 
-
+    /**
+     * Manejador de excepciones para solicitudes con recursos no encontrados.
+     * Captura instancias de {@link EntityNotFoundException} cuando se intenta acceder a un recurso que no existe.
+     *
+     * @param ex      la excepción lanzada cuando se intenta acceder a un recurso que no existe
+     * @param request el objeto {@link WebRequest} asociado a la solicitud HTTP que provocó la excepción
+     * @return una respuesta con código 404 (Not Found) que contiene detalles del error en un objeto {@link ErrorResponse}
+     */
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleEntityNotFound(
             EntityNotFoundException ex,
@@ -232,27 +265,30 @@ public class GlobalExceptionController {
                 .body(errorResponse);
     }
 
-
+    /**
+     * Manejador de excepciones para solicitudes con credenciales inválidas.
+     * Captura instancias de {@link BadCredentialsException} cuando se intenta autenticar con credenciales inválidas.
+     *
+     * @param ex      la excepción lanzada cuando se intenta autenticar con credenciales inválidas
+     * @param request el objeto {@link WebRequest} asociado a la solicitud HTTP que provocó la excepción
+     * @return una respuesta con código 401 (Unauthorized) que contiene detalles del error en un objeto {@link ErrorResponse}
+     */
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ErrorResponse> handleBadCredentials(
             BadCredentialsException ex,
             WebRequest request) {
 
-        // 1. Manejo seguro de mensajes nulos o vacíos
         String errorDetail = Optional.ofNullable(ex.getMessage())
                 .filter(msg -> !msg.isBlank())
                 .orElse("Credenciales inválidas (sin detalles adicionales)"); // Mensaje por defecto
 
-        // 2. Evitar exponer información sensible
         String sanitizedMessage = sanitizeErrorMessage(errorDetail);
 
-        // 3. Logging seguro y estructurado
         log.warn("Intento de autenticación fallido - IP: {}, User-Agent: {} | Razón: {}",
                 request.getHeader("X-Forwarded-For"),
                 request.getHeader("User-Agent"),
                 sanitizedMessage);
 
-        // 4. Respuesta normalizada
         ErrorResponse errorResponse = ErrorResponse.builder()
                 .errorCode("AUTH-001")
                 .message("Credenciales incorrectas")
@@ -266,6 +302,14 @@ public class GlobalExceptionController {
                 .body(errorResponse);
     }
 
+    /**
+     * Manejador de excepciones para solicitudes con usuarios no encontrados.
+     * Captura instancias de {@link UsernameNotFoundException} cuando se intenta acceder a un usuario que no existe.
+     *
+     * @param ex      la excepción lanzada cuando se intenta acceder a un usuario que no existe
+     * @param request el objeto {@link WebRequest} asociado a la solicitud HTTP que provocó la excepción
+     * @return una respuesta con código 401 (Unauthorized) que contiene detalles del error en un objeto {@link ErrorResponse}
+     */
     @ExceptionHandler(UsernameNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleUsernameNotFound(
             UsernameNotFoundException ex,
@@ -290,6 +334,15 @@ public class GlobalExceptionController {
                 .body(errorResponse);
     }
 
+    /**
+     * Manejador de excepciones para solicitudes con acceso no autorizado.
+     * Captura instancias de {@link UnauthorizedAccessException} cuando se intenta acceder a un recurso sin permisos.
+     *
+     * @param ex      la excepción lanzada cuando se intenta acceder a un recurso sin permisos
+     * @param request el objeto {@link WebRequest} asociado a la solicitud HTTP que provocó la excepción
+     * @return una respuesta con código 403 (Forbidden) que contiene detalles del error en un objeto {@link ErrorResponse}
+     */
+
     @ExceptionHandler(UnauthorizedAccessException.class)
     public ResponseEntity<ErrorResponse> handleUnauthorizedAccess(
             UnauthorizedAccessException ex,
@@ -313,6 +366,15 @@ public class GlobalExceptionController {
                 .header("X-Auth-Error", "true")
                 .body(errorResponse);
     }
+
+    /**
+     * Manejador de excepciones para solicitudes con acceso no autorizado.
+     * Captura instancias de {@link AuthorizationDeniedException} cuando se intenta acceder a un recurso sin permisos.
+     *
+     * @param ex      la excepción lanzada cuando se intenta acceder a un recurso sin permisos
+     * @param request el objeto {@link WebRequest} asociado a la solicitud HTTP que provocó la excepción
+     * @return una respuesta con código 403 (Forbidden) que contiene detalles del error en un objeto {@link ErrorResponse}
+     */
 
     @ExceptionHandler(AuthorizationDeniedException.class)
     public ResponseEntity<ErrorResponse> handleAuthorizationDenied(
@@ -339,16 +401,23 @@ public class GlobalExceptionController {
     }
 
 
+    /**
+     * Manejador de excepciones para solicitudes con violaciones de integridad de datos.
+     * Captura instancias de {@link DataIntegrityViolationException} cuando se intenta acceder a un recurso sin permisos.
+     *
+     * @param ex      la excepción lanzada cuando se intenta acceder a un recurso sin permisos
+     * @param request el objeto {@link WebRequest} asociado a la solicitud HTTP que provocó la excepción
+     * @return una respuesta con código 409 (Conflict) que contiene detalles del error en un objeto {@link ErrorResponse}
+     */
+
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ErrorResponse> handleDataIntegrityViolation(
             DataIntegrityViolationException ex,
             WebRequest request) {
 
-        // 1. Analizar la excepción para determinar el tipo de violación
         String violationDetail = extractViolationDetail(ex);
         String sanitizedDetail = sanitizeConstraintViolation(violationDetail);
 
-        // 2. Construir respuesta estándar
         ErrorResponse errorResponse = ErrorResponse.builder()
                 .errorCode("CONFLICT-001")
                 .message("Conflicto con los datos proporcionados")
@@ -358,20 +427,29 @@ public class GlobalExceptionController {
                 .path(getSanitizedPath(request))
                 .build();
 
-        // 3. Logging estructurado seguro (sin exponer datos sensibles)
         log.warn("Data Integrity Violation - Path: {} | IP: {} | Violation: {}",
                 errorResponse.getPath(),
                 request.getHeader("X-Forwarded-For"),
                 sanitizedDetail.replaceAll("(\r\n|\n|\r)", ""));
 
-        // 4. Respuesta con headers de seguridad
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .header("X-Content-Type-Options", "nosniff")
                 .header("X-Conflict-Error", "true")
                 .body(errorResponse);
     }
 
+
     //Maneja Ids no proporcionados
+
+    /**
+     * Manejador de excepciones para solicitudes con parámetros faltantes.
+     * Captura instancias de {@link MissingPathVariableException} cuando se intenta acceder a un recurso sin parámetros requeridos.
+     *
+     * @param ex      la excepción lanzada cuando se intenta acceder a un recurso sin parámetros requeridos
+     * @param request el objeto {@link WebRequest} asociado a la solicitud HTTP que provocó la excepción
+     * @return una respuesta con código 400 (Bad Request) que contiene detalles del error en un objeto {@link ErrorResponse}
+     */
+
     @ExceptionHandler(MissingPathVariableException.class)
     public ResponseEntity<ErrorResponse> handleMissingPathVariable(MissingPathVariableException ex, WebRequest request) {
 
@@ -396,6 +474,15 @@ public class GlobalExceptionController {
                 .body(errorResponse);
     }
 
+    /**
+     * Manejador de excepciones para solicitudes con parámetros de tipo incorrecto.
+     * Captura instancias de {@link TypeMismatchException} cuando se intenta acceder a un recurso con parámetros de tipo incorrecto.
+     *
+     * @param ex      la excepción lanzada cuando se intenta acceder a un recurso con parámetros de tipo incorrecto
+     * @param request el objeto {@link WebRequest} asociado a la solicitud HTTP que provocó la excepción
+     * @return una respuesta con código 400 (Bad Request) que contiene detalles del error en un objeto {@link ErrorResponse}
+     */
+
     @ExceptionHandler(TypeMismatchException.class)
     public ResponseEntity<ErrorResponse> handleTypeMismatch(TypeMismatchException ex, WebRequest request) {
 
@@ -417,6 +504,15 @@ public class GlobalExceptionController {
                 .body(errorResponse);
     }
 
+    /**
+     * Manejador de excepciones para solicitudes con recursos no encontrados.
+     * Captura instancias de {@link ProfessionalNotFoundException} cuando se intenta acceder a un profesional que no existe.
+     *
+     * @param ex      la excepción lanzada cuando se intenta acceder a un profesional que no existe
+     * @param request el objeto {@link WebRequest} asociado a la solicitud HTTP que provocó la excepción
+     * @return una respuesta con código 404 (Not Found) que contiene detalles del error en un objeto {@link ErrorResponse}
+     */
+
     @ExceptionHandler(ProfessionalNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleProfessionalNotFoundException(ProfessionalNotFoundException ex, WebRequest request) {
 
@@ -437,6 +533,16 @@ public class GlobalExceptionController {
                 .header("X-Content-Type-Options", "nosniff")
                 .body(errorResponse);
     }
+
+    /**
+     * Manejador de excepciones para solicitudes con recursos no encontrados.
+     * Captura instancias de {@link ReceptionistNotFoundException} cuando se intenta acceder a un recepcionista que no existe.
+     *
+     * @param ex      la excepción lanzada cuando se intenta acceder a un recepcionista que no existe
+     * @param request el objeto {@link WebRequest} asociado a la solicitud HTTP que provocó la excepción
+     * @return una respuesta con código 404 (Not Found) que contiene detalles del error en un objeto {@link ErrorResponse}
+     */
+
     @ExceptionHandler(ReceptionistNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleReceptionistNotFoundException(ReceptionistNotFoundException ex, WebRequest request) {
 
@@ -457,6 +563,15 @@ public class GlobalExceptionController {
                 .header("X-Content-Type-Options", "nosniff")
                 .body(errorResponse);
     }
+
+    /**
+     * Manejador de excepciones para solicitudes con recursos no encontrados.
+     * Captura instancias de {@link UserNotFoundException} cuando se intenta acceder a un usuario que no existe.
+     *
+     * @param ex      la excepción lanzada cuando se intenta acceder a un usuario que no existe
+     * @param request el objeto {@link WebRequest} asociado a la solicitud HTTP que provocó la excepción
+     * @return una respuesta con código 404 (Not Found) que contiene detalles del error en un objeto {@link ErrorResponse}
+     */
 
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleUserNotFoundException(UserNotFoundException ex, WebRequest request) {
@@ -479,6 +594,15 @@ public class GlobalExceptionController {
                 .body(errorResponse);
     }
 
+    /**
+     * Manejador de excepciones para solicitudes con recursos no encontrados.
+     * Captura instancias de {@link DisabledException} cuando se intenta acceder a un usuario deshabilitado.
+     *
+     * @param ex      la excepción lanzada cuando se intenta acceder a un usuario deshabilitado
+     * @param request el objeto {@link WebRequest} asociado a la solicitud HTTP que provocó la excepción
+     * @return una respuesta con código 403 (Forbidden) que contiene detalles del error en un objeto {@link ErrorResponse}
+     */
+
     @ExceptionHandler(DisabledException.class)
     public ResponseEntity<ErrorResponse> handleDisabledException(DisabledException ex, WebRequest request) {
 
@@ -499,6 +623,15 @@ public class GlobalExceptionController {
                 .header("X-Content-Type-Options", "nosniff")
                 .body(errorResponse);
     }
+
+    /**
+     * Manejador de excepciones para solicitudes con recursos no encontrados.
+     * Captura instancias de {@link LockedException} cuando se intenta acceder a un usuario bloqueado.
+     *
+     * @param ex      la excepción lanzada cuando se intenta acceder a un usuario bloqueado
+     * @param request el objeto {@link WebRequest} asociado a la solicitud HTTP que provocó la excepción
+     * @return una respuesta con código 403 (Forbidden) que contiene detalles del error en un objeto {@link ErrorResponse}
+     */
 
     @ExceptionHandler(LockedException.class)
     public ResponseEntity<ErrorResponse> handleLockedException(LockedException ex, WebRequest request) {
@@ -521,6 +654,15 @@ public class GlobalExceptionController {
                 .body(errorResponse);
     }
 
+    /**
+     * Manejador de excepciones para solicitudes con recursos no encontrados.
+     * Captura instancias de {@link EmailAlreadyExistsException} cuando se intenta registrar un correo electrónico que ya existe.
+     *
+     * @param ex      la excepción lanzada cuando se intenta registrar un correo electrónico que ya existe
+     * @param request el objeto {@link WebRequest} asociado a la solicitud HTTP que provocó la excepción
+     * @return una respuesta con código 409 (Conflict) que contiene detalles del error en un objeto {@link ErrorResponse}
+     */
+
     @ExceptionHandler(EmailAlreadyExistsException.class)
     public ResponseEntity<ErrorResponse> handleEmailAlreadyExists(EmailAlreadyExistsException ex, WebRequest request) {
 
@@ -541,6 +683,15 @@ public class GlobalExceptionController {
                 .header("X-Content-Type-Options", "nosniff")
                 .body(errorResponse);
     }
+
+    /**
+     * Manejador de excepciones para solicitudes con recursos no encontrados.
+     * Captura instancias de {@link PatientNotFoundException} cuando se intenta acceder a un paciente que no existe.
+     *
+     * @param ex      la excepción lanzada cuando se intenta acceder a un paciente que no existe
+     * @param request el objeto {@link WebRequest} asociado a la solicitud HTTP que provocó la excepción
+     * @return una respuesta con código 404 (Not Found) que contiene detalles del error en un objeto {@link ErrorResponse}
+     */
 
     @ExceptionHandler(PatientNotFoundException.class)
     public ResponseEntity<ErrorResponse> handlePatientNotFoundException(PatientNotFoundException ex, WebRequest request) {
@@ -563,6 +714,15 @@ public class GlobalExceptionController {
                 .body(errorResponse);
     }
 
+    /**
+     * Manejador de excepciones para solicitudes con recursos no encontrados.
+     * Captura instancias de {@link DniAlreadyExistsException} cuando se intenta registrar un DNI que ya existe.
+     *
+     * @param ex      la excepción lanzada cuando se intenta registrar un DNI que ya existe
+     * @param request el objeto {@link WebRequest} asociado a la solicitud HTTP que provocó la excepción
+     * @return una respuesta con código 409 (Conflict) que contiene detalles del error en un objeto {@link ErrorResponse}
+     */
+
     @ExceptionHandler(DniAlreadyExistsException.class)
     public ResponseEntity<ErrorResponse> handleDniAlreadyExistsException(DniAlreadyExistsException ex, HttpServletRequest request) {
         ErrorResponse errorResponse = ErrorResponse.builder()
@@ -583,6 +743,15 @@ public class GlobalExceptionController {
                 .body(errorResponse);
     }
 
+
+    /**
+     * Manejador de excepciones para solicitudes con recursos no encontrados.
+     * Captura instancias de {@link ConflictWithExistingRecord} cuando se intenta acceder a un recurso que no existe.
+     *
+     * @param ex      la excepción lanzada cuando se intenta acceder a un recurso que no existe
+     * @param request el objeto {@link WebRequest} asociado a la solicitud HTTP que provocó la excepción
+     * @return una respuesta con código 404 (Not Found) que contiene detalles del error en un objeto {@link ErrorResponse}
+     */
 
     @ExceptionHandler(ConflictWithExistingRecord.class)
     public ResponseEntity<ErrorResponse> handleConflictWithExistingRecord(ConflictWithExistingRecord ex, WebRequest request) {
@@ -605,6 +774,15 @@ public class GlobalExceptionController {
                 .body(errorResponse);
     }
 
+    /**
+     * Manejador de excepciones para solicitudes con recursos no encontrados.
+     * Captura instancias de {@link SchoolNotFoundException} cuando se intenta acceder a una escuela que no existe.
+     *
+     * @param ex      la excepción lanzada cuando se intenta acceder a una escuela que no existe
+     * @param request el objeto {@link WebRequest} asociado a la solicitud HTTP que provocó la excepción
+     * @return una respuesta con código 404 (Not Found) que contiene detalles del error en un objeto {@link ErrorResponse}
+     */
+
     @ExceptionHandler(SchoolNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleSchoolNotFoundException(SchoolNotFoundException ex, WebRequest request) {
 
@@ -625,6 +803,15 @@ public class GlobalExceptionController {
                 .header("X-Content-Type-Options", "nosniff")
                 .body(errorResponse);
     }
+
+    /**
+     * Manejador de excepciones para solicitudes con recursos no encontrados.
+     * Captura instancias de {@link DianosesNotFoundException} cuando se intenta acceder a un diagnostico que no existe.
+     *
+     * @param ex      la excepción lanzada cuando se intenta acceder a un diagnostico que no existe
+     * @param request el objeto {@link WebRequest} asociado a la solicitud HTTP que provocó la excepción
+     * @return una respuesta con código 404 (Not Found) que contiene detalles del error en un objeto {@link ErrorResponse}
+     */
 
     @ExceptionHandler(DianosesNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleDianosesNotFoundException(DianosesNotFoundException ex, WebRequest request) {
@@ -647,6 +834,15 @@ public class GlobalExceptionController {
                 .body(errorResponse);
     }
 
+    /**
+     * Manejador de excepciones para solicitudes con recursos no encontrados.
+     * Captura instancias de {@link MedicalRecordsNotFoundException} cuando se intenta acceder a un registro medico que no existe.
+     *
+     * @param ex      la excepción lanzada cuando se intenta acceder a un registro medico que no existe
+     * @param request el objeto {@link WebRequest} asociado a la solicitud HTTP que provocó la excepción
+     * @return una respuesta con código 404 (Not Found) que contiene detalles del error en un objeto {@link ErrorResponse}
+     */
+
     @ExceptionHandler(MedicalRecordsNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleMedicalRecordsNotFoundException(MedicalRecordsNotFoundException ex, WebRequest request) {
 
@@ -668,13 +864,19 @@ public class GlobalExceptionController {
                 .body(errorResponse);
     }
 
+    /**
+     * Manejador de excepciones para solicitudes con recursos no encontrados.
+     * Captura instancias de {@link Exception} cuando se produce cualquier otra excepción no prevista.
+     *
+     * @param ex      la excepción lanzada cuando se produce cualquier otra excepción no prevista
+     * @param request el objeto {@link WebRequest} asociado a la solicitud HTTP que provocó la excepción
+     * @return una respuesta con código 500 (Internal Server Error) que contiene detalles del error en un objeto {@link ErrorResponse}
+     */
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleException(Exception ex, WebRequest request) {
-        // 1. Obtener mensaje raíz o fallback
         String rootMessage = Optional.ofNullable(ex.getMessage()).orElse("Error inesperado");
 
-        // 2. Construcción de respuesta
         ErrorResponse errorResponse = ErrorResponse.builder()
                 .errorCode("SERVER-001")
                 .message("Ha ocurrido un error inesperado")
@@ -683,13 +885,11 @@ public class GlobalExceptionController {
                 .path(getSanitizedPath(request))
                 .build();
 
-        // 3. Logging estructurado
         log.error("Unhandled Exception - Path: {} | IP: {} | Exception: {}",
                 errorResponse.getPath(),
                 request.getHeader("X-Forwarded-For"),
                 ex.toString());
 
-        // 4. Encabezados de seguridad
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .header("X-Content-Type-Options", "nosniff")
                 .body(errorResponse);
@@ -697,20 +897,24 @@ public class GlobalExceptionController {
 
     // --- Métodos auxiliares ---
 
+    /**
+     * Extrae el detalle de violación de restricción de base de datos de una excepción de violación de restricción de base de datos.
+     *
+     * @param ex la excepción de violación de restricción de base de datos
+     * @return el detalle de violación de restricción de base de datos
+     */
+
     private String extractViolationDetail(DataIntegrityViolationException ex) {
-        // 1. Obtener la causa raíz de forma segura
         Throwable rootCause = ex.getRootCause();
         if (rootCause == null) {
             return "Error de integridad de datos no especificado";
         }
 
-        // 2. Manejar los casos más comunes de violación de unicidad
         String errorMessage = rootCause.getMessage();
         if (errorMessage == null) {
             return "Violación de restricción de base de datos";
         }
 
-        // 3. Extraer información relevante según el motor de base de datos
         try {
             // Caso MySQL/MariaDB
             if (errorMessage.contains("Duplicate entry") && errorMessage.contains("for key")) {
@@ -742,6 +946,13 @@ public class GlobalExceptionController {
         }
     }
 
+    /**
+     * Sanitiza el detalle de violación de restricción de base de datos para el cliente.
+     *
+     * @param detail el detalle de violación de restricción de base de datos
+     * @return el detalle de violación de restricción de base de datos sanitizado
+     */
+
     private String sanitizeConstraintViolation(String detail) {
         // Sanitizar detalles técnicos para el cliente
         return detail.replaceAll("(Duplicate entry ')(.*?)(' for key)", "$1[REDACTED]$3")
@@ -750,23 +961,49 @@ public class GlobalExceptionController {
 
 
 
-    // Método auxiliar para sanitizar mensajes
+    /**
+     * Sanitiza el mensaje de error para el cliente.
+     *
+     * @param rawMessage el mensaje de error crudo
+     * @return el mensaje de error sanitizado
+     */
+
     private String sanitizeErrorMessage(String rawMessage) {
         return rawMessage.replaceAll("(\r\n|\n|\r)", "") // Elimina saltos de línea
                 .replaceAll("password|token|secret", "[REDACTED]"); // Ofusca datos sensibles
     }
 
-    // Métodos auxiliares
+
+    /**
+     * Sanitiza el nombre del campo para el cliente.
+     *
+     * @param fieldName el nombre del campo
+     * @return el nombre del campo sanitizado
+     */
     private String sanitizeFieldName(String fieldName) {
         // Ofusca campos sensibles en los mensajes de error
         return fieldName.toLowerCase().contains("password") ? "credential" : fieldName;
     }
 
+
+    /**
+     * Obtiene la ruta sanitizada de la solicitud.
+     *
+     * @param request el objeto {@link WebRequest} asociado a la solicitud HTTP
+     * @return la ruta sanitizada
+     */
     private String getSanitizedPath(WebRequest request) {
         return request.getDescription(false)
                 .replace("uri=", "")
                 .replaceAll("[\\n\\r]", "");
     }
+
+    /**
+     * Extrae el mensaje de error de la raíz de una excepción.
+     *
+     * @param ex la excepción
+     * @return el mensaje de error de la raíz
+     */
 
     private String extractRootCauseMessage(Throwable ex) {
         Throwable rootCause = ExceptionUtils.getRootCause(ex);
@@ -775,10 +1012,24 @@ public class GlobalExceptionController {
                 "Error de sintaxis no especificado";
     }
 
+    /**
+     * Sanitiza el mensaje de error JSON para el cliente.
+     *
+     * @param rawMessage el mensaje de error JSON crudo
+     * @return el mensaje de error JSON sanitizado
+     */
+
     private String sanitizeJsonErrorMessage(String rawMessage) {
         return rawMessage.replaceAll("(\"|'|`|\\{|\\}|\\[|\\])", "")
                 .replaceAll("password|token|secret", "[REDACTED]");
     }
+
+    /**
+     * Clasifica el tipo de error JSON.
+     *
+     * @param message el mensaje de error JSON
+     * @return el tipo de error JSON
+     */
 
     private String classifyJsonError(String message) {
         if (message.contains("com.fasterxml.jackson")) {
@@ -791,11 +1042,25 @@ public class GlobalExceptionController {
                 "MALFORMED_REQUEST";
     }
 
+    /**
+     * Sanitiza el nombre de un parámetro para el cliente.
+     *
+     * @param name el nombre del parámetro
+     * @return el nombre del parámetro sanitizado
+     */
+
     private String sanitizeParamName(String name) {
         return name.toLowerCase().contains("token") || name.toLowerCase().contains("password")
                 ? "[REDACTED]"
                 : name;
     }
+
+    /**
+     * Sanitiza la ruta de un parámetro para el cliente.
+     *
+     * @param path la ruta del parámetro
+     * @return la ruta del parámetro sanitizada
+     */
     private String sanitizePropertyPath(String path) {
         return path.toLowerCase().contains("password") ? "credential" : path.replaceAll("[\\n\\r]", "");
     }

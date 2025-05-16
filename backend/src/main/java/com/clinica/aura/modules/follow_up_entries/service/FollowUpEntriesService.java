@@ -16,16 +16,17 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @RequiredArgsConstructor
 @Service
 public class FollowUpEntriesService {
     private final FollowUpEntriesRepository followUpEntriesRepository;
-    //private final FollowUpEntriesController followUpEntriesController;
     private final MedicalRecordsRepository medicalRecordsRepository;
     private final SecurityUtil securityUtil;
 
+    @Transactional
     public FollowUpEntriesDtoResponse create(FollowUpEntriesDtoRequest dto) {
         MedicalRecordsModel medicalRecord = medicalRecordsRepository.findById(dto.getMedicalRecordId())
                 .orElseThrow(() -> new MedicalRecordsNotFoundException(
@@ -73,23 +74,21 @@ public class FollowUpEntriesService {
         return response;
     }
 
+    @Transactional
     public void delete(Long id) {
         FollowUpEntriesModel record = followUpEntriesRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Registro con id "+ id + " no encontrado"));
         followUpEntriesRepository.delete(record);
     }
 
+    @Transactional
     public FollowUpEntriesDtoResponse update(Long id, FollowUpEntriesDtoRequestUpdate dto) {
         FollowUpEntriesModel record = followUpEntriesRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Registro con id "+ id + " no encontrado"));
-
-        //FollowUpEntriesModel record = new FollowUpEntriesModel();
-        //record.setMedicals(medicalRecord);
 
         ProfessionalModel professionalModel = securityUtil.getAuthenticatedProfessional();
         record.setUpdatedBy(professionalModel);
         record.setObservations(dto.getObservations());
         record.setInterventions(dto.getInterventions());
         record.setNextSessionInstructions(dto.getNextSessionInstructions());
-        //record.setUpdatedAt(dto.getUpdatedAt());
 
         followUpEntriesRepository.save(record);
 

@@ -39,7 +39,11 @@ public class ClinicalReportService {
     private MedicalBackgroundRepository medicalBackgroundRepository;
 
 
-
+    /**
+     * Crea un nuevo informe clínico
+     * @param dto
+     * @return
+     */
     public ClinicalReportResponseDto create(ClinicalReportRequestDto dto) {
         // 1. Validar existencia del MedicalBackground
         MedicalBackgroundModel background = medicalBackgroundRepository.findById(dto.getMedicalBackgroundId())
@@ -73,7 +77,10 @@ public class ClinicalReportService {
     }
 
 
-
+    /**
+     * Busca todos los informes clínicos
+     * @return
+     */
 
     public List<ClinicalReportResponseDto> findAll() {
         return clinicalReportRepository.findAll().stream()
@@ -122,6 +129,10 @@ public class ClinicalReportService {
         return toDto(report);
     }
 
+    /**
+     * Elimina un informe clínico
+     * @param id
+     */
 
     public void delete(Long id) {
         ClinicalReportModel report = clinicalReportRepository.findById(id)
@@ -146,7 +157,10 @@ public class ClinicalReportService {
         clinicalReportRepository.delete(report);
     }
 
-
+    /**
+     * Convierte el modelo a DTO
+     * @param model
+     */
     private ClinicalReportResponseDto toDto(ClinicalReportModel model) {
         ClinicalReportResponseDto dto = new ClinicalReportResponseDto();
         dto.setId(model.getId());

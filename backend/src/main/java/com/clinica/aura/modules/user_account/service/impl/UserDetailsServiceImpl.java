@@ -142,6 +142,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 .build();
     }
 
+    @Transactional
     public UserMeResponseDto updateCurrentUser(Long id, UserMeRequestDto userMeRequest) {
         UserModel user = userRepository.findById(id)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario con el id " + id + " no encontrado"));

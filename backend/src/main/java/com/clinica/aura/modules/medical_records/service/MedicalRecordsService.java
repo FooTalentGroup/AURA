@@ -21,6 +21,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 
@@ -38,6 +39,7 @@ public class MedicalRecordsService {
     private final SecurityUtil securityUtil;
     private final ModelMapper mapper;
 
+    @Transactional
     public MedicalRecordsResponseDto create(MedicalRecordsRequestDto dto) {
         PatientModel patient = patientRepository.findById(dto.getPatientId()).orElseThrow(() -> new PatientNotFoundException("Paciente con id " + dto.getPatientId() + " no encontrado"));
 
@@ -54,7 +56,6 @@ public class MedicalRecordsService {
 
         MedicalRecordsResponseDto response = new MedicalRecordsResponseDto();
         response.setId(record.getId());
-        //response.setSpecialty(record.getSpecialty());
         response.setCreatedAt(record.getCreatedAt());
         response.setUpdatedAt(record.getUpdatedAt());
         response.setPatientId(record.getPatients().getId());
@@ -83,7 +84,6 @@ public class MedicalRecordsService {
         MedicalRecordsModel record = medicalRecordsRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Registro no encontrado"));
         MedicalRecordsResponseDto response = new MedicalRecordsResponseDto();
         response.setId(record.getId());
-        //response.setSpecialty(record.getSpecialty());
         response.setCreatedAt(record.getCreatedAt());
         response.setUpdatedAt(record.getUpdatedAt());
         response.setPatientId(record.getPatients().getId());
@@ -99,7 +99,6 @@ public class MedicalRecordsService {
 
         MedicalRecordsResponseDto response = new MedicalRecordsResponseDto();
         response.setId(record.getId());
-        //response.setSpecialty(record.getSpecialty());
         response.setCreatedAt(record.getCreatedAt());
         response.setUpdatedAt(record.getUpdatedAt());
         response.setPatientId(record.getPatients().getId());
@@ -127,6 +126,7 @@ public class MedicalRecordsService {
         return response;
     }
 
+    @Transactional
     public void delete(Long id) {
         MedicalRecordsModel record = medicalRecordsRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Registro no encontrado"));
         medicalRecordsRepository.delete(record);
@@ -141,7 +141,6 @@ public class MedicalRecordsService {
     private MedicalRecordsResponseDto mapToDto(MedicalRecordsModel medicalRecordsModel) {
         return new MedicalRecordsResponseDto(
                 medicalRecordsModel.getId(),
-               // medicalRecordsModel.getSpecialty(),
                 medicalRecordsModel.getCreatedAt(),
                 medicalRecordsModel.getUpdatedAt(),
                 medicalRecordsModel.getPatients().getId(),

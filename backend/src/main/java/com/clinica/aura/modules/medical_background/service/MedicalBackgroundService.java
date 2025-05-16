@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,6 +31,7 @@ public class MedicalBackgroundService {
     private final UserRepository userRepository;
     private final ProfessionalRepository professionalRepository;
 
+    @Transactional
     public MedicalBackgroundResponseDto create(MedicalBackgroundRequestDto dto) {
         PatientModel patient = patientRepository.findById(dto.getPatientId())
                 .orElseThrow(() -> new EntityNotFoundException("Paciente no encontrado con ID: " + dto.getPatientId()));
@@ -86,6 +88,7 @@ public class MedicalBackgroundService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public MedicalBackgroundResponseDto update(Long id, MedicalBackgroundRequestDto dto) {
         MedicalBackgroundModel background = medicalBackgroundRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Antecedente médico no encontrado con ID: " + id));
@@ -109,6 +112,7 @@ public class MedicalBackgroundService {
         return mapToDto(background);
     }
 
+    @Transactional
     public void delete(Long id) {
         MedicalBackgroundModel background = medicalBackgroundRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Antecedente médico no encontrado con ID: " + id));

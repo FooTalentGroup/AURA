@@ -22,11 +22,35 @@ public class ReceptionistController {
     private final ReceptionistService receptionistService;
 
 
+    /**
+     * Endpoint para actualizar los datos de un recepcionista específico.
+     * <p>
+     * Actualiza la información del recepcionista identificado por el ID proporcionado,
+     * utilizando los datos validados del DTO de actualización.
+     * </p>
+     *
+     * @param id                            el identificador único del recepcionista a actualizar
+     * @param receptionistRequestUpdateDto  el objeto {@link ReceptionistRequestUpdateDto} con los datos para la actualización
+     * @return una respuesta con código 200 (OK) y el DTO con los datos actualizados del recepcionista
+     */
+
     @Operation(summary = "Actualiza los datos de un recepcionista", description = "Actualiza los datos de un recepcionista específico.")
     @PatchMapping("/{id}")
     public ResponseEntity<ReceptionistResponseDto> updateReceptionist(@PathVariable  long id, @RequestBody @Valid ReceptionistRequestUpdateDto receptionistRequestUpdateDto) {
         return ResponseEntity.ok(receptionistService.updateReceptionist(id, receptionistRequestUpdateDto));
     }
+
+    /**
+     * Endpoint para obtener todos los recepcionistas con paginación.
+     * <p>
+     * Permite obtener una lista paginada de recepcionistas.
+     * Los parámetros 'page' y 'size' controlan la paginación de los resultados.
+     * </p>
+     *
+     * @param page número de página a obtener (por defecto 0)
+     * @param size cantidad de recepcionistas por página (por defecto 10)
+     * @return una respuesta con código 200 (OK) y una página de {@link ReceptionistResponseDto}
+     */
 
     @Operation(summary = "Obtener todos los recepcionistas", description = "Obtiene todos los recepcionistas.")
     @GetMapping
@@ -35,11 +59,31 @@ public class ReceptionistController {
         return ResponseEntity.ok(receptionistService.getAllReceptionists(page, size));
     }
 
+    /**
+     * Endpoint para obtener un recepcionista por ID.
+     * <p>
+     * Permite obtener un recepcionista identificado por su ID.
+     * </p>
+     *
+     * @param id el identificador único del recepcionista a obtener
+     * @return una respuesta con código 200 (OK) y el DTO con los datos del recepcionista
+     */
+
     @Operation(summary = "Obtener un recepcionista por ID", description = "Obtiene un recepcionista por su ID.")
     @GetMapping("/{id}")
     public ResponseEntity<ReceptionistResponseDto> getReceptionistById(@PathVariable long id) {
         return ResponseEntity.ok(receptionistService.getReceptionistById(id));
     }
+
+    /**
+     * Endpoint para eliminar un recepcionista.
+     * <p>
+     * Elimina un recepcionista identificado por su ID.
+     * </p>
+     *
+     * @param id el identificador único del recepcionista a eliminar
+     * @return una respuesta con código 200 (OK) y un mensaje de confirmación
+     */
 
     @Operation(summary = "Eliminar un recepcionista", description = "Elimina un recepcionista del sistema.")
     @DeleteMapping("/{id}")
