@@ -116,7 +116,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                     user.getPerson().getLastName(),
                     user.getPerson().getDni(),
                     user.getPerson().getPhoneNumber(),
-                    user.getEmail()
+                    user.getEmail(),
+                    user.getRoles().stream().map(role -> role.getEnumRole().name()).toList()
             ));
         });
 
