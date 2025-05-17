@@ -38,7 +38,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                   href="#"
                   className="text-xl font-semibold w-11 h-11 flex justify-center items-center gap-2 p-3 rounded-full bg-sky-200 hover:bg-sky-300 text-gray-800"
                 >
-                  A
+                  {state.user?.username?.charAt(0).toUpperCase() || "X"}
                 </a>
               </li>
               <li className="flex items-center">
