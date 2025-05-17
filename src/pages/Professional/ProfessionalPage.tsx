@@ -4,10 +4,11 @@ import { ProfessionalRow } from "../../features/professional/components/Professi
 import { PageContainer } from "../../components/shared/layouts/PageContainer";
 import { useNavigate } from "react-router-dom";
 import { Modal } from "../../layouts/Modal";
+import { professionalsService } from "../../features/professional/services/ProfessionalService";
 
 const ProfessionalPage: React.FC = () => {
   const [query, setQuery] = useState("");
-  const { professionals, loading, error } = useProfessionals(
+  const { professionals, loading, error,reload  } = useProfessionals(
     0,
     20,
     query
@@ -69,9 +70,25 @@ const navigate = useNavigate();
         <p className="text-center text-gray-600">No se encontraron usuarios</p>
       ) : (
         professionals.map((u) => (
-          <ProfessionalRow key={u.id} professional={u} onView={handleView}  onViewSchedule={() => console.log('Ver horario', u.id)} />
-        ))
-      )}
+            <ProfessionalRow
+              key={u.id}
+              professional={u}
+              onView={handleView}
+              onViewSchedule={() => navigate(`/professionals/${u.id}/schedule`)}
+              onDelete={async (id) => {
+                try {
+                  await professionalsService.delete(id);
+                  // una vez borrado, recargamos la lista
+                  await reload();
+                } catch (e: any) {
+                  // si quieres propagar el error al modal de la fila,
+                  // lanza de nuevo la excepción para que lo capture ProfessionalRow
+                  throw error;
+                }
+              }}
+            />
+          ))
+        )}
     </PageContainer>
      <Modal isOpen={isModalOpen} onClose={closeModal}>
         <div className="text-center space-y-6">

@@ -1,4 +1,6 @@
+
 import {
+  Admin,
   AuthResponseRegisterDto,
   RegisterProfessionalPayload,
   UserResponse,
@@ -15,8 +17,10 @@ import {
   PatientProps,
   School,
   SchoolsListResponse,
+  updatedDiagnosis,
 } from "../../features/patientTabs/types/patientTabs.types.ts";
 import { Professional } from "../../features/professional/types/Professional.types.ts";
+import { UserUpdateData } from "../../features/profile/types/profile.type.ts";
 
 // --- Payload y modelos ---
 export interface SuspendRequestDto {
@@ -143,6 +147,12 @@ export const api = {
       method: "GET",
     }),
 
+  updateCurrentUser: (id: number, data: UserUpdateData) =>
+    request(`/auth/me/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(data),
+    }),
+
   // --- Pacientes ---
   getPatientById: (id: number) =>
     request<PatientProps>(`/patients/${id}`, { method: "GET" }),
@@ -231,8 +241,8 @@ export const api = {
     ),
 
   // --- Usuarios ---
-  getUserById: (id: number) =>
-    request<UserResponse>(`/user/${id}`, { method: "GET" }),
+  getAdmin: () =>
+    request<Admin>(`/user/all_admin`, { method: "GET" }),
 
   // --- Profesionales ---
 
@@ -258,29 +268,20 @@ export const api = {
     request<SchoolsListResponse>(`/schools/schools?page=${page}&size=${size}`, {
       method: "GET",
     }),
-   createSchool: (data: SchoolPayload) =>
-    request<School>(
-      `/schools`,
-      {
-        method: "POST",
-        body: JSON.stringify(data),
-      }
-    ),
+  createSchool: (data: SchoolPayload) =>
+    request<School>(`/schools`, {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
 
   updateSchool: (id: number, data: SchoolPayload) =>
-    request<School>(
-      `/schools/schools/${id}`,
-      {
-        method: "PUT",
-        body: JSON.stringify(data),
-      }
-    ),
+    request<School>(`/schools/schools/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(data),
+    }),
 
   deleteSchool: (id: number) =>
-    request<void>(
-      `/schools/${id}`,
-      { method: "DELETE" }
-    ),
+    request<void>(`/schools/${id}`, { method: "DELETE" }),
 
   // --- Entradas de seguimiento ---
   getFollowEntriesById: (id: number) =>
@@ -292,6 +293,11 @@ export const api = {
   createDiagnosis: (data: PatientDiagnosesProps) =>
     request<PatientDiagnosesProps>(`/diagnoses/create`, {
       method: "POST",
+      body: JSON.stringify(data),
+    }),
+    updateDiagnosis: (id: number, data: updatedDiagnosis) =>
+    request<PatientDiagnosesProps>(`/diagnoses/update/${id}`, {
+      method: "PATCH",
       body: JSON.stringify(data),
     }),
 
