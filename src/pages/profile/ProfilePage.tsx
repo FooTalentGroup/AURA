@@ -28,32 +28,6 @@ function ProfilePage() {
     { key: "address", label: "Dirección" },
   ];
 
-  const handleSavePersonalInfo = (updatedData: UserUpdateData) => {
-    const updateData: UserUpdateData = {
-      name: updatedData.name || userData?.name,
-      email: updatedData.email || updatedData?.email,
-      lastName: updatedData.lastName || userData?.lastName,
-      birthDate: updatedData.birthDate || userData?.birthDate || "",
-      dni: updatedData.dni || userData?.dni || "",
-    };
-
-    console.log("Actualizando información básica:", updateData);
-
-    if (!userData) return;
-
-    api
-      .updateCurrentUser(userData.id, updateData)
-      .then((res) => {
-        setUserData(res);
-      })
-      .catch((error) => {
-        if (error.response) {
-          console.error("Error al actualizar datos:", error.response.data);
-        } else {
-          console.error("Error al actualizar datos:", error.message);
-        }
-      });
-  };
 
   const handleSaveContactInfo = (updatedData: Partial<CurrentUserProps>) => {
     const updateData: UserUpdateData = {
@@ -80,17 +54,42 @@ function ProfilePage() {
       });
   };
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const user = await api.getCurrentUser();
-        setUserData(user);
-      } catch (err) {
-        console.error("Error al cargar el usuario:", err);
+useEffect(() => {
+  const fetchUser = async () => {
+    try {
+      const user = await api.getCurrentUser() as CurrentUserProps;
+      setUserData(user);
+    } catch (err) {
+      console.error("Error al cargar el usuario:", err);
+    }
+  };
+  fetchUser();
+}, []);
+
+const handleSavePersonalInfo = (updatedData: UserUpdateData) => {
+  if (!userData) return;
+
+  const updateData: UserUpdateData = {
+    name: updatedData.name || userData.name,
+    email: updatedData.email || userData.email,
+    lastName: updatedData.lastName || userData.lastName,
+    birthDate: updatedData.birthDate || userData.birthDate || "",
+    dni: updatedData.dni || userData.dni || "",
+  };
+
+  api
+    .updateCurrentUser(userData.id, updateData)
+    .then(() => {
+      setUserData({ ...userData, ...updateData });
+    })
+    .catch((error) => {
+      if (error.response) {
+        console.error("Error al actualizar datos:", error.response.data);
+      } else {
+        console.error("Error al actualizar datos:", error.message);
       }
-    };
-    fetchUser();
-  }, []);
+    });
+};
 
   return (
     <DashboardLayout>
