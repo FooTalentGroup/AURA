@@ -79,20 +79,20 @@ public class AuthController {
 
         AuthResponseRegisterDto response = professionalService.createUser(authCreateUserDto);
 
-       ResponseCookie cookie = ResponseCookie.from("jwt_token", response.getToken())
-                .httpOnly(true)
-                .secure(true)
-                .path("/")
-                .maxAge(jwtUtils.getExpirationTime())
-                .sameSite("None")
-                .build();
+//       ResponseCookie cookie = ResponseCookie.from("jwt_token", response.getToken())
+//                .httpOnly(true)
+//                .secure(true)
+//                .path("/")
+//                .maxAge(jwtUtils.getExpirationTime())
+//                .sameSite("None")
+//                .build();
+//
+//        servletResponse.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 
-        servletResponse.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
-
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .header(HttpHeaders.SET_COOKIE, cookie.toString())
-                .header("user-id", response.getUserId().toString())
-                .body(response);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+//                .header(HttpHeaders.SET_COOKIE, cookie.toString())
+//                .header("user-id", response.getUserId().toString())
+//                .body(response);
     }
 
     @Operation(summary = "Registrar nuevo recepcionista", description = """
@@ -105,20 +105,20 @@ public class AuthController {
 
         AuthResponseRegisterDto response = receptionistService.createUser(authCreateUserDto);
 
-        ResponseCookie cookie = ResponseCookie.from("jwt_token", response.getToken())
-                .httpOnly(true)
-                .secure(true)
-                .path("/")
-                .maxAge(jwtUtils.getExpirationTime())
-                .sameSite("None")
-                .build();
+//        ResponseCookie cookie = ResponseCookie.from("jwt_token", response.getToken())
+//                .httpOnly(true)
+//                .secure(true)
+//                .path("/")
+//                .maxAge(jwtUtils.getExpirationTime())
+//                .sameSite("None")
+//                .build();
+//
+//        servletResponse.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 
-        servletResponse.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
-
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .header(HttpHeaders.SET_COOKIE, cookie.toString())
-                .header("user-id", response.getUserId().toString())
-                .body(response);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+//                .header(HttpHeaders.SET_COOKIE, cookie.toString())
+//                .header("user-id", response.getUserId().toString())
+//                .body(response);
     }
 
     @Operation(summary = "Obtener el usuario actual", description = """
