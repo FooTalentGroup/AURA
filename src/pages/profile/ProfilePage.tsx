@@ -46,7 +46,7 @@ function ProfilePage() {
 
     api
       .updateCurrentUser(userData.id, updateData)
-      .then((res) => {
+      .then(() => {
         setUserData({ ...userData, ...updateData });
       })
       .catch((error) => {
