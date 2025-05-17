@@ -1,12 +1,6 @@
+
 import {
-<<<<<<< HEAD
-  CurrentUserProps,
-  UserUpdateData,
-} from "../../components/shared/ui/EditableForm.tsx";
-import {
-=======
   Admin,
->>>>>>> feature/bugs
   AuthResponseRegisterDto,
   RegisterProfessionalPayload,
   UserResponse,
@@ -26,6 +20,7 @@ import {
   updatedDiagnosis,
 } from "../../features/patientTabs/types/patientTabs.types.ts";
 import { Professional } from "../../features/professional/types/Professional.types.ts";
+import { UserUpdateData } from "../../features/profile/types/profile.type.ts";
 
 // --- Payload y modelos ---
 export interface SuspendRequestDto {
