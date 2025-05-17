@@ -93,7 +93,7 @@ export const PatientRow: React.FC<Props> = ({ patient, onView, onDelete }) => {
               onClick={() => setConfirmOpen(true)}
               className="w-full text-left px-4 py-2 text-sm text-red-600 rounded-full hover:bg-red-50"
             >
-              Eliminar usuario
+              Eliminar paciente
             </button>
           </div>
         )}

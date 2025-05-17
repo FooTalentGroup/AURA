@@ -95,7 +95,10 @@ export interface FollowEntriesProps {
   professionalId: number;
   medicalRecordId: number;
 }
-
+export interface updatedDiagnosis {
+  title: string;
+  details: string;
+}
 export interface PatientDiagnosesProps {
   id: number;
   date: string;

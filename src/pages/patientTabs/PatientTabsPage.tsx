@@ -184,7 +184,10 @@ export default function PatientTabsPage() {
                 />
               )}
               {activeTab === "diagnostico" && (
-                <DiagnosticTab diagnoses={diagnoses!} />
+                <DiagnosticTab
+                  diagnoses={diagnoses!}
+                  onUpdate={(updated) => setDiagnoses(updated)}
+                />
               )}
               {activeTab === "historial" && (
                 <ClinicalHistoryTab

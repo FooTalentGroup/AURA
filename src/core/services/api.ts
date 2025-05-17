@@ -1,8 +1,12 @@
 import {
+<<<<<<< HEAD
   CurrentUserProps,
   UserUpdateData,
 } from "../../components/shared/ui/EditableForm.tsx";
 import {
+=======
+  Admin,
+>>>>>>> feature/bugs
   AuthResponseRegisterDto,
   RegisterProfessionalPayload,
   UserResponse,
@@ -19,6 +23,7 @@ import {
   PatientProps,
   School,
   SchoolsListResponse,
+  updatedDiagnosis,
 } from "../../features/patientTabs/types/patientTabs.types.ts";
 import { Professional } from "../../features/professional/types/Professional.types.ts";
 
@@ -241,8 +246,8 @@ export const api = {
     ),
 
   // --- Usuarios ---
-  getUserById: (id: number) =>
-    request<UserResponse>(`/user/${id}`, { method: "GET" }),
+  getAdmin: () =>
+    request<Admin>(`/user/all_admin`, { method: "GET" }),
 
   // --- Profesionales ---
 
@@ -293,6 +298,11 @@ export const api = {
   createDiagnosis: (data: PatientDiagnosesProps) =>
     request<PatientDiagnosesProps>(`/diagnoses/create`, {
       method: "POST",
+      body: JSON.stringify(data),
+    }),
+    updateDiagnosis: (id: number, data: updatedDiagnosis) =>
+    request<PatientDiagnosesProps>(`/diagnoses/update/${id}`, {
+      method: "PATCH",
       body: JSON.stringify(data),
     }),
 
