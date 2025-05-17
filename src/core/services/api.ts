@@ -3,7 +3,6 @@ import {
   Admin,
   AuthResponseRegisterDto,
   RegisterProfessionalPayload,
-  UserResponse,
 } from "../../features/auth/types/auth.types.ts";
 import { PatientPayload } from "../../features/patients/types/patient.types.ts";
 import { Patient } from "../../features/patients/types/patient.types.ts";
@@ -20,7 +19,7 @@ import {
   updatedDiagnosis,
 } from "../../features/patientTabs/types/patientTabs.types.ts";
 import { Professional } from "../../features/professional/types/Professional.types.ts";
-import { UserUpdateData } from "../../features/profile/types/profile.type.ts";
+import { CurrentUserProps, UserUpdateData } from "../../features/profile/types/profile.type.ts";
 
 // --- Payload y modelos ---
 export interface SuspendRequestDto {
@@ -143,12 +142,12 @@ export const api = {
   }),
 
   getCurrentUser: () =>
-    request<UserResponse>(`/auth/me`, {
+    request<CurrentUserProps>(`/auth/me`, {
       method: "GET",
     }),
 
   updateCurrentUser: (id: number, data: UserUpdateData) =>
-    request(`/auth/me/${id}`, {
+    request<CurrentUserProps>(`/auth/me/${id}`, {
       method: "PUT",
       body: JSON.stringify(data),
     }),

@@ -57,7 +57,7 @@ function ProfilePage() {
 useEffect(() => {
   const fetchUser = async () => {
     try {
-      const user = await api.getCurrentUser() as CurrentUserProps;
+      const user = await api.getCurrentUser();
       setUserData(user);
     } catch (err) {
       console.error("Error al cargar el usuario:", err);
