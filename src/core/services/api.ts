@@ -141,12 +141,13 @@ export const api = {
     method: "GET",
   }),
 
-  getCurrentUser: () =>
-    request<CurrentUserProps>(`/auth/me`, {
-      method: "GET",
-    }),
+    getCurrentUser: (): Promise<CurrentUserProps> =>
+    request<CurrentUserProps>(`/auth/me`, { method: "GET" }),
 
-  updateCurrentUser: (id: number, data: UserUpdateData) =>
+  updateCurrentUser: (
+    id: number,
+    data: UserUpdateData
+  ): Promise<CurrentUserProps> =>
     request<CurrentUserProps>(`/auth/me/${id}`, {
       method: "PUT",
       body: JSON.stringify(data),
