@@ -1,4 +1,5 @@
 import {
+  Admin,
   AuthResponseRegisterDto,
   RegisterProfessionalPayload,
   UserResponse,
@@ -232,8 +233,8 @@ export const api = {
     ),
 
   // --- Usuarios ---
-  getUserById: (id: number) =>
-    request<UserResponse>(`/user/${id}`, { method: "GET" }),
+  getAdmin: () =>
+    request<Admin>(`/user/all_admin`, { method: "GET" }),
 
   // --- Profesionales ---
 
