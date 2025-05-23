@@ -1,6 +1,9 @@
 package com.clinica.aura.modules.user_account.service.impl;
 
 import com.clinica.aura.config.jwt.JwtUtils;
+import com.clinica.aura.exceptions.DniAlreadyExistsException;
+import com.clinica.aura.exceptions.EmailAlreadyExistsException;
+import com.clinica.aura.modules.person.repository.PersonRepository;
 import com.clinica.aura.modules.professional.repository.ProfessionalRepository;
 import com.clinica.aura.modules.user_account.Enum.EnumRole;
 import com.clinica.aura.modules.user_account.dtoRequest.AuthLoginRequestDto;
@@ -42,6 +45,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     private final JwtUtils jwtUtils;
     private final RoleRepository roleRepository;
     private final ProfessionalRepository professionalRepository;
+    private final PersonRepository personRepository;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -146,6 +150,15 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public UserMeResponseDto updateCurrentUser(Long id, UserMeRequestDto userMeRequest) {
         UserModel user = userRepository.findById(id)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario con el id " + id + " no encontrado"));
+
+        if (userRepository.findByEmail(userMeRequest.getEmail()).isPresent()) {
+            throw new EmailAlreadyExistsException("El correo " + userMeRequest.getEmail() + " ya existe en la base de datos.");
+        }
+
+        if (personRepository.findByDni(userMeRequest.getDni()).isPresent()) {
+            throw new DniAlreadyExistsException("El DNI " + userMeRequest.getDni() + " ya está registrado en la base de datos.");
+        }
+
         user.setEmail(userMeRequest.getEmail());
         user.getPerson().setName(userMeRequest.getName());
         user.getPerson().setLastName(userMeRequest.getLastName());
