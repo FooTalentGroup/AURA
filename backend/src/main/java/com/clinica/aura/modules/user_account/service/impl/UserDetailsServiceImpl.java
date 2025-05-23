@@ -151,22 +151,28 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         UserModel user = userRepository.findById(id)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario con el id " + id + " no encontrado"));
 
-        if (userRepository.findByEmail(userMeRequest.getEmail()).isPresent()) {
-            throw new EmailAlreadyExistsException("El correo " + userMeRequest.getEmail() + " ya existe en la base de datos.");
+        if (!user.getEmail().equals(userMeRequest.getEmail())) {
+            userRepository.findByEmail(userMeRequest.getEmail()).ifPresent(existingUser -> {
+                throw new EmailAlreadyExistsException("El correo " + userMeRequest.getEmail() + " ya existe en la base de datos.");
+            });
+            user.setEmail(userMeRequest.getEmail());
         }
 
-        if (personRepository.findByDni(userMeRequest.getDni()).isPresent()) {
-            throw new DniAlreadyExistsException("El DNI " + userMeRequest.getDni() + " ya está registrado en la base de datos.");
+        if (!user.getPerson().getDni().equals(userMeRequest.getDni())) {
+            personRepository.findByDni(userMeRequest.getDni()).ifPresent(existingPerson -> {
+                throw new DniAlreadyExistsException("El DNI " + userMeRequest.getDni() + " ya está registrado en la base de datos.");
+            });
+            user.getPerson().setDni(userMeRequest.getDni());
         }
 
-        user.setEmail(userMeRequest.getEmail());
         user.getPerson().setName(userMeRequest.getName());
         user.getPerson().setLastName(userMeRequest.getLastName());
-        user.getPerson().setDni(userMeRequest.getDni());
         user.getPerson().setBirthDate(userMeRequest.getBirthDate());
+
         userRepository.save(user);
         return getCurrentUser(user.getEmail());
     }
+
 
 
     @Transactional
