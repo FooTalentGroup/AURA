@@ -13,7 +13,6 @@ import java.time.LocalDate;
 @Builder
 public class UserMeRequestDto {
 
-    @NotBlank
     @Email(message = "Formato de email inválido")
     @Pattern(
             regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+[A-Za-z]{2,}([A-Za-z]{2,})?$",
@@ -37,7 +36,7 @@ public class UserMeRequestDto {
     @Past
     private LocalDate birthDate;
 
-    @Pattern(regexp = "^[1-9]d{7}$", message = "El DNI solo debe tener números y maximo 8 caracteres")
+    @Pattern(regexp = "^[1-9]\\d{7}$", message = "El DNI solo debe tener números y maximo 8 caracteres")
     @Size(min =8, max=8, message = "El dni debe 8 caracteres")
     @NotBlank(message = "El DNI es obligatorio")
     @Schema(description = "DNI del paciente", requiredMode = Schema.RequiredMode.REQUIRED, example = "40650777")
