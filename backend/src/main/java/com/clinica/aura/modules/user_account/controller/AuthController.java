@@ -137,7 +137,7 @@ public class AuthController {
             """)
     @PreAuthorize("isAuthenticated()")
     @PutMapping("/me/{userId}")
-    public ResponseEntity<UserMeResponseDto> updateCurrentUser(@PathVariable Long userId, @RequestBody UserMeRequestDto userMeRequestDto) {
+    public ResponseEntity<UserMeResponseDto> updateCurrentUser(@PathVariable Long userId, @RequestBody @Valid UserMeRequestDto userMeRequestDto) {
         UserMeResponseDto userMeResponseDto = userDetailsService.updateCurrentUser(userId, userMeRequestDto);
         return ResponseEntity.ok(userMeResponseDto);
     }
@@ -175,7 +175,7 @@ public class AuthController {
      * @return un ResponseEntity que contiene la hora de finalización de la suspensión y el tiempo restante
      */
     public ResponseEntity<?> suspendUser(@PathVariable Long userId,
-                                         @RequestBody SuspendRequestDto request) {
+                                         @RequestBody @Valid SuspendRequestDto request) {
         userDetailsService.suspendUser(userId, request.getDuration(), request.getUnit());
 
         LocalDateTime suspensionEndTime = LocalDateTime.now().plus(request.getDuration(), mapToChronoUnit(request.getUnit()));
