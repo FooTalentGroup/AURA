@@ -37,3 +37,4 @@ public class MedicalNotesFilesResponseDTO {
         String getDiagnostico();
     }
 }
+

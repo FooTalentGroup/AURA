@@ -13,7 +13,7 @@ import lombok.Setter;
  *     <li><b>id</b>: Identificador único de la escuela (generado automáticamente).</li>
  *     <li><b>schoolName</b>: Nombre de la institución educativa.</li>
  *     <li><b>emailSchool</b>: Correo electrónico institucional de la escuela.</li>
- *     <li><b>phoneSchool</b>: Número de teléfono de contacto de la escuela.</li>
+ *     <li><b>phoneSchool</b>: Número de teléfono de la escuela.</li>
  * </ul>
  */
 
@@ -26,4 +26,4 @@ public class SchoolResponseDto {
     private String emailSchool;
     private String phoneSchool;
 
-   }
+}

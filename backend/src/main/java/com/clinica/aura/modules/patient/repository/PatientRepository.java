@@ -10,13 +10,29 @@ import java.util.Optional;
 
 public interface PatientRepository extends JpaRepository<PatientModel, Long> {
 
-    // se usa en el metodo buscar por dni
+    /**
+     * Recupera un paciente según su número de documento nacional de identidad (DNI).
+     * @param dni Número de documento del paciente.
+     * @return {@link Optional} con el {@link PatientModel} encontrado, o vacío si no existe.
+     */
     Optional<PatientModel> findByPersonDni(String dni);
 
-    // se usa para obtener pacientes por el ID de la escuela
-    List<PatientModel> findBySchoolModelId(Long schoolId);
 
-    // se usa en el metodo para obtener buscar por nombre
+    /**
+     * Realiza una búsqueda flexible de pacientes por nombre y/o apellido, permitiendo combinaciones en cualquier orden.
+     * Este método utiliza una consulta personalizada que permite:
+     * <ul>
+     *     <li>Buscar por nombre parcial o completo (insensible a mayúsculas/minúsculas).</li>
+     *     <li>Buscar por apellido parcial o completo.</li>
+     *     <li>Buscar combinaciones "nombre + apellido" o "apellido + nombre".</li>
+     *     <li>Ignorar parámetros nulos o vacíos, lo que permite búsquedas abiertas o con una sola palabra.</li>
+     * </ul>
+     * Es especialmente útil para búsquedas donde el usuario puede ingresar cualquier orden o combinación de nombre y apellido.
+     *
+     * @param kw1 Primera palabra clave (name).
+     * @param kw2 Segunda palabra clave (lastName).
+     * @return Lista de pacientes que coincidan con los criterios especificados.
+     */
     @Query("""
     SELECT p FROM PatientModel p
     WHERE (

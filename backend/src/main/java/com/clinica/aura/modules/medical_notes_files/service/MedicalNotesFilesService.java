@@ -35,19 +35,15 @@ public class MedicalNotesFilesService {
 
     /**
      * Genera un reporte PDF personalizado con los datos médicos de un paciente, identificado por su DNI.
-     *
      * El reporte incluye información básica del paciente (nombre, fecha de nacimiento, tutor, etc.) y un
-     * listado de seguimientos médicos obtenidos desde la base de datos. También se incluye un logo institucional
+     * listado de seguimientos médicos obtenidos desde la base de datos. También se incluye el logotipo institucional
      * al inicio del documento, si está disponible en los recursos.
-     *
      * Además, se guarda un registro del archivo generado en la base de datos mediante un objeto {@link MedicalNotesFilesModel}.
-     *
-     * @param dni            DNI del paciente cuyos registros médicos se desean incluir en el reporte.
+     * @param dni   del paciente cuyos registros médicos se desean incluir en el reporte.
      * @param tituloReporte  Título que se colocará en el encabezado del documento PDF y como nombre del archivo registrado.
      * @return Un arreglo de bytes que representa el contenido binario del archivo PDF generado.
-     *
      * @throws RuntimeException Si no se encuentran registros para el DNI proporcionado o si ocurre un error
-     *                          durante la generación del PDF (por ejemplo, al cargar el logo o escribir el documento).
+     * durante la generación del PDF (por ejemplo, al cargar el logo o escribir el documento).
      */
     public byte[] generatePdfReport(String dni, String tituloReporte) {
         List<MedicalNotesFilesResponseDTO.MedicalFilesDTO> records = repository.findReportByDni(dni);
@@ -67,7 +63,7 @@ public class MedicalNotesFilesService {
             try {
                 InputStream is = getClass().getClassLoader().getResourceAsStream("img/auraLogo.jpg");
                 if (is == null) {
-                    throw new FileNotFoundException("No se encontró el logo en recursos.");
+                    throw new FileNotFoundException("No se encontró el logotipo en los recursos.");
                 }
                 Image img = Image.getInstance(IOUtils.toByteArray(is));
                 img.scaleToFit(100, 100);
@@ -91,7 +87,7 @@ public class MedicalNotesFilesService {
                 if(i>0) break;
                 document.add(new Paragraph("Paciente: " + r.getName() + " " + r.getLastName()));
                 document.add(new Paragraph("Fecha de nacimiento: " + r.getBirthDate()));
-                document.add(new Paragraph("Dni: "+ r.getDni()));
+                document.add(new Paragraph("DNI: "+ r.getDni()));
                 document.add(new Paragraph("Nombre del tutor: " + r.getTutorName()));
                 document.add(new Paragraph("Relación con el paciente: " +r.getRelationToPatient()));
                 document.add(new Paragraph("Teléfono: " + (r.getPhoneNumber() != null ? r.getPhoneNumber() : "N/A")));
@@ -114,13 +110,13 @@ public class MedicalNotesFilesService {
                 document.add(new Paragraph("Fecha de seguimiento: " + (r.getCreateDate() != null ? r.getCreateDate().toString() : "N/A")));
                 document.add(new Paragraph("Profesional que hizo el seguimiento: "+ r.getFollowUpProfessionalName()+" "+ r.getFollowUpProfessionalLastName()));
                 document.add(new Paragraph("Observación: " + (r.getObservations() != null ? r.getObservations() : "N/A")));
-                document.add(new Paragraph("Intervensiones: " + (r.getInterventions() != null ? r.getInterventions() : "N/A")));
-                document.add(new Paragraph("Instrucciones de la próxima sesión : " + (r.getNextSessionInstructions() != null ? r.getNextSessionInstructions() : "N/A")));
+                document.add(new Paragraph("Intervenciones: " + (r.getInterventions() != null ? r.getInterventions() : "N/A")));
+                document.add(new Paragraph("Instrucciones de la próxima sesión: " + (r.getNextSessionInstructions() != null ? r.getNextSessionInstructions() : "N/A")));
 
                 document.add(new Paragraph(" "));
                 document.add(new LineSeparator());
-                document.add(new Paragraph("Diagnóstico: "+ r.getDiagnostico()));
-                document.add(new Paragraph("Detalles: "+ r.getDetails()));
+                document.add(new Paragraph("Diagnóstico: " + r.getDiagnostico()));
+                document.add(new Paragraph("Detalles: " + r.getDetails()));
                 document.add(new Paragraph(" "));
             }
 
@@ -133,6 +129,6 @@ public class MedicalNotesFilesService {
             throw new RuntimeException("Error al generar el reporte PDF", e);
         }
         return out.toByteArray();
-   }
+    }
 
 }

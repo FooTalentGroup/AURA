@@ -9,7 +9,6 @@ import lombok.*;
  * Entidad que representa una institución educativa asociada a uno o más pacientes.
  * Esta entidad se utiliza para registrar y gestionar información básica sobre escuelas.
  * Su uso es referencial en otras entidades como {@link PatientModel}, que puede vincularse a una escuela específica.
- *
  * Atributos principales:
  * - schoolName: nombre de la escuela.
  * - emailSchool: correo electrónico institucional, utilizado para validaciones únicas.
@@ -38,3 +37,4 @@ public class SchoolModel {
     private String phoneSchool;
 
 }
+

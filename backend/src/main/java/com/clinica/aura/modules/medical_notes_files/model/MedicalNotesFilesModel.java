@@ -6,9 +6,9 @@ import java.time.LocalDateTime;
 
 /**
  * Entidad que representa un archivo PDF generado con notas médicas de un paciente.
- * Esta clase se mapea a la tabla {@code medical_notes_files} en la base de datos, y
+ * Esta clase se mapea a la tabla {@code medical_notes_files} en la base de datos y
  * almacena metadatos asociados al archivo, como el nombre del archivo, el nombre del paciente
- * y la fecha en la que se subió el archivo.
+ * y la fecha en que se subió el archivo.
  * Se utiliza principalmente para registrar y rastrear los reportes generados desde el sistema,
  * manteniendo un historial de generación de documentos médicos.
  */

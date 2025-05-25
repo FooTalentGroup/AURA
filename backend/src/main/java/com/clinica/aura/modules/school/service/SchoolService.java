@@ -31,14 +31,11 @@ public class SchoolService {
 
     /**
      * Registra una nueva escuela en el sistema.
-     *
      * Este método primero valida que el correo electrónico proporcionado en la solicitud
      * no se encuentre ya registrado en la base de datos. Si el email ya existe, lanza una excepción
      * personalizada {@link EmailAlreadyExistsException}.
-     *
      * Luego, construye un objeto {@link SchoolModel} con los datos recibidos y lo guarda en la base de datos.
      * Finalmente, retorna un {@link SchoolResponseDto} con la información de la escuela registrada.
-     *
      * @param request Objeto {@link SchoolRequestDto} que contiene los datos necesarios para crear la escuela,
      *                incluyendo nombre, correo electrónico y teléfono.
      * @return Un {@link SchoolResponseDto} con los datos de la escuela recién registrada, incluyendo su ID generado.
@@ -72,11 +69,9 @@ public class SchoolService {
 
     /**
      * Obtiene una lista paginada de todas las escuelas registradas en el sistema.
-     *
      * Este método utiliza los parámetros de paginación proporcionados (número de página y tamaño de página)
      * para recuperar una porción de registros desde la base de datos. Los datos recuperados se transforman
      * en objetos {@link SchoolResponseDto} y se encapsulan en un objeto {@link PaginatedResponse}.
-     *
      * @param page Número de página (empezando desde 0) que se desea consultar.
      * @param size Cantidad de registros que se desean obtener por página.
      * @return Un objeto {@link PaginatedResponse} que contiene:
@@ -113,11 +108,9 @@ public class SchoolService {
 
     /**
      * Actualiza los datos de una escuela existente en el sistema.
-     *
      * Este método busca una escuela por su ID en la base de datos. Si no se encuentra, lanza una excepción
      * personalizada {@link SchoolNotFoundException}. Si se encuentra, actualiza los campos correspondientes
      * con los valores recibidos en el objeto {@link SchoolRequestDtoUpdate} y guarda los cambios.
-     *
      * @param id      ID de la escuela que se desea actualizar.
      * @param request Objeto {@link SchoolRequestDtoUpdate} que contiene los nuevos datos de la escuela:
      *                nombre, correo electrónico y teléfono.
@@ -145,22 +138,19 @@ public class SchoolService {
 
     /**
      * Elimina una escuela del sistema según su ID.
-     *
      * Este método primero verifica si existe una escuela con el ID proporcionado.
      * Si no existe, lanza una excepción personalizada {@link SchoolNotFoundException}.
      * Si existe, procede a eliminar el registro correspondiente de la base de datos.
-     *
      * @param id ID de la escuela que se desea eliminar.
      * @throws SchoolNotFoundException Si no se encuentra una escuela con el ID especificado.
      */
-   @Transactional
-   public void deleteSchoolById(Long id) {
-       if (!schoolRepository.existsById(id)) {
-           throw new SchoolNotFoundException("No se encontró una escuela con el ID: " + id);
-       }
-       schoolRepository.deleteById(id);
-   }
+    @Transactional
+    public void deleteSchoolById(Long id) {
+        if (!schoolRepository.existsById(id)) {
+            throw new SchoolNotFoundException("No se encontró una escuela con el ID: " + id);
+        }
+        schoolRepository.deleteById(id);
+    }
 
 
 }
-
