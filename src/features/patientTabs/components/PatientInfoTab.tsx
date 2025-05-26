@@ -52,57 +52,55 @@ function PatientInfoTab({
     setFormData((f) => ({ ...f, [name]: value }));
   };
 
-const handleSavePersonal = async () => {
-  if (!patient?.id) return;
-  const payload = {
-    name: formData.name,
-    lastName: formData.lastName,
-    birthDate: formData.birthDate,
-    dni: formData.dni,
-    genre: formData.genre,
-    insuranceName: patient.insuranceName ?? "",
-    insurancePlan: patient.insurancePlan ?? "",
-    memberShipNumber: patient.memberShipNumber ?? "",
-    hasInsurance: patient.hasInsurance ?? false,
-    relationToPatient: patient.relationToPatient ?? "",
-    schoolId: patient.schoolId ?? null,
-    professionalIds: patient.professionalIds ?? [],
-    address: patient.address ?? "",
-    phoneNumber: patient.phoneNumber ?? "",
-    email: patient.email ?? "",
-    tutorName: patient.tutorName ?? "",
-    // agrega aquí cualquier otro campo requerido por el backend
+  const handleSavePersonal = async () => {
+    if (!patient?.id) return;
+    const payload = {
+      name: formData.name,
+      lastName: formData.lastName,
+      birthDate: formData.birthDate,
+      dni: formData.dni,
+      genre: formData.genre,
+      insuranceName: patient.insuranceName ?? "",
+      insurancePlan: patient.insurancePlan ?? "",
+      memberShipNumber: patient.memberShipNumber ?? "",
+      hasInsurance: patient.hasInsurance ?? false,
+      relationToPatient: patient.relationToPatient ?? "",
+      schoolId: patient.schoolId ?? null,
+      professionalIds: patient.professionalIds ?? [],
+      address: patient.address ?? "",
+      phoneNumber: patient.phoneNumber ?? "",
+      email: patient.email ?? "",
+      tutorName: patient.tutorName ?? "",
+    };
+    const updated = await api.updatePatient(patient.id, payload);
+    onUpdate(updated);
+    setIsEditingPersonal(false);
   };
-  const updated = await api.updatePatient(patient.id, payload);
-  onUpdate(updated);
-  setIsEditingPersonal(false);
-};
 
-const handleSaveInsurance = async () => {
-  if (!patient?.id) return;
-  const payload = {
-    name: patient.name ?? "",
-    lastName: patient.lastName ?? "",
-    birthDate: patient.birthDate ?? "",
-    dni: patient.dni ?? "",
-    genre: patient.genre ?? "",
-    insuranceName: formData.insuranceName,
-    insurancePlan: formData.insurancePlan,
-    memberShipNumber: formData.memberShipNumber ?? "",
-    hasInsurance: patient.hasInsurance ?? false,
-    relationToPatient: patient.relationToPatient ?? "",
-    schoolId: patient.schoolId ?? null,
-    professionalIds: patient.professionalIds ?? [],
-    address: patient.address ?? "",
-    phoneNumber: patient.phoneNumber ?? "",
-    email: patient.email ?? "",
-    tutorName: patient.tutorName ?? "",
-    // agrega aquí cualquier otro campo requerido por el backend
+  const handleSaveInsurance = async () => {
+    if (!patient?.id) return;
+    const payload = {
+      name: patient.name ?? "",
+      lastName: patient.lastName ?? "",
+      birthDate: patient.birthDate ?? "",
+      dni: patient.dni ?? "",
+      genre: patient.genre ?? "",
+      insuranceName: formData.insuranceName,
+      insurancePlan: formData.insurancePlan,
+      memberShipNumber: formData.memberShipNumber ?? "",
+      hasInsurance: patient.hasInsurance ?? false,
+      relationToPatient: patient.relationToPatient ?? "",
+      schoolId: patient.schoolId ?? null,
+      professionalIds: patient.professionalIds ?? [],
+      address: patient.address ?? "",
+      phoneNumber: patient.phoneNumber ?? "",
+      email: patient.email ?? "",
+      tutorName: patient.tutorName ?? "",
+    };
+    const updated = await api.updatePatient(patient.id, payload);
+    onUpdate(updated);
+    setIsEditingInsurance(false);
   };
-  const updated = await api.updatePatient(patient.id, payload);
-  onUpdate(updated);
-  setIsEditingInsurance(false);
-};
 
   return (
     <section className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 bg-gray-200/60 p-4 rounded-b-2xl rounded-tr-2xl">
@@ -251,7 +249,7 @@ const handleSaveInsurance = async () => {
               />
             ) : (
               <p className="py-2 px-3 text-gray-600 bg-blue-50/80 rounded-md mt-2">
-                {patient?.insuranceName}
+                {patient?.insuranceName || "No especificado"}
               </p>
             )}
           </div>
@@ -269,7 +267,10 @@ const handleSaveInsurance = async () => {
               />
             ) : (
               <p className="py-2 px-3 text-gray-600 bg-blue-50/80 rounded-md mt-2">
-                {patient?.insurancePlan}
+                {typeof patient?.insurancePlan === "string" &&
+                patient.insurancePlan.trim()
+                  ? patient.insurancePlan.trim()
+                  : "No especificado"}
               </p>
             )}
           </div>
@@ -290,6 +291,10 @@ const handleSaveInsurance = async () => {
             ) : (
               <p className="py-2 px-3 text-gray-600 bg-blue-50/80 rounded-md mt-2">
                 {patient?.memberShipNumber ?? "Particular"}
+                {typeof patient?.memberShipNumber === "string" &&
+                patient.memberShipNumber.trim()
+                  ? patient.memberShipNumber.trim()
+                  : "No especificado"}
               </p>
             )}
           </div>

@@ -59,14 +59,20 @@ export default function PatientTabsPage() {
       } catch {
         console.warn(`Sin historial médico para patient ${patientID}`);
       }
+
       if (record) {
         // Turnos asociados a la historia
-        const appts = await api.getMedicalRecordFilter(); // o bien api.getAppointmentsByMedicalRecordId(record.id) si lo tienes
-        setAppointments(appts);
+        try {
+          const appts = await api.getMedicalRecordFilter(); // o bien api.getAppointmentsByMedicalRecordId(record.id) si lo tienes
+          console.log("constante appts", appts);
+          setAppointments(appts);
+        } catch (err) {
+          console.error("Error al obtener turnos asociados:", err);
+        }
 
         // Follow-up entries
         try {
-          const fe = await api.getFollowEntriesById(record.id);
+          const fe = await api.getFollowEntriesById(record.followUpIds[0]);
           setFollowEntries(fe);
         } catch {
           console.warn(`Sin follow entries para record ${record.id}`);
@@ -111,7 +117,6 @@ export default function PatientTabsPage() {
   return (
     <DashboardLayout>
       <section className="bg-white rounded-2xl shadow-sm">
-        {/* Header */}
         <div className="p-4 border-b-2 border-gray-300/90 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Link to="#" onClick={() => navigate(-1)} title="Atrás">
@@ -132,7 +137,6 @@ export default function PatientTabsPage() {
             )}
           </div>
 
-          {/* Botón + Agregar registro */}
           <button
             onClick={() => setIsModalOpen(true)}
             className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700"
@@ -141,14 +145,12 @@ export default function PatientTabsPage() {
           </button>
         </div>
 
-        {/* Contenido */}
         {!patient ? (
           <div className="flex justify-center items-center h-96">
             <Loader />
           </div>
         ) : (
           <>
-            {/* Pestañas */}
             <header className="mt-4 px-6">
               <nav className="flex">
                 {tabs.map((tab) => (
@@ -167,7 +169,6 @@ export default function PatientTabsPage() {
               </nav>
             </header>
 
-            {/* Tab content */}
             <main className="px-6 pb-6">
               {activeTab === "paciente" && (
                 <PatientInfoTab

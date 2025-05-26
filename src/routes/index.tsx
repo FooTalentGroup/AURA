@@ -26,7 +26,6 @@ const AppRoutes = () => {
       <Route element={<PublicRoutes />}>
         <Route path="/forgot-password" element={<ForgotPasswordForm />} />
         <Route path="/login" element={<LoginPage />} />
-        {/* <Route path="/register" element={<RegisterPage />} /> */}
       </Route>
 
       <Route element={<PrivateRoutes />}>
@@ -37,7 +36,6 @@ const AppRoutes = () => {
         <Route path="/Pregister" element={<ProfessionalRegister />} />
         <Route path="/Rregister" element={<ReceptionistRegister />} />
         <Route path="/Sregister" element={<PatientRegister />} />
-
       </Route>
 
       <Route element={<AdminRoute />}>

@@ -42,7 +42,7 @@ export const EditableForm = ({
         {!isEditMode ? (
           <button
             onClick={() => setIsEditMode(true)}
-            className="flex gap-2 items-center border border-black rounded-full p-2 px-4 text-blue-600 hover:bg-blue-50 cursor-pointer transition-colors duration-300"
+            className="flex gap-2 items-center border border-black rounded-full p-2 px-4 text-[#0072c3] hover:bg-blue-50 cursor-pointer transition-colors duration-300"
           >
             <PencilIcon />
             Editar
@@ -51,13 +51,13 @@ export const EditableForm = ({
           <div className="flex justify-end space-x-4 bg-gray-50">
             <button
               onClick={handleBack}
-              className="border border-black rounded-full p-2 px-6 text-blue-600 hover:bg-blue-50 cursor-pointer transition-colors duration-300"
+              className="border border-black rounded-full p-2 px-6 text-[#0072c3] hover:bg-blue-50 cursor-pointer transition-colors duration-300"
             >
               Atrás
             </button>
             <button
               onClick={handleSave}
-              className="border border-blue-600 bg-blue-600 rounded-full p-2 px-6 text-white hover:bg-blue-700 hover:shadow-md cursor-pointer transition-colors duration-300"
+              className="border border-[#0072c3] bg-[#0072c3] rounded-full p-2 px-6 text-white hover:bg-[#147dc8] hover:shadow-md cursor-pointer transition-colors duration-300"
             >
               Guardar
             </button>
@@ -66,7 +66,7 @@ export const EditableForm = ({
       </header>
 
       <div className="p-6 pb-8">
-        <div className="grid grid-cols-2 gap-4 gap-x-6">
+        <form className="grid grid-cols-2 gap-4 gap-x-6">
           {fields.map((field) => (
             <div key={field.key}>
               {isEditMode ? (
@@ -83,7 +83,7 @@ export const EditableForm = ({
                 </div>
               ) : (
                 <div>
-                  <p className="pl-2 text-sm font-medium text-blue-600">
+                  <p className="pl-2 text-sm font-medium text-[#0072c3]">
                     {field.label}
                   </p>
                   <p className="mt-2 p-2 bg-gray-100 rounded-lg">
@@ -93,7 +93,7 @@ export const EditableForm = ({
               )}
             </div>
           ))}
-        </div>
+        </form>
       </div>
     </article>
   );

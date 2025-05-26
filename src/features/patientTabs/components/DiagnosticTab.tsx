@@ -1,6 +1,10 @@
 import { useState, useEffect } from "react";
 import { PencilIcon } from "../../../components/shared/ui/Icons";
-import { DiagnosticTabProps, PatientDiagnosesProps, updatedDiagnosis } from "../types/patientTabs.types";
+import {
+  DiagnosticTabProps,
+  PatientDiagnosesProps,
+  updatedDiagnosis,
+} from "../types/patientTabs.types";
 import { formatDate } from "../utils/utils";
 import { api } from "../../../core/services/api";
 
@@ -13,7 +17,10 @@ interface DiagnosticTabEditableProps extends DiagnosticTabProps {
   onUpdate: (updated: PatientDiagnosesProps) => void;
 }
 
-export default function DiagnosticTab({ diagnoses, onUpdate }: DiagnosticTabEditableProps) {
+export default function DiagnosticTab({
+  diagnoses,
+  onUpdate,
+}: DiagnosticTabEditableProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [form, setForm] = useState<EditableDiagnosis>({
     date: diagnoses?.date || "",
@@ -39,7 +46,7 @@ export default function DiagnosticTab({ diagnoses, onUpdate }: DiagnosticTabEdit
     const { name, value } = e.target;
     setForm((prev) => ({
       ...prev,
-      [name]: name === 'idProfessional' ? Number(value) : value,
+      [name]: name === "idProfessional" ? Number(value) : value,
     }));
   };
 
@@ -86,13 +93,17 @@ export default function DiagnosticTab({ diagnoses, onUpdate }: DiagnosticTabEdit
               />
             ) : (
               <p className="py-2 px-3 text-gray-600 bg-blue-50/80 rounded-md mt-2">
-                {formatDate(diagnoses?.date || "")}
+                {diagnoses?.date
+                  ? formatDate(diagnoses.date)
+                  : "No especificado"}
               </p>
             )}
           </div>
 
           <div>
-            <label className="font-semibold text-blue-600">Id del Profesional</label>
+            <label className="font-semibold text-blue-600">
+              Id del Profesional
+            </label>
             {isEditing ? (
               <input
                 type="number"
@@ -104,7 +115,7 @@ export default function DiagnosticTab({ diagnoses, onUpdate }: DiagnosticTabEdit
               />
             ) : (
               <p className="py-2 px-3 text-gray-600 bg-blue-50/80 rounded-md mt-2">
-                {diagnoses?.idProfessional}
+                {diagnoses?.idProfessional || "No especificado"}
               </p>
             )}
           </div>
@@ -120,7 +131,7 @@ export default function DiagnosticTab({ diagnoses, onUpdate }: DiagnosticTabEdit
               />
             ) : (
               <p className="py-2 px-3 text-gray-600 bg-blue-50/80 rounded-md mt-2">
-                {diagnoses?.title}
+                {diagnoses?.title || "No especificado"}
               </p>
             )}
           </div>
@@ -137,7 +148,7 @@ export default function DiagnosticTab({ diagnoses, onUpdate }: DiagnosticTabEdit
               />
             ) : (
               <p className="py-2 px-3 text-gray-600 bg-blue-50/80 rounded-md mt-2">
-                {diagnoses?.details}
+                {diagnoses?.details || "No especificado"}
               </p>
             )}
           </div>

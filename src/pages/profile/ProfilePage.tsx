@@ -28,7 +28,6 @@ function ProfilePage() {
     { key: "address", label: "Dirección" },
   ];
 
-
   const handleSaveContactInfo = (updatedData: Partial<CurrentUserProps>) => {
     const updateData: UserUpdateData = {
       name: updatedData.name || userData?.name,
@@ -54,42 +53,42 @@ function ProfilePage() {
       });
   };
 
-useEffect(() => {
-  const fetchUser = async () => {
-    try {
-      const user = await api.getCurrentUser();
-      setUserData(user);
-    } catch (err) {
-      console.error("Error al cargar el usuario:", err);
-    }
-  };
-  fetchUser();
-}, []);
-
-const handleSavePersonalInfo = (updatedData: UserUpdateData) => {
-  if (!userData) return;
-
-  const updateData: UserUpdateData = {
-    name: updatedData.name || userData.name,
-    email: updatedData.email || userData.email,
-    lastName: updatedData.lastName || userData.lastName,
-    birthDate: updatedData.birthDate || userData.birthDate || "",
-    dni: updatedData.dni || userData.dni || "",
-  };
-
-  api
-    .updateCurrentUser(userData.id, updateData)
-    .then(() => {
-      setUserData({ ...userData, ...updateData });
-    })
-    .catch((error) => {
-      if (error.response) {
-        console.error("Error al actualizar datos:", error.response.data);
-      } else {
-        console.error("Error al actualizar datos:", error.message);
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const user = await api.getCurrentUser();
+        setUserData(user);
+      } catch (err) {
+        console.error("Error al cargar el usuario:", err);
       }
-    });
-};
+    };
+    fetchUser();
+  }, []);
+
+  const handleSavePersonalInfo = (updatedData: UserUpdateData) => {
+    if (!userData) return;
+
+    const updateData: UserUpdateData = {
+      name: updatedData.name || userData.name,
+      email: updatedData.email || userData.email,
+      lastName: updatedData.lastName || userData.lastName,
+      birthDate: updatedData.birthDate || userData.birthDate || "",
+      dni: updatedData.dni || userData.dni || "",
+    };
+
+    api
+      .updateCurrentUser(userData.id, updateData)
+      .then(() => {
+        setUserData({ ...userData, ...updateData });
+      })
+      .catch((error) => {
+        if (error.response) {
+          console.error("Error al actualizar datos:", error.response.data);
+        } else {
+          console.error("Error al actualizar datos:", error.message);
+        }
+      });
+  };
 
   return (
     <DashboardLayout>
@@ -104,7 +103,7 @@ const handleSavePersonalInfo = (updatedData: UserUpdateData) => {
         <article className="grid grid-cols-8 rounded-lg px-6">
           <article className="p-8 col-span-5">
             <header className="flex flex-col items-center mb-12">
-              <span className="mb-4 flex justify-center items-center text-3xl font-bold bg-sky-200 text-blue-400 w-20 h-20 rounded-full">
+              <span className="mb-4 flex justify-center items-center text-4xl font-semibold bg-sky-200 text-[#00539a] w-24 h-24 rounded-full">
                 {userData?.name.charAt(0).toUpperCase()}
                 {userData?.lastName.charAt(0).toUpperCase()}
               </span>
@@ -130,7 +129,7 @@ const handleSavePersonalInfo = (updatedData: UserUpdateData) => {
               <p>Cargando datos del usuario...</p>
             )}
           </article>
-          <article className="border-l border-gray-400 p-8 col-span-3">
+          <article className="p-8 col-span-3">
             <header className="flex justify-between items-center mb-8">
               <h2 className="text-2xl">Ayuda</h2>
               <QuestionIcon />
