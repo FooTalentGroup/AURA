@@ -200,7 +200,11 @@ export default function PatientTabsPage() {
                 (backgrounds ? (
                   <MedicalBackgroundTab medicalBackgrounds={backgrounds} />
                 ) : (
-                  <div>No se encontraron antecedentes</div>
+                  <div className="bg-gray-200/60 p-4 rounded-xl">
+                    <p className="text-lg">
+                      No se encontraron antecedentes para este paciente.
+                    </p>
+                  </div>
                 ))}
             </main>
           </>
