@@ -85,7 +85,6 @@ public class PatientService {
      * @throws SchoolNotFoundException Si el ID de la escuela no existe en la base de datos.
      * Calcula la edad actual del paciente usando la fecha de nacimiento.
      */
-
     @Transactional
     public PatientResponseDto createUser(@Valid PatientRequestDto authCreateUserDto) {
 
@@ -448,7 +447,6 @@ public class PatientService {
     }
 
 
-
     /**
      * Recupera la información completa de un paciente a partir de su número de DNI.
      * Este método realiza lo siguiente:
@@ -515,14 +513,13 @@ public class PatientService {
      *     <li>Mapea cada entidad encontrada a un {@link PatientResponseDto}, incluyendo datos personales,
      *         profesionales asignados, escuela, y edad calculada.</li>
      * </ul>
-     *
      * @param name      Nombre del paciente.
-     * @param sureName  Apellido del paciente.
+     * @param lastName Apellido del paciente.
      * @return Lista de {@link PatientResponseDto} con los pacientes encontrados.
      * @throws PatientNotFoundException Si no se encuentra ningún paciente con el nombre y apellido especificados.
      */
-    public List<PatientResponseDto> getPatientsByName(String name, String sureName) {
-        List<PatientModel> patients = patientRepository.searchByFullName(name, sureName);
+    public List<PatientResponseDto> getPatientsByName(String name, String lastName) {
+        List<PatientModel> patients = patientRepository.searchByFullName(name, lastName);
 
         if (patients.isEmpty()) {
             throw new PatientNotFoundException("No se encontraron pacientes con el nombre: " + name);
@@ -593,8 +590,5 @@ public class PatientService {
     }
 
 }
-
-
-
 
 

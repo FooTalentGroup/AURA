@@ -27,10 +27,12 @@ public class MedicalNotesFilesController {
     }
 
     @GetMapping(value = "/{dni}", produces = "application/pdf")
-    @Operation(summary = "Descargar pdf por Dni de paciente", description = "A partir de un dni de paciente, " +
-            "puede generarse un pdf con sus datos personales, seguimiento y diagnostico si estos están cargados" +
-            " en la base de datos. Una vez ingresado el dni del paciente  y ejecutado el método, aparece un botón " +
-            "que dice 'Download file' para descargar el pdf generado")
+    @Operation(
+            summary = "Descargar PDF por DNI del paciente",
+            description = "A partir del DNI de un paciente, se genera un archivo PDF con sus datos personales, " +
+                    "información de seguimiento y diagnóstico (si están disponibles en la base de datos). " +
+                    "Una vez ejecutado el método, se mostrará un botón con la leyenda 'Download file' para descargar el PDF generado."
+    )
     public ResponseEntity<byte[]> generatePdf(@PathVariable String dni) {
         String tituloReporte = "Reporte Médico";
         byte[] pdf = reportService.generatePdfReport(dni, tituloReporte);

@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Recupera un conjunto de datos médicos completos del paciente identificado por su DNI.
  * Esta consulta utiliza SQL nativo para unir múltiples tablas relacionadas con pacientes,
- * usuarios, profesionales, seguimientos e historiales médicos, a fin de construir un reporte
+ * usuarios, profesionales, seguimientos e historiales médicos, con el fin de construir un reporte
  * detallado que será utilizado para la generación de archivos PDF.
  * Los datos recuperados incluyen:
  * - Datos personales del paciente (nombre, apellido, DNI, teléfono, fecha de nacimiento)
@@ -22,10 +22,10 @@ import java.util.List;
  * - Datos del profesional que realiza los seguimientos médicos
  * - Detalles de las intervenciones, observaciones e instrucciones para próximas sesiones
  * - Diagnósticos y sus detalles asociados a la historia clínica
- *
- *   se ingresa el DNI del paciente para el cual se desea generar el reporte.
- * @return Una lista de DTOs {@link
+ * DNI del paciente para el cual se desea generar el reporte.
+ * @return Una lista de DTOs {@link MedicalNotesFilesResponseDTO.MedicalFilesDTO}
  */
+
 
 @Repository
 public interface MedicalNotesFilesRepository extends JpaRepository<MedicalNotesFilesModel, Long> {

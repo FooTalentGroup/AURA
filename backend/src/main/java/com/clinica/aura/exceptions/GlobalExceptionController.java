@@ -715,6 +715,64 @@ public class GlobalExceptionController {
     }
 
     /**
+     * Manejador de excepciones para entradas con formato de DNI inválido.
+     * Captura instancias de {@link InvalidDniFormatException} cuando el DNI ingresado no cumple con el formato esperado.
+     *
+     * Este manejador devuelve un código de estado HTTP 400 (Bad Request) e informa al usuario que
+     * el campo DNI debe contener exactamente 8 dígitos numéricos, sin letras ni caracteres especiales.
+     *
+     * @param ex      la excepción lanzada cuando el formato del DNI es inválido
+     * @param request el objeto {@link WebRequest} asociado a la solicitud HTTP que provocó la excepción
+     * @return una respuesta con código 400 (Bad Request) que contiene detalles del error en un objeto {@link ErrorResponse}
+     */
+    @ExceptionHandler(InvalidDniFormatException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidDniFormatException(InvalidDniFormatException ex, WebRequest request) {
+
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .errorCode("VALIDATION-400")
+                .message("DNI ingresado no válido")
+                .details(List.of(ex.getMessage()))
+                .timestamp(Instant.now())
+                .path(getSanitizedPath(request))
+                .build();
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .header("X-Content-Type-Options", "nosniff")
+                .body(errorResponse);
+    }
+
+    /**
+     * Manejador de excepciones para solicitudes con formato inválido en campos de nombre o apellido.
+     * Captura instancias de {@link InvalidNameFormatException} lanzadas cuando los campos de búsqueda
+     * contienen caracteres no permitidos (como números, símbolos o signos de puntuación).
+     * Retorna una respuesta HTTP con código 400 (Bad Request), incluyendo un objeto {@link ErrorResponse}
+     * con detalles del error.
+     * @param ex      la excepción lanzada debido a un formato inválido en los parámetros de entrada
+     * @param request el objeto {@link WebRequest} asociado a la solicitud que provocó la excepción
+     * @return una respuesta con código 400 (Bad Request) y detalles del error en el cuerpo
+     */
+    @ExceptionHandler(InvalidNameFormatException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidNameFormatException(InvalidNameFormatException ex, WebRequest request) {
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .errorCode("NAME-400")
+                .message("Entrada inválida para nombre o apellido")
+                .details(List.of(sanitizeErrorMessage(ex.getMessage())))
+                .timestamp(Instant.now())
+                .path(getSanitizedPath(request))
+                .build();
+
+        log.warn("Formato de nombre inválido - Path: {} | IP: {} | Mensaje: {}",
+                errorResponse.getPath(),
+                request.getHeader("X-Forwarded-For"),
+                ex.getMessage());
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .header("X-Content-Type-Options", "nosniff")
+                .body(errorResponse);
+    }
+
+
+    /**
      * Manejador de excepciones para solicitudes con recursos no encontrados.
      * Captura instancias de {@link DniAlreadyExistsException} cuando se intenta registrar un DNI que ya existe.
      *
@@ -894,6 +952,8 @@ public class GlobalExceptionController {
                 .header("X-Content-Type-Options", "nosniff")
                 .body(errorResponse);
     }
+
+
 
     // --- Métodos auxiliares ---
 
