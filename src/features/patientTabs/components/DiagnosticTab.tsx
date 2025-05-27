@@ -67,7 +67,7 @@ export default function DiagnosticTab({
 
   return (
     <section className="bg-gray-200/60 p-4 rounded-b-2xl rounded-t-2xl">
-      <article className="h-fit w-3/6 bg-white py-2 rounded-lg mx-auto">
+      <article className="h-fit w-3/6 bg-white py-2 rounded-lg">
         <header className="flex justify-between items-center border-b border-gray-300/90 pb-2 px-4">
           <h3 className="text-xl font-medium text-gray-800">Diagnóstico</h3>
           {!isEditing && (
