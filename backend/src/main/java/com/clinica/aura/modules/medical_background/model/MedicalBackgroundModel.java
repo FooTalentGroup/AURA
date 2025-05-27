@@ -1,7 +1,7 @@
 package com.clinica.aura.modules.medical_background.model;
 
 
-import com.clinica.aura.modules.clinical_report.model.ClinicalReportModel;
+
 import com.clinica.aura.modules.professional.model.ProfessionalModel;
 import jakarta.persistence.*;
 import lombok.*;
@@ -30,13 +30,6 @@ public class MedicalBackgroundModel {
     @JoinColumn(name = "patient_id", nullable = false)
     private PatientModel patient;
 
-    // Relación uno a muchos con informes clínicos
-    @OneToMany(mappedBy = "medicalBackground", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ClinicalReportModel> clinicalReports;
-
-    // Otros campos
-    @Column(columnDefinition = "TEXT")
-    private String schoolReports;
 
     // Lista simple de alergias
     @ElementCollection

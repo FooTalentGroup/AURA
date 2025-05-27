@@ -1,5 +1,6 @@
 package com.clinica.aura.modules.medical_background.dto;
 
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
@@ -19,8 +20,6 @@ public class MedicalBackgroundResponseDto {
     @Schema(description = "ID del paciente asociado", example = "1")
     private Long patientId;
 
-    @Schema(description = "Informe escolar del paciente", example = "Informe del colegio sobre el comportamiento y desempeño académico")
-    private String schoolReports;
 
     @Schema(description = "Lista de alergias del paciente", example = "[\"Polen\", \"Penicilina\"]")
     private List<String> allergies;

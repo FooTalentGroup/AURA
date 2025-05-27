@@ -35,7 +35,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 import com.clinica.aura.exceptions.DniAlreadyExistsException;
 
-
+/**
+ * Servicio que gestiona operaciones relacionadas con profesionales de la salud.
+ */
 @Service
 @RequiredArgsConstructor
 public class ProfessionalService {
@@ -48,6 +50,15 @@ public class ProfessionalService {
     private final PatientRepository patientRepository;
     private final PersonRepository personRepository;
 
+    /**
+     * Crea un nuevo usuario profesional, asociando una persona, profesional y usuario en la base de datos.
+     * Valida que el email y DNI no estén registrados previamente.
+     *
+     * @param authCreateUserDto DTO con la información del profesional a registrar.
+     * @return DTO de respuesta con información del registro y token JWT.
+     * @throws EmailAlreadyExistsException si el correo ya está registrado.
+     * @throws DniAlreadyExistsException si el DNI ya existe en la base de datos.
+     */
     @Transactional
     public AuthResponseRegisterDto createUser(@Valid ProfessionalRequestDto authCreateUserDto) {
 
@@ -127,9 +138,13 @@ public class ProfessionalService {
 
 
 
-
-
-    // Buscar profesional por ID
+    /**
+     * Obtiene la información de un profesional a partir de su ID.
+     *
+     * @param id ID del profesional.
+     * @return DTO con los datos del profesional.
+     * @throws ProfessionalNotFoundException si no se encuentra el profesional.
+     */
     public ProfessionalResponseDto getProfessionalById(Long id) {
         Optional<ProfessionalModel> professional = professionalRepository.findById(id);
         if (professional.isEmpty()) {
@@ -141,14 +156,25 @@ public class ProfessionalService {
         return mapToDto(professional.get());
     }
 
-    //paginacion
+    /**
+     * Devuelve una lista paginada de profesionales.
+     *
+     * @param page Número de página a obtener (comienza en 0).
+     * @param size Cantidad de elementos por página.
+     * @return Página con profesionales mapeados a DTO.
+     */
     public Page<ProfessionalResponseDto> getProfessionalsPaginated(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return professionalRepository.findAll(pageable)
                 .map(this::mapToDto);
     }
 
-    //metodo q filtra por especialidad o apellido
+    /**
+     * Busca profesionales por apellido o especialidad utilizando una palabra clave.
+     *
+     * @param keyword Término de búsqueda (apellido o especialidad).
+     * @return Lista de profesionales coincidentes en formato DTO.
+     */
     public List<ProfessionalResponseDto> searchProfessionals(String keyword) {
         return professionalRepository.searchByLastNameOrSpecialty(keyword)
                 .stream()
@@ -156,7 +182,12 @@ public class ProfessionalService {
                 .toList();
     }
 
-    //mapeo a dto
+    /**
+     * Mapea un modelo de profesional a su representación como DTO.
+     *
+     * @param professional Entidad ProfessionalModel.
+     * @return DTO correspondiente.
+     */
     private ProfessionalResponseDto mapToDto(ProfessionalModel professional) {
         PersonModel person = professional.getPerson();
 
@@ -185,7 +216,14 @@ public class ProfessionalService {
 
 
 
-    //metodo para hacer update a profesional
+    /**
+     * Actualiza la información de un profesional existente, incluyendo sus datos personales y pacientes asociados.
+     *
+     * @param id ID del profesional a actualizar.
+     * @param dto DTO con los datos actualizados.
+     * @return DTO actualizado del profesional.
+     * @throws ProfessionalNotFoundException si no se encuentra el profesional.
+     */
     public ProfessionalResponseDto updateProfessional(Long id, @Valid ProfessionalRequestUpdateDto dto) {
         ProfessionalModel existing = professionalRepository.findById(id)
                 .orElseThrow(() -> new ProfessionalNotFoundException("Profesional no encontrado con ID: " + id));
@@ -219,7 +257,12 @@ public class ProfessionalService {
 
 
 
-    //método de eliminación logica
+    /**
+     * Elimina lógicamente a un profesional (soft delete) y elimina su persona asociada.
+     *
+     * @param id ID del profesional a eliminar.
+     * @throws ProfessionalNotFoundException si no se encuentra el profesional.
+     */
     public void deleteProfessional(Long id) {
         ProfessionalModel professional = professionalRepository.findByIdAndDeletedFalse(id)
                 .orElseThrow(() -> new ProfessionalNotFoundException("Profesional no encontrado con ID: " + id));
@@ -227,13 +270,15 @@ public class ProfessionalService {
         professional.setDeleted(true);
         professionalRepository.save(professional);
     }
-
-    //metodo para listar los pacientes de un profesional por su id
-        @Transactional(readOnly = true)
-        public List<PatientResponseDto> getPatientsByProfessionalId(Long professionalId) {
-            List<PatientModel> patients = professionalRepository.findPatientsByProfessionalId(professionalId);
-
-
+    /**
+     * Obtiene todos los pacientes asociados a un profesional específico.
+     *
+     * @param professionalId ID del profesional.
+     * @return Lista de pacientes asociados al profesional.
+     */
+    @Transactional(readOnly = true)
+    public List<PatientResponseDto> getPatientsByProfessionalId(Long professionalId) {
+        List<PatientModel> patients = professionalRepository.findPatientsByProfessionalId(professionalId);
             return patients.stream().map(patient -> {
                 PersonModel person = patient.getPerson(); // extraigo la persona
 
