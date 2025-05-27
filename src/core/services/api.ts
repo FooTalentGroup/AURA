@@ -1,4 +1,3 @@
-
 import {
   Admin,
   AuthResponseRegisterDto,
@@ -19,7 +18,10 @@ import {
   updatedDiagnosis,
 } from "../../features/patientTabs/types/patientTabs.types.ts";
 import { Professional } from "../../features/professional/types/Professional.types.ts";
-import { CurrentUserProps, UserUpdateData } from "../../features/profile/types/profile.type.ts";
+import {
+  CurrentUserProps,
+  UserUpdateData,
+} from "../../features/profile/types/profile.type.ts";
 
 // --- Payload y modelos ---
 export interface SuspendRequestDto {
@@ -137,11 +139,11 @@ export const api = {
       body: JSON.stringify(data),
     }),
   getProfessionalById: (id: number) =>
-  request<Professional>(`/professionals/${id}`, {
-    method: "GET",
-  }),
+    request<Professional>(`/professionals/${id}`, {
+      method: "GET",
+    }),
 
-    getCurrentUser: (): Promise<CurrentUserProps> =>
+  getCurrentUser: (): Promise<CurrentUserProps> =>
     request<CurrentUserProps>(`/auth/me`, { method: "GET" }),
 
   updateCurrentUser: (
@@ -241,8 +243,7 @@ export const api = {
     ),
 
   // --- Usuarios ---
-  getAdmin: () =>
-    request<Admin>(`/user/all_admin`, { method: "GET" }),
+  getAdmin: () => request<Admin>(`/user/all_admin`, { method: "GET" }),
 
   // --- Profesionales ---
 
@@ -295,7 +296,7 @@ export const api = {
       method: "POST",
       body: JSON.stringify(data),
     }),
-    updateDiagnosis: (id: number, data: updatedDiagnosis) =>
+  updateDiagnosis: (id: number, data: updatedDiagnosis) =>
     request<PatientDiagnosesProps>(`/diagnoses/update/${id}`, {
       method: "PATCH",
       body: JSON.stringify(data),
@@ -306,13 +307,14 @@ export const api = {
     request<PatientNotesInfo>(`/medical-backgrounds/patient/${id}`, {
       method: "GET",
     }),
- createFollowUpEntry: (data: {
-  medicalRecordId: number;
-  observations: string;
-  interventions: string;
-  nextSessionInstructions: string;
-}) => request<FollowEntriesProps>("/follow-up-entries/create", {
-  method: "POST",
-  body: JSON.stringify(data),
-}),
+  createFollowUpEntry: (data: {
+    medicalRecordId: number;
+    observations: string;
+    interventions: string;
+    nextSessionInstructions: string;
+  }) =>
+    request<FollowEntriesProps>("/follow-up-entries/create", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
 };

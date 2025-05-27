@@ -7,13 +7,15 @@ import {
 } from "../types/patientTabs.types";
 import { formatDate } from "../utils/utils";
 import { api } from "../../../core/services/api";
+import { ExtendedPatientDiagnosesProps } from "../../../pages/patientTabs/PatientTabsPage";
 
 type EditableDiagnosis = updatedDiagnosis & {
   date: string;
-  idProfessional: number;
+  details: string;
 };
 
-interface DiagnosticTabEditableProps extends DiagnosticTabProps {
+export interface DiagnosticTabEditableProps extends DiagnosticTabProps {
+  diagnoses: ExtendedPatientDiagnosesProps;
   onUpdate: (updated: PatientDiagnosesProps) => void;
 }
 
@@ -24,7 +26,6 @@ export default function DiagnosticTab({
   const [isEditing, setIsEditing] = useState(false);
   const [form, setForm] = useState<EditableDiagnosis>({
     date: diagnoses?.date || "",
-    idProfessional: diagnoses?.idProfessional || 0,
     title: diagnoses?.title || "",
     details: diagnoses?.details || "",
   });
@@ -33,7 +34,6 @@ export default function DiagnosticTab({
     if (diagnoses) {
       setForm({
         date: diagnoses.date,
-        idProfessional: diagnoses.idProfessional,
         title: diagnoses.title,
         details: diagnoses.details,
       });
@@ -101,21 +101,23 @@ export default function DiagnosticTab({
           </div>
 
           <div>
-            <label className="font-semibold text-blue-600">
-              Id del Profesional
-            </label>
+            <label className="font-semibold text-blue-600">Profesional</label>
             {isEditing ? (
               <input
-                type="number"
+                type="text"
                 name="idProfessional"
-                value={form.idProfessional}
+                value={`${diagnoses?.professionalName || ""} ${
+                  diagnoses?.professionalLastName || ""
+                }`}
                 onChange={handleChange}
                 className="mt-2 p-2 border rounded w-full"
                 disabled
               />
             ) : (
               <p className="py-2 px-3 text-gray-600 bg-blue-50/80 rounded-md mt-2">
-                {diagnoses?.idProfessional || "No especificado"}
+                {diagnoses?.professionalName && diagnoses?.professionalLastName
+                  ? `${diagnoses.professionalName} ${diagnoses.professionalLastName}`
+                  : "No especificado"}
               </p>
             )}
           </div>

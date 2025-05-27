@@ -21,6 +21,11 @@ import {
 } from "../../features/patientTabs/types/patientTabs.types";
 import { api } from "../../core/services/api";
 
+export interface ExtendedPatientDiagnosesProps extends PatientDiagnosesProps {
+  professionalName: string;
+  professionalLastName: string;
+}
+
 export default function PatientTabsPage() {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -30,9 +35,8 @@ export default function PatientTabsPage() {
   const [activeTab, setActiveTab] = useState<TabId>("paciente");
   const [patient, setPatient] = useState<PatientProps | null>(null);
   const [school, setSchool] = useState<SchoolProps | null>(null);
-  const [diagnoses, setDiagnoses] = useState<PatientDiagnosesProps | null>(
-    null
-  );
+  const [diagnoses, setDiagnoses] =
+    useState<ExtendedPatientDiagnosesProps | null>(null);
   const [followEntries, setFollowEntries] = useState<FollowEntriesProps | null>(
     null
   );
@@ -64,7 +68,6 @@ export default function PatientTabsPage() {
         // Turnos asociados a la historia
         try {
           const appts = await api.getMedicalRecordFilter(); // o bien api.getAppointmentsByMedicalRecordId(record.id) si lo tienes
-          console.log("constante appts", appts);
           setAppointments(appts);
         } catch (err) {
           console.error("Error al obtener turnos asociados:", err);
@@ -82,7 +85,24 @@ export default function PatientTabsPage() {
         if (record.diagnosisIds?.length) {
           try {
             const diag = await api.getDiagnosesById(record.diagnosisIds[0]);
-            setDiagnoses(diag);
+
+            try {
+              const professional = await api.getProfessionalById(
+                diag.idProfessional
+              );
+
+              const extendedDiag: ExtendedPatientDiagnosesProps = {
+                ...diag,
+                professionalName: professional.name,
+                professionalLastName: professional.lastName,
+              };
+
+              setDiagnoses(extendedDiag);
+            } catch {
+              console.warn(
+                `No se encontró el profesional con id: ${diag.idProfessional}`
+              );
+            }
           } catch {
             console.warn(
               `Sin diagnósticos para diagnosisId ${record.diagnosisIds[0]}`
@@ -187,7 +207,12 @@ export default function PatientTabsPage() {
               {activeTab === "diagnostico" && (
                 <DiagnosticTab
                   diagnoses={diagnoses!}
-                  onUpdate={(updated) => setDiagnoses(updated)}
+                  // onUpdate={(updated) => setDiagnoses(updated)}
+                  onUpdate={(updatedDiagnosis) => {
+                    setDiagnoses((prev) =>
+                      prev ? { ...prev, ...updatedDiagnosis } : null
+                    );
+                  }}
                 />
               )}
               {activeTab === "historial" && (
