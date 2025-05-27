@@ -1,6 +1,6 @@
 import { useState, FC } from "react";
 import { AppointmentTableProps } from "../types/patientTabs.types";
-import { formatDate, getSpecialtyBackgroundColor } from "../utils/utils";
+import { formatDate, getSpecialtyColors } from "../utils/utils";
 
 const AppointmentTable: FC<AppointmentTableProps> = ({ appointments }) => {
   const [filters, setFilters] = useState({
@@ -11,7 +11,6 @@ const AppointmentTable: FC<AppointmentTableProps> = ({ appointments }) => {
 
   return (
     <div className="bg-white mx-auto py-4 rounded-xl">
-      {/* Filtros */}
       <div className="flex flex-nowrap gap-2 mb-6 px-4">
         <div className="relative">
           <select
@@ -103,7 +102,8 @@ const AppointmentTable: FC<AppointmentTableProps> = ({ appointments }) => {
 
       {/* Lista de citas */}
       <div className="text-sm rounded-lg overflow-hidden px-4">
-        {appointments?.filter((app) => {
+        {appointments
+          ?.filter((app) => {
             return (
               (filters.date === "" || app.createdAt === filters.date) &&
               (filters.specialty === "" ||
@@ -130,7 +130,7 @@ const AppointmentTable: FC<AppointmentTableProps> = ({ appointments }) => {
                 {formatDate(appointment.createdAt)}
               </div>
               <div
-                className={`w-40 px-4 py-1 rounded-md ${getSpecialtyBackgroundColor(
+                className={`font-semibold w-44 px-4 py-2 rounded-sm ${getSpecialtyColors(
                   appointment.specialty
                 )}`}
               >
