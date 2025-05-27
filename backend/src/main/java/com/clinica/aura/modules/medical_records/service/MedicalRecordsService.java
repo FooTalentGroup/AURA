@@ -168,6 +168,7 @@ public class MedicalRecordsService {
 
         return records.stream()
                 .map(record -> new MedicalRecordsSummaryDto(
+                        record.getId(),
                         record.getCreatedBy().getSpecialty(),
                         record.getCreatedBy().getPerson().getName() + " " + record.getCreatedBy().getPerson().getLastName(),
                         record.getCreatedAt().toLocalDate()

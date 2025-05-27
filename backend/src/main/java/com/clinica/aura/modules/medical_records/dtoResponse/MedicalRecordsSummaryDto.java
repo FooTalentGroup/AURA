@@ -10,6 +10,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Builder
 public class MedicalRecordsSummaryDto {
+    private Long id;
     private String specialty;
     private String professionalName;
     private LocalDate createdAt;
