@@ -1,23 +1,11 @@
 import { useState, useEffect } from "react";
 import { PencilIcon } from "../../../components/shared/ui/Icons";
 import {
-  DiagnosticTabProps,
-  PatientDiagnosesProps,
-  updatedDiagnosis,
+  DiagnosticTabEditableProps,
+  EditableDiagnosis,
 } from "../types/patientTabs.types";
 import { formatDate } from "../utils/utils";
 import { api } from "../../../core/services/api";
-import { ExtendedPatientDiagnosesProps } from "../../../pages/patientTabs/PatientTabsPage";
-
-type EditableDiagnosis = updatedDiagnosis & {
-  date: string;
-  details: string;
-};
-
-export interface DiagnosticTabEditableProps extends DiagnosticTabProps {
-  diagnoses: ExtendedPatientDiagnosesProps;
-  onUpdate: (updated: PatientDiagnosesProps) => void;
-}
 
 export default function DiagnosticTab({
   diagnoses,

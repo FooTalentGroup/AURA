@@ -167,3 +167,18 @@ export const tabs: TabItem[] = [
   { id: "historial", label: "Historial clínico" },
   { id: "antecedentes", label: "Antecedentes" },
 ];
+
+export interface ExtendedPatientDiagnosesProps extends PatientDiagnosesProps {
+  professionalName: string;
+  professionalLastName: string;
+}
+
+export type EditableDiagnosis = updatedDiagnosis & {
+  date: string;
+  details: string;
+};
+
+export interface DiagnosticTabEditableProps extends DiagnosticTabProps {
+  diagnoses: ExtendedPatientDiagnosesProps;
+  onUpdate: (updated: PatientDiagnosesProps) => void;
+}

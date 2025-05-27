@@ -11,8 +11,8 @@ import DiagnosticTab from "../../features/patientTabs/components/DiagnosticTab";
 import MedicalBackgroundTab from "../../features/patientTabs/components/MedicalBackgroundTab";
 import {
   AppointmentProps,
+  ExtendedPatientDiagnosesProps,
   FollowEntriesProps,
-  PatientDiagnosesProps,
   PatientNotesInfo,
   PatientProps,
   SchoolProps,
@@ -20,11 +20,6 @@ import {
   tabs,
 } from "../../features/patientTabs/types/patientTabs.types";
 import { api } from "../../core/services/api";
-
-export interface ExtendedPatientDiagnosesProps extends PatientDiagnosesProps {
-  professionalName: string;
-  professionalLastName: string;
-}
 
 export default function PatientTabsPage() {
   const navigate = useNavigate();
