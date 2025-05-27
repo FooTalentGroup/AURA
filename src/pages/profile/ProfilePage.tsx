@@ -1,10 +1,8 @@
 import DashboardLayout from "../../layouts/DashboardLayout";
-import { CloseIcon, QuestionIcon } from "../../components/shared/ui/Icons";
+import { CloseIcon } from "../../components/shared/ui/Icons";
 import { useEffect, useState } from "react";
 import { api } from "../../core/services/api";
 import { EditableForm } from "../../components/shared/ui/EditableForm";
-import ProfileList from "../../features/profile/components/ProfileList";
-import InformationHelp from "../../features/profile/components/InformationHelp";
 import {
   CurrentUserProps,
   UserUpdateData,
@@ -100,8 +98,8 @@ function ProfilePage() {
           </button>
         </header>
         <hr className="text-gray-400" />
-        <article className="grid grid-cols-8 rounded-lg px-6">
-          <article className="p-8 col-span-5">
+        <article className="rounded-lg px-6">
+          <article className="p-8">
             <header className="flex flex-col items-center mb-12">
               <span className="mb-4 flex justify-center items-center text-4xl font-semibold bg-sky-200 text-[#00539a] w-24 h-24 rounded-full">
                 {userData?.name.charAt(0).toUpperCase()}
@@ -110,7 +108,7 @@ function ProfilePage() {
               <h2 className="text-2xl">Bienvenido, {userData?.name}</h2>
             </header>
             {userData ? (
-              <article className="flex flex-col gap-8">
+              <article className="flex flex-col gap-8 max-w-2xl mx-auto">
                 <EditableForm
                   title="Información básica"
                   fields={personalFields}
@@ -128,14 +126,6 @@ function ProfilePage() {
             ) : (
               <p>Cargando datos del usuario...</p>
             )}
-          </article>
-          <article className="p-8 col-span-3">
-            <header className="flex justify-between items-center mb-8">
-              <h2 className="text-2xl">Ayuda</h2>
-              <QuestionIcon />
-            </header>
-            <ProfileList />
-            <InformationHelp />
           </article>
         </article>
       </section>
