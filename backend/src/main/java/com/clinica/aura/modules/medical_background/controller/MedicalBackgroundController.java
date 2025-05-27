@@ -101,19 +101,5 @@ public class MedicalBackgroundController {
         return new ResponseEntity<>(updatedBackground, HttpStatus.OK);
     }
 
-    /**
-     * Elimina un antecedente médico por su ID.
-     *
-     * @param id ID del antecedente médico a eliminar.
-     * @return Respuesta sin contenido si la eliminación fue exitosa.
-     */
-    @Operation(
-            summary = "Eliminar un antecedente médico por ID",
-            description = "Solo un profesional autenticado puede eliminar antecedentes médicos."
-    )
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        medicalBackgroundService.delete(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
+
 }

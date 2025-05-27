@@ -1,5 +1,6 @@
 package com.clinica.aura.modules.medical_background.service;
 
+
 import com.clinica.aura.modules.medical_background.dto.MedicalBackgroundRequestDto;
 import com.clinica.aura.modules.medical_background.dto.MedicalBackgroundResponseDto;
 import com.clinica.aura.modules.medical_background.model.MedicalBackgroundModel;
@@ -20,8 +21,15 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
+
+/**
+ * Servicio para la gestión de antecedentes médicos de pacientes.
+ * Permite crear, consultar, actualizar y eliminar antecedentes médicos.
+ */
 @Service
 @RequiredArgsConstructor
 public class MedicalBackgroundService {
@@ -31,6 +39,17 @@ public class MedicalBackgroundService {
     private final UserRepository userRepository;
     private final ProfessionalRepository professionalRepository;
 
+    /**
+     * Crea un nuevo antecedente médico para un paciente.
+     *
+     * @param dto Objeto con los datos necesarios para crear el antecedente.
+     * @return DTO de respuesta con la información del antecedente creado.
+     * @throws EntityNotFoundException si el paciente no existe.
+     * @throws ConflictWithExistingRecord si el paciente ya tiene un antecedente registrado.
+     * @throws UnauthorizedAccessException si el usuario no está autenticado.
+     * @throws UsernameNotFoundException si no se encuentra el usuario autenticado.
+     * @throws ProfessionalNotFoundException si el usuario autenticado no es un profesional.
+     */
     @Transactional
     public MedicalBackgroundResponseDto create(MedicalBackgroundRequestDto dto) {
         PatientModel patient = patientRepository.findById(dto.getPatientId())
@@ -60,8 +79,7 @@ public class MedicalBackgroundService {
         // Asignar alergias y discapacidades desde el DTO
         background.setAllergies(dto.getAllergies());
         background.setDisabilities(dto.getDisabilities());
-        //asignamos informe medico
-        background.setSchoolReports(dto.getSchoolReports());
+
 
         // Guardar el modelo de antecedentes médicos
         medicalBackgroundRepository.save(background);
@@ -69,18 +87,39 @@ public class MedicalBackgroundService {
         return mapToDto(background);
     }
 
+    /**
+     * Busca un antecedente médico por su ID.
+     *
+     * @param id ID del antecedente médico.
+     * @return DTO de respuesta con los datos del antecedente.
+     * @throws EntityNotFoundException si no se encuentra el antecedente con el ID dado.
+     */
     public MedicalBackgroundResponseDto findById(Long id) {
         MedicalBackgroundModel background = medicalBackgroundRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Antecedente médico no encontrado con ID: " + id));
         return mapToDto(background);
     }
 
+
+
+    /**
+     * Busca un antecedente médico por el ID del paciente.
+     *
+     * @param patientId ID del paciente.
+     * @return DTO de respuesta con los datos del antecedente médico.
+     * @throws EntityNotFoundException si el paciente no tiene antecedentes registrados.
+     */
     public MedicalBackgroundResponseDto findByPatientId(Long patientId) {
         MedicalBackgroundModel background = medicalBackgroundRepository.findByPatientId(patientId)
                 .orElseThrow(() -> new EntityNotFoundException("Antecedente médico no encontrado para el paciente con ID: " + patientId));
         return mapToDto(background);
     }
 
+    /**
+     * Obtiene la lista de todos los antecedentes médicos registrados.
+     *
+     * @return Lista de DTOs con los antecedentes médicos.
+     */
     public List<MedicalBackgroundResponseDto> findAll() {
         return medicalBackgroundRepository.findAll()
                 .stream()
@@ -88,6 +127,16 @@ public class MedicalBackgroundService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Actualiza los datos de un antecedente médico existente.
+     *
+     * @param id ID del antecedente médico a actualizar.
+     * @param dto Objeto con los nuevos datos.
+     * @return DTO de respuesta con los datos actualizados.
+     * @throws EntityNotFoundException si no se encuentra el antecedente.
+     * @throws UsernameNotFoundException si el usuario no existe.
+     * @throws ProfessionalNotFoundException si el usuario no es un profesional.
+     */
     @Transactional
     public MedicalBackgroundResponseDto update(Long id, MedicalBackgroundRequestDto dto) {
         MedicalBackgroundModel background = medicalBackgroundRepository.findById(id)
@@ -103,8 +152,7 @@ public class MedicalBackgroundService {
         // Actualizamos las alergias y discapacidades
         background.setAllergies(dto.getAllergies());
         background.setDisabilities(dto.getDisabilities());
-        //actualizamos informe medico
-        background.setSchoolReports(dto.getSchoolReports());
+
         background.setUpdatedBy(professional);
 
         medicalBackgroundRepository.save(background);
@@ -112,43 +160,30 @@ public class MedicalBackgroundService {
         return mapToDto(background);
     }
 
-    @Transactional
-    public void delete(Long id) {
-        MedicalBackgroundModel background = medicalBackgroundRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Antecedente médico no encontrado con ID: " + id));
-
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        if ("anonymousUser".equals(email)) {
-            throw new UnauthorizedAccessException("Debe iniciar sesión un profesional para eliminar antecedentes médicos");
-        }
-
-        UserModel user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado con email: " + email));
-
-        professionalRepository.findByPerson(user.getPerson())
-                .orElseThrow(() -> new ProfessionalNotFoundException("Profesional no encontrado para el usuario con id: " + user.getPerson().getId()));
 
 
-        // Eliminar primero alergias y discapacidades asociadas
-        background.getAllergies().clear();
-        background.getDisabilities().clear();
-        medicalBackgroundRepository.save(background);
 
-        //  eliminar
-        medicalBackgroundRepository.delete(background);
-
-    }
-
-
+    /**
+     * Convierte un modelo de entidad a un DTO de respuesta.
+     *
+     * @param model Entidad MedicalBackgroundModel.
+     * @return DTO con los datos del modelo.
+     */
     private MedicalBackgroundResponseDto mapToDto(MedicalBackgroundModel model) {
+
+
         return MedicalBackgroundResponseDto.builder()
                 .id(model.getId())
-                .patientId(model.getPatient().getId())
+                .patientId(model.getPatient() != null ? model.getPatient().getId() : null)
                 .allergies(model.getAllergies())
                 .disabilities(model.getDisabilities())
-                .schoolReports(model.getSchoolReports())
+
                 .createdAt(model.getCreatedAt())
                 .updatedAt(model.getUpdatedAt())
+
+
+
                 .build();
     }
+
 }

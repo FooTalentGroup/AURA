@@ -1,10 +1,7 @@
 package com.clinica.aura.modules.professional.dtoRequest;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -37,14 +34,19 @@ public class ProfessionalRequestDto {
     private String dni;
 
     @NotBlank(message = "El nombre es obligatorio")
+    @Pattern(regexp = "^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$", message = "El nombre solo debe contener letras")
+    @Size(min = 5, max = 30, message = "Debe tener entre 3 y 12 caracteres.")
     @Schema(description = "Nombre del profesional", requiredMode = Schema.RequiredMode.REQUIRED, example = "John")
     private String name;
 
     @NotBlank(message = "El apellido es obligatorio")
+    @Pattern(regexp = "^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$", message = "El apellido solo debe contener letras")
+    @Size(min = 5, max = 30, message = "Debe tener entre 3 y 12 caracteres.")
     @Schema(description = "Apellido del profesional", requiredMode = Schema.RequiredMode.REQUIRED, example = "Doe")
     private String lastName;
 
     @NotBlank(message = "El teléfono es obligatorio")
+    @Pattern(regexp = "^\\d{8,11}$", message = "El teléfono del profesional debe tener entre 8 y 11 dígitos numéricos")
     @Schema(description = "Teléfono del profesional", requiredMode = Schema.RequiredMode.REQUIRED, example = "123456789")
     private String phoneNumber;
 
