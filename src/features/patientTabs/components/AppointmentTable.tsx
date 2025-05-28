@@ -11,9 +11,11 @@ const AppointmentTable: FC<AppointmentTableProps> = ({
     specialty: "",
     professional: "",
   });
+  const [selectedOption, setSelectedOption] = useState(0);
 
-  const handleClick = (id: number) => {
-    onSetAppointmentId(id); // Llamamos a la función para actualizar el estado
+  const handleClick = (index: number, id: number) => {
+    onSetAppointmentId(id);
+    setSelectedOption(index);
   };
 
   return (
@@ -122,13 +124,15 @@ const AppointmentTable: FC<AppointmentTableProps> = ({
           .map((appointment, index) => (
             <div
               key={index}
-              onClick={() => handleClick(appointment.id)}
-              className={`flex items-center p-4 cursor-pointer hover:bg-gray-50 rounded-xl my-2 ${
-                index === 0 ? "border-2 border-[#0072c3] hover:bg-white" : ""
+              onClick={() => handleClick(index, appointment.id)}
+              className={`flex items-center p-4 cursor-pointer border-2  hover:bg-gray-50 rounded-xl my-2 ${
+                index === selectedOption
+                  ? "border-2 border-[#0072c3] hover:bg-white"
+                  : "border-transparent"
               }`}
             >
               <div className="flex-shrink-0 w-6 h-6 flex items-center justify-center">
-                {index === 0 ? (
+                {index === selectedOption ? (
                   <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
                 ) : (
                   <div className="w-3 h-3 bg-gray-300 rounded-full"></div>
