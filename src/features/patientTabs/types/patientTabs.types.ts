@@ -182,3 +182,32 @@ export interface DiagnosticTabEditableProps extends DiagnosticTabProps {
   diagnoses: ExtendedPatientDiagnosesProps;
   onUpdate: (updated: PatientDiagnosesProps) => void;
 }
+
+interface Sort {
+  empty: boolean;
+  unsorted: boolean;
+  sorted: boolean;
+}
+
+interface Pageable {
+  pageNumber: number;
+  pageSize: number;
+  sort: Sort;
+  offset: number;
+  unpaged: boolean;
+  paged: boolean;
+}
+
+export interface PaginatedFollowUpEntries {
+  content: FollowEntriesProps[];
+  pageable: Pageable;
+  totalPages: number;
+  totalElements: number;
+  last: boolean;
+  size: number;
+  number: number;
+  sort: Sort;
+  numberOfElements: number;
+  first: boolean;
+  empty: boolean;
+}
