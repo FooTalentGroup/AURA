@@ -17,10 +17,10 @@ export const EditableForm = ({
   onSave: (updatedData: UserUpdateData) => void;
 }) => {
   const [isEditMode, setIsEditMode] = useState(false);
-  const [formData, setFormData] = useState<any>(data);
-  const [originalData, setOriginalData] = useState<any>(data);
+  const [formData, setFormData] = useState<UserUpdateData>(data);
+  const [originalData, setOriginalData] = useState<UserUpdateData>(data);
 
-  const handleChange = (key: string, value: string) => {
+  const handleChange = (key: keyof UserUpdateData, value: string) => {
     setFormData({ ...formData, [key]: value });
   };
 
