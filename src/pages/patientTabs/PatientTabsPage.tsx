@@ -38,6 +38,7 @@ export default function PatientTabsPage() {
   const [appointments, setAppointments] = useState<AppointmentProps[]>([]);
   const [backgrounds, setBackgrounds] = useState<PatientNotesInfo | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [appointmentId, setAppointmentId] = useState<number | null>(null);
 
   // --- Fetch all patient-related data ---
   const fetchPatient = useCallback(async () => {
@@ -64,11 +65,12 @@ export default function PatientTabsPage() {
         try {
           const appts = await api.getMedicalRecordFilter(); // o bien api.getAppointmentsByMedicalRecordId(record.id) si lo tienes
           setAppointments(appts);
+          setAppointmentId(appts[0].id);
         } catch (err) {
           console.error("Error al obtener turnos asociados:", err);
         }
 
-        // Follow-up entries(por id, ya no sirve)
+        // Follow-up entries(por id, TODO eliminar)
         // try {
         //   const fe = await api.getFollowEntriesById(record.followUpIds[0]);
         //   setFollowEntries(fe);
@@ -81,12 +83,12 @@ export default function PatientTabsPage() {
         try {
           const followEntriesContent = (await api.listFollowEntriesPaginated())
             .content;
-          const appointmentId = appointments[2].id;
+          // const appointmentId = appointments[0].id;
           const followEntryByAppointmentId = followEntriesContent.find(
             (entry) => entry.medicalRecordId === appointmentId
           );
           setFollowEntries(followEntryByAppointmentId || null);
-          console.log(followEntryByAppointmentId);
+          // console.log(followEntryByAppointmentId);
         } catch (error) {
           console.error(
             "No se encontró follow-up-entries para este medicalRecordID",
@@ -134,7 +136,7 @@ export default function PatientTabsPage() {
     } catch (err) {
       console.error("Error al cargar datos del paciente:", err);
     }
-  }, [patientID]);
+  }, [patientID, appointmentId]);
 
   // Carga inicial y recarga cuando cambie patientID
   useEffect(() => {
