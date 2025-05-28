@@ -12,7 +12,7 @@ function ClinicalHistoryTab({
         appointments={medicalFilters}
         onSetAppointmentId={onSetAppointmentId}
       />
-      <article className="bg-white py-2 w-full border border-gray-400">
+      <article className="bg-white py-2 w-full border border-gray-300">
         <form className="text-sm px-4 pb-2">
           <div className="p-4 rounded-md">
             <div className="mb-6">
