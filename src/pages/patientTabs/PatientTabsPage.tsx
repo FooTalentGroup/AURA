@@ -88,7 +88,6 @@ export default function PatientTabsPage() {
             (entry) => entry.medicalRecordId === appointmentId
           );
           setFollowEntries(followEntryByAppointmentId || null);
-          // console.log(followEntryByAppointmentId);
         } catch (error) {
           console.error(
             "No se encontró follow-up-entries para este medicalRecordID",
@@ -147,6 +146,10 @@ export default function PatientTabsPage() {
   const handleSuccess = () => {
     fetchPatient();
     setIsModalOpen(false);
+  };
+
+  const handleSetAppointmentId = (id: number) => {
+    setAppointmentId(id);
   };
 
   return (
@@ -234,6 +237,7 @@ export default function PatientTabsPage() {
                 <ClinicalHistoryTab
                   medicalFilters={appointments}
                   followEntries={followEntries!}
+                  onSetAppointmentId={handleSetAppointmentId}
                 />
               )}
               {activeTab === "antecedentes" &&

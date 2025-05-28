@@ -159,6 +159,7 @@ export interface MedicalBackgroundTabProps {
 export interface ClinicalHistoryTabProps {
   medicalFilters?: AppointmentProps[];
   followEntries?: FollowEntriesProps;
+  onSetAppointmentId: (id: number) => void;
 }
 
 export const tabs: TabItem[] = [
