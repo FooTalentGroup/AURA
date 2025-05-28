@@ -109,6 +109,7 @@ export interface PatientDiagnosesProps {
 }
 
 export interface AppointmentProps {
+  id: number;
   specialty: string;
   professionalName: string;
   createdAt: string;
