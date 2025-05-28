@@ -2,12 +2,19 @@ import { useState, FC } from "react";
 import { AppointmentTableProps } from "../types/patientTabs.types";
 import { formatDate, getSpecialtyColors } from "../utils/utils";
 
-const AppointmentTable: FC<AppointmentTableProps> = ({ appointments }) => {
+const AppointmentTable: FC<AppointmentTableProps> = ({
+  appointments,
+  onSetAppointmentId,
+}) => {
   const [filters, setFilters] = useState({
     date: "",
     specialty: "",
     professional: "",
   });
+
+  const handleClick = (id: number) => {
+    onSetAppointmentId(id); // Llamamos a la función para actualizar el estado
+  };
 
   return (
     <div className="bg-white mx-auto py-4 rounded-xl">
@@ -115,6 +122,7 @@ const AppointmentTable: FC<AppointmentTableProps> = ({ appointments }) => {
           .map((appointment, index) => (
             <div
               key={index}
+              onClick={() => handleClick(appointment.id)}
               className={`flex items-center p-4 ${
                 index === 0 ? "border rounded-2xl" : ""
               }`}

@@ -65,7 +65,9 @@ export default function PatientTabsPage() {
         try {
           const appts = await api.getMedicalRecordFilter(); // o bien api.getAppointmentsByMedicalRecordId(record.id) si lo tienes
           setAppointments(appts);
-          setAppointmentId(appts[0].id);
+          if (appointments.length === 0) {
+            setAppointmentId(appts[0].id);
+          }
         } catch (err) {
           console.error("Error al obtener turnos asociados:", err);
         }
