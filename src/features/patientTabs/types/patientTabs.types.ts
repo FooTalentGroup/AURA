@@ -123,7 +123,6 @@ export interface AppointmentTableProps {
 export interface PatientNotesInfo {
   id: number;
   patientId: number;
-  schoolReports: string;
   allergies: string[];
   disabilities: string[];
   createdAt: string;
