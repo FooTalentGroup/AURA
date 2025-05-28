@@ -1,3 +1,4 @@
+import Loader from "../../../components/shared/ui/Loader";
 import { ClinicalHistoryTabProps } from "../types/patientTabs.types";
 import AppointmentTable from "./AppointmentTable";
 
@@ -14,7 +15,9 @@ function ClinicalHistoryTab({
         onSetAppointmentId={onSetAppointmentId}
       />
       {isLoading ? (
-        <span>Cargando...</span>
+        <div className="bg-white w-full flex justify-center items-center border border-gray-300">
+          <Loader />
+        </div>
       ) : (
         <article className="bg-white py-2 w-full border border-gray-300">
           <form className="text-sm px-4 pb-2">
