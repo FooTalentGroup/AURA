@@ -87,14 +87,13 @@ export default function PatientTabsPage() {
         try {
           const followEntriesContent = (await api.listFollowEntriesPaginated())
             .content;
-          // const appointmentId = appointments[0].id;
           const followEntryByAppointmentId = followEntriesContent.find(
             (entry) => entry.medicalRecordId === appointmentId
           );
           setFollowEntries(followEntryByAppointmentId || null);
         } catch (error) {
-          console.error(
-            "No se encontró follow-up-entries para este medicalRecordID",
+          console.warn(
+            `No se encontraron observaciones para este medical Record`,
             error
           );
         }
