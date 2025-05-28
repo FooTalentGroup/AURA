@@ -48,7 +48,6 @@ const TreatmentNotes: FC<TreatmentNotesProps> = ({ patientNotesInfo }) => {
 
   return (
     <div className="w-full mx-auto my-4 flex">
-      {/* Panel izquierdo de pestañas */}
       <div className="flex flex-col gap-2 w-2/5 bg-white rounded-lg overflow-hidden p-4">
         <TabButton
           label="Alergias"
@@ -62,7 +61,6 @@ const TreatmentNotes: FC<TreatmentNotesProps> = ({ patientNotesInfo }) => {
         />
       </div>
 
-      {/* Panel derecho */}
       <div className="w-2/3 bg-white rounded-lg ml-4">{renderContent()}</div>
     </div>
   );
