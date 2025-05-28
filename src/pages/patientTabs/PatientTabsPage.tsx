@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import DashboardLayout from "../../layouts/DashboardLayout";
 import Loader from "../../components/shared/ui/Loader";
@@ -40,6 +40,7 @@ export default function PatientTabsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [appointmentId, setAppointmentId] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const appointmentsLoadedRef = useRef(false);
 
   // --- Fetch all patient-related data ---
   const fetchPatient = useCallback(async () => {
@@ -67,21 +68,13 @@ export default function PatientTabsPage() {
         try {
           const appts = await api.getMedicalRecordFilter(); // o bien api.getAppointmentsByMedicalRecordId(record.id) si lo tienes
           setAppointments(appts);
-          if (appointments.length === 0) {
+          if (!appointmentsLoadedRef.current) {
             setAppointmentId(appts[0].id);
+            appointmentsLoadedRef.current = true;
           }
         } catch (err) {
           console.error("Error al obtener turnos asociados:", err);
         }
-
-        // Follow-up entries(por id, TODO eliminar)
-        // try {
-        //   const fe = await api.getFollowEntriesById(record.followUpIds[0]);
-        //   setFollowEntries(fe);
-        //   console.log("fe", fe);
-        // } catch {
-        //   console.warn(`Sin follow entries para record ${record.id}`);
-        // }
 
         // Follow-up-entries por paginación
         try {
