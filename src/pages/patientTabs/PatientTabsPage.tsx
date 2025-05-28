@@ -68,12 +68,24 @@ export default function PatientTabsPage() {
           console.error("Error al obtener turnos asociados:", err);
         }
 
-        // Follow-up entries
+        // Follow-up entries(por id, ya no sirve)
         try {
           const fe = await api.getFollowEntriesById(record.followUpIds[0]);
           setFollowEntries(fe);
         } catch {
           console.warn(`Sin follow entries para record ${record.id}`);
+        }
+
+        // Follow-up-entries por paginación
+        try {
+          const followEntriesContent = (await api.listFollowEntriesPaginated())
+            .content;
+          console.log(followEntriesContent);
+        } catch (error) {
+          console.error(
+            "No se encontró follow-up-entries para este medicalRecordID",
+            error
+          );
         }
 
         // Diagnósticos del paciente (tomando el primer diagnosisId)
