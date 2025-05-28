@@ -288,6 +288,11 @@ export const api = {
   getFollowEntriesById: (id: number) =>
     request<FollowEntriesProps>(`/follow-up-entries/${id}`, { method: "GET" }),
 
+  listFollowEntriesPaginated: (page: number = 0, size: number = 10) =>
+    request(`/follow-up-entries?page=${page}&size=${size}`, {
+      method: "GET",
+    }),
+
   // --- Diagnóstico de pacientes
   getDiagnosesById: (id: number) =>
     request<PatientDiagnosesProps>(`/diagnoses/${id}`, { method: "GET" }),
