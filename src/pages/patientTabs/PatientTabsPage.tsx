@@ -39,10 +39,12 @@ export default function PatientTabsPage() {
   const [backgrounds, setBackgrounds] = useState<PatientNotesInfo | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [appointmentId, setAppointmentId] = useState<number | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   // --- Fetch all patient-related data ---
   const fetchPatient = useCallback(async () => {
     if (!patientID) return;
+    setIsLoading(true);
     try {
       // 1) Paciente
       const p = await api.getPatientById(patientID);
@@ -136,6 +138,8 @@ export default function PatientTabsPage() {
       }
     } catch (err) {
       console.error("Error al cargar datos del paciente:", err);
+    } finally {
+      setIsLoading(false);
     }
   }, [patientID, appointmentId]);
 
@@ -240,6 +244,7 @@ export default function PatientTabsPage() {
                   medicalFilters={appointments}
                   followEntries={followEntries!}
                   onSetAppointmentId={handleSetAppointmentId}
+                  isLoading={isLoading}
                 />
               )}
               {activeTab === "antecedentes" &&
