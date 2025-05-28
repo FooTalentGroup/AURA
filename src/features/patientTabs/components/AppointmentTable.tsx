@@ -123,8 +123,8 @@ const AppointmentTable: FC<AppointmentTableProps> = ({
             <div
               key={index}
               onClick={() => handleClick(appointment.id)}
-              className={`flex items-center p-4 ${
-                index === 0 ? "border-2 border-[#0072c3] rounded-2xl" : ""
+              className={`flex items-center p-4 cursor-pointer hover:bg-gray-50 rounded-xl my-2 ${
+                index === 0 ? "border-2 border-[#0072c3] hover:bg-white" : ""
               }`}
             >
               <div className="flex-shrink-0 w-6 h-6 flex items-center justify-center">
