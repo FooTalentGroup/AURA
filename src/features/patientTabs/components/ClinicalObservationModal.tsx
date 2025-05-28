@@ -6,7 +6,7 @@ import { api } from "../../../core/services/api";
 interface Props {
   isOpen: boolean;
   onClose: () => void;
-    onSuccess: () => void;
+  onSuccess: () => void;
   patientId: number;
 }
 
@@ -17,8 +17,11 @@ export default function RegisterClinicalRecordModal({
   patientId,
 }: Props) {
   // 1) Datos del profesional
-  const { professional, loading: loadingProf, error: errorProf } =
-    useProfessionalData();
+  const {
+    professional,
+    loading: loadingProf,
+    error: errorProf,
+  } = useProfessionalData();
 
   // 2) Datos de la historia clínica
   const [medicalRecordId, setMedicalRecordId] = useState<number | null>(null);
@@ -65,9 +68,13 @@ export default function RegisterClinicalRecordModal({
         interventions,
         nextSessionInstructions: indications,
       });
-     onSuccess();
-    } catch (err: any) {
-      setSubmitError(err.message || "Error al guardar el registro clínico");
+      onSuccess();
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setSubmitError(err.message || "Error al guardar el registro clínico");
+      } else {
+        setSubmitError("Error desconocido");
+      }
     } finally {
       setSubmitting(false);
     }
@@ -101,8 +108,7 @@ export default function RegisterClinicalRecordModal({
         <strong>
           {professional.name} {professional.lastName}
         </strong>{" "}
-        | Especialidad:{" "}
-        <strong>{professional.specialty}</strong>
+        | Especialidad: <strong>{professional.specialty}</strong>
       </p>
 
       <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
@@ -139,9 +145,7 @@ export default function RegisterClinicalRecordModal({
           />
         </label>
 
-        {submitError && (
-          <p className="text-red-600 text-sm">{submitError}</p>
-        )}
+        {submitError && <p className="text-red-600 text-sm">{submitError}</p>}
 
         <div className="flex justify-end gap-3 mt-2">
           <button
