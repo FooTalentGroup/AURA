@@ -5,6 +5,7 @@ import { api } from "../../core/services/api";
 import { EditableForm } from "../../components/shared/ui/EditableForm";
 import {
   CurrentUserProps,
+  EditableField,
   UserUpdateData,
 } from "../../features/profile/types/profile.type";
 
@@ -13,14 +14,14 @@ function ProfilePage() {
     undefined
   );
 
-  const personalFields = [
+  const personalFields: EditableField[] = [
     { key: "name", label: "Nombre" },
     { key: "lastName", label: "Apellido" },
     { key: "birthDate", label: "Fecha de nacimiento", type: "date" },
     { key: "dni", label: "DNI" },
   ];
 
-  const contactFields = [
+  const contactFields: EditableField[] = [
     { key: "email", label: "Correo electrónico", type: "email" },
     { key: "phoneNumber", label: "Teléfono" },
     { key: "address", label: "Dirección" },

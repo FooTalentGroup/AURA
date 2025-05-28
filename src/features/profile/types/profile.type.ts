@@ -13,7 +13,14 @@ export type CurrentUserProps = {
 export type UserUpdateData = Partial<Omit<CurrentUserProps, "id" | "roles">>;
 
 export type EditableField = {
-  key: keyof UserUpdateData;
+  key:
+    | "email"
+    | "name"
+    | "lastName"
+    | "birthDate"
+    | "dni"
+    | "phoneNumber"
+    | "address";
   label: string;
   type?: string;
 };
