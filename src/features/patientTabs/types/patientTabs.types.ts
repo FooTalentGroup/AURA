@@ -161,6 +161,7 @@ export interface ClinicalHistoryTabProps {
   medicalFilters?: AppointmentProps[];
   followEntries?: FollowEntriesProps;
   onSetAppointmentId: (id: number) => void;
+  isLoading: boolean;
 }
 
 export const tabs: TabItem[] = [
