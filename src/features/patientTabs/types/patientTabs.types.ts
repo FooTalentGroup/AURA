@@ -117,6 +117,7 @@ export interface AppointmentProps {
 
 export interface AppointmentTableProps {
   appointments?: AppointmentProps[];
+  onSetAppointmentId: (id: number) => void;
 }
 
 export interface PatientNotesInfo {
