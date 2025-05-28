@@ -10,6 +10,7 @@ import {
   AppointmentProps,
   FollowEntriesProps,
   MedicalRecordPatientIdProps,
+  PaginatedFollowUpEntries,
   PatientDiagnosesProps,
   PatientNotesInfo,
   PatientProps,
@@ -289,9 +290,12 @@ export const api = {
     request<FollowEntriesProps>(`/follow-up-entries/${id}`, { method: "GET" }),
 
   listFollowEntriesPaginated: (page: number = 0, size: number = 10) =>
-    request(`/follow-up-entries?page=${page}&size=${size}`, {
-      method: "GET",
-    }),
+    request<PaginatedFollowUpEntries>(
+      `/follow-up-entries?page=${page}&size=${size}`,
+      {
+        method: "GET",
+      }
+    ),
 
   // --- Diagnóstico de pacientes
   getDiagnosesById: (id: number) =>
