@@ -69,18 +69,24 @@ export default function PatientTabsPage() {
         }
 
         // Follow-up entries(por id, ya no sirve)
-        try {
-          const fe = await api.getFollowEntriesById(record.followUpIds[0]);
-          setFollowEntries(fe);
-        } catch {
-          console.warn(`Sin follow entries para record ${record.id}`);
-        }
+        // try {
+        //   const fe = await api.getFollowEntriesById(record.followUpIds[0]);
+        //   setFollowEntries(fe);
+        //   console.log("fe", fe);
+        // } catch {
+        //   console.warn(`Sin follow entries para record ${record.id}`);
+        // }
 
         // Follow-up-entries por paginación
         try {
           const followEntriesContent = (await api.listFollowEntriesPaginated())
             .content;
-          console.log(followEntriesContent);
+          const appointmentId = appointments[2].id;
+          const followEntryByAppointmentId = followEntriesContent.find(
+            (entry) => entry.medicalRecordId === appointmentId
+          );
+          setFollowEntries(followEntryByAppointmentId || null);
+          console.log(followEntryByAppointmentId);
         } catch (error) {
           console.error(
             "No se encontró follow-up-entries para este medicalRecordID",
