@@ -239,20 +239,27 @@ export default function PatientTabsPage() {
                   }}
                 />
               )}
-              {activeTab === "historial" && (
-                <ClinicalHistoryTab
-                  medicalFilters={appointments}
-                  followEntries={followEntries!}
-                  onSetAppointmentId={handleSetAppointmentId}
-                  isLoading={isLoading}
-                />
-              )}
+              {activeTab === "historial" &&
+                (appointments && followEntries ? (
+                  <ClinicalHistoryTab
+                    medicalFilters={appointments}
+                    followEntries={followEntries!}
+                    onSetAppointmentId={handleSetAppointmentId}
+                    isLoading={isLoading}
+                  />
+                ) : (
+                  <div className="bg-gray-200/60 p-4 rounded-2xl">
+                    <p className="text-lg bg-white p-4 rounded-xl w-xl">
+                      No se encontró historial clínico para este paciente.
+                    </p>
+                  </div>
+                ))}
               {activeTab === "antecedentes" &&
                 (backgrounds ? (
                   <MedicalBackgroundTab medicalBackgrounds={backgrounds} />
                 ) : (
-                  <div className="bg-gray-200/60 p-4 rounded-xl">
-                    <p className="text-lg">
+                  <div className="bg-gray-200/60 p-4 rounded-2xl">
+                    <p className="text-lg bg-white p-4 rounded-xl w-xl">
                       No se encontraron antecedentes para este paciente.
                     </p>
                   </div>
