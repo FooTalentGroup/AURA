@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { RxDotsVertical } from 'react-icons/rx';
-import { Modal } from '../../../layouts/Modal';
-import { Professional } from '../types/Professional.types';
+import React, { useState } from "react";
+import { RxDotsVertical } from "react-icons/rx";
+import { Modal } from "../../../layouts/Modal";
+import { Professional } from "../types/Professional.types";
 
 interface Props {
   professional: Professional;
@@ -10,7 +10,12 @@ interface Props {
   onDelete?: (id: number) => Promise<void>;
 }
 
-export const ProfessionalRow: React.FC<Props> = ({ professional, onView, onViewSchedule, onDelete }) => {
+export const ProfessionalRow: React.FC<Props> = ({
+  professional,
+  onView,
+  onViewSchedule,
+  onDelete,
+}) => {
   const getInitial = (name: string) => name.charAt(0).toUpperCase();
 
   // Estados para menú y confirmación
@@ -27,8 +32,12 @@ export const ProfessionalRow: React.FC<Props> = ({ professional, onView, onViewS
       await onDelete(professional.id);
       setConfirmOpen(false);
       setMenuOpen(false);
-    } catch (err: any) {
-      setError(err.message || 'Error eliminando usuario');
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message || "Error eliminando usuario");
+      } else {
+        setError("Error desconocido eliminando usuario");
+      }
     } finally {
       setDeleting(false);
     }
@@ -74,7 +83,7 @@ export const ProfessionalRow: React.FC<Props> = ({ professional, onView, onViewS
           </button>
           {/* Menú ⋮ */}
           <button
-            onClick={() => setMenuOpen(o => !o)}
+            onClick={() => setMenuOpen((o) => !o)}
             className="p-2 rounded-full hover:bg-gray-100"
           >
             <RxDotsVertical className="h-5 w-5 text-gray-500" />
@@ -98,7 +107,9 @@ export const ProfessionalRow: React.FC<Props> = ({ professional, onView, onViewS
       {/* Modal de confirmación de eliminación */}
       <Modal isOpen={confirmOpen} onClose={() => setConfirmOpen(false)}>
         <h3 className="text-xl font-medium mb-4">¿Estás seguro?</h3>
-        <p className="mb-6">Esta acción eliminará al usuario definitivamente.</p>
+        <p className="mb-6">
+          Esta acción eliminará al usuario definitivamente.
+        </p>
         {error && <p className="text-sm text-red-600 mb-4">{error}</p>}
         <div className="flex justify-end space-x-4">
           <button
