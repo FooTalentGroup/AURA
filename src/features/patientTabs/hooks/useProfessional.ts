@@ -13,8 +13,12 @@ export function useProfessionalData() {
         const user = await api.getCurrentUser();
         const prof = await api.getProfessionalById(user.id);
         setProfessional(prof);
-      } catch (err: any) {
-        setError(err.message || "Error al obtener datos del profesional");
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          setError(err.message || "Error al obtener datos del profesional");
+        } else {
+          setError("Error desconocido");
+        }
       } finally {
         setLoading(false);
       }
