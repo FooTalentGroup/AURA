@@ -45,7 +45,6 @@ export default function DiagnosticTab({
         title: form.title,
         details: form.details,
       });
-      // Optionally update local date and professional id if backend returns
       onUpdate(updated);
       setIsEditing(false);
     } catch (error) {

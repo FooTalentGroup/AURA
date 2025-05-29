@@ -2,7 +2,6 @@ import React from 'react';
 
 /**
  * validatePassword: valida criterios de complejidad de contraseña.
- * Retorna un objeto con flags: length, uppercase, lowercase, number.
  */
 export const validatePassword = (password: string) => ({
   length: password.length >= 8,
@@ -21,7 +20,6 @@ interface PasswordErrorListProps {
 
 /**
  * PasswordErrorList: muestra la lista de errores de complejidad.
- * Úsalo en formularios de creación o cambio de contraseña.
  */
 export const PasswordErrorList: React.FC<PasswordErrorListProps> = ({
   lengthValid,

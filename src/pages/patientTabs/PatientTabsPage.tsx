@@ -140,7 +140,7 @@ export default function PatientTabsPage() {
     fetchPatient();
   }, [fetchPatient]);
 
-  // Al crear un nuevo registro clínico en el modal
+  // Al crear un nuevo registro clínico, recarga los datos del paciente y cierra el modal
   const handleSuccess = () => {
     fetchPatient();
     setIsModalOpen(false);
@@ -223,7 +223,6 @@ export default function PatientTabsPage() {
               {activeTab === "diagnostico" && (
                 <DiagnosticTab
                   diagnoses={diagnoses!}
-                  // onUpdate={(updated) => setDiagnoses(updated)}
                   onUpdate={(updatedDiagnosis) => {
                     setDiagnoses((prev) =>
                       prev ? { ...prev, ...updatedDiagnosis } : null

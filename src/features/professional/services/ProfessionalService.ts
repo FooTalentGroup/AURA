@@ -1,6 +1,5 @@
-// src/core/services/professionalsService.ts
 import { request } from "../../../core/services/api";
-import { Paginated } from "../../../core/services/api";               // si tu api exporta este tipo genérico
+import { Paginated } from "../../../core/services/api";               
 import { Professional, ProfessionalPayload  } from "../types/Professional.types";
 
 export const professionalsService = {

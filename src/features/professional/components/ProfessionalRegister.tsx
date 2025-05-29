@@ -63,9 +63,9 @@ const [success, setSuccess] = useState(false);
       setModalOpen(true); 
     try {
     await register(values as RegisterProfessionalPayload);
-    setSuccess(true);      // ← marcas éxito
+    setSuccess(true);      
   } catch {
-    //  setSuccess(false)
+    //  error
   }
 };
 

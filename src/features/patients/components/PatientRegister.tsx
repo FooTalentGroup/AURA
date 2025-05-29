@@ -79,7 +79,6 @@ export const PatientRegister: React.FC = () => {
   const handleNext = () => setCurrentStep((s) => Math.min(s + 1, totalSteps));
   const handleBack = () => setCurrentStep((s) => Math.max(s - 1, 1));
 
-  // Skip insurance
   const skipInsurance = () => {
     setValues((prev) => ({
       ...prev,

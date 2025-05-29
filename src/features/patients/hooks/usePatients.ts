@@ -15,8 +15,8 @@ export function usePatients(page = 0, size = 20) {
   /**
    * Carga la lista de pacientes:
    * - Sin query: lista paginada
-   * - Query sólo dígitos: búsqueda parcial de DNI (filtrado local)
-   * - Otro texto: busca por nombre (API)
+   * - Query sólo dígitos: búsqueda parcial de DNI 
+   * - Otro texto: busca por nombre 
    */
   const load = useCallback(
     async (query?: string, patientsOverride?: Patient[]) => {

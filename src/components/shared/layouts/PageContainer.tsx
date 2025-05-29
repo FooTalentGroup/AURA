@@ -20,7 +20,6 @@ interface PageContainerProps {
 
 /**
  * PageContainer envuelve el contenido en un layout centrado.
- * Usa la clase `container` de Tailwind para centrar el ancho.
  */
 export const PageContainer:
 
@@ -39,7 +38,6 @@ React.FC<PageContainerProps> = ({
   const bgClass = isFocused ? 'bg-white border border-gray-300 md:w-86 focus:ring-2 focus:ring-[#0F62FE14]' : 'bg-[#0F62FE14] md:w-86';
   const iconColor = isFocused ? 'text-gray-600' : 'text-[#0072C3]';
     const location = useLocation();
-  // true cuando la URL es exactamente "/pacientes" o empieza con "/pacientes/"
   const isPatientPage = location.pathname === '/patients'
     || location.pathname.startsWith('/patients');
   return (
