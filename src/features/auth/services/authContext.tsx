@@ -24,17 +24,11 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const location = useLocation();
 
   useEffect(() => {
-    const publicPaths = ["/login", "/register", "/forgot-password"];
     // Iniciar carga de estado
     dispatch({ type: "INIT" });
 
-    // Si estamos en una ruta pública, no llamamos a /auth/me y marcamos como cargado
-    if (publicPaths.includes(location.pathname)) {
-      dispatch({ type: "LOGOUT" });
-      return;
-    }
 
-    // En rutas privadas, rehidratar sesión desde backend
+    // Verificar si el usuario ya está autenticado
     authApi.me()
       .then((res: UserResponse) => {
         const user: CurrentUser = {

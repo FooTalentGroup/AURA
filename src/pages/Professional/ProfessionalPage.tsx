@@ -49,7 +49,7 @@ const navigate = useNavigate();
       onAdd={handleAdd}
       addLabel="Crear Usuario"
     >
-      {/* Aquí podrías insertar tabs (“Profesionales” / “Administrativo”) */}
+      {/* Tabs de navegación para filtrar entre profesionales y administrativos */}
 
       {/* Column Headers para profesionales */}
       <div className="grid grid-cols-[2fr_1fr_1fr_1fr_1fr_1fr] text-sm text-gray-500 mb-4 px-4">
@@ -81,8 +81,7 @@ const navigate = useNavigate();
                   // una vez borrado, recargamos la lista
                   await reload();
                 } catch (e: any) {
-                  // si quieres propagar el error al modal de la fila,
-                  // lanza de nuevo la excepción para que lo capture ProfessionalRow
+                  // Si ocurre un error al eliminar, lo propagamos para que el componente ProfessionalRow lo capture y muestre el mensaje correspondiente en el modal de confirmación.
                   throw error;
                 }
               }}

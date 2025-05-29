@@ -5,13 +5,11 @@ import AdminRoute from "./AdminRoutes";
 
 // Páginas públicas
 import LoginPage from "../pages/auth/LoginPage";
-// import RegisterPage from "../pages/auth/RegisterPage";
 
 // Páginas privadas
 import DashboardPage from "../pages/dashboard/DashboardPage";
 import PatientsPage from "../pages/patients/PatientsPage";
 import NotFoundPage from "../pages/NotFoundPage";
-import ForgotPasswordForm from "../pages/auth/ForgotPasswordForm";
 import ProfilePage from "../pages/profile/ProfilePage";
 import AdminPage from "../pages/admin/AdminPage";
 import ProfessionalPage from "../pages/Professional/ProfessionalPage";
@@ -24,9 +22,7 @@ const AppRoutes = () => {
   return (
     <Routes>
       <Route element={<PublicRoutes />}>
-        <Route path="/forgot-password" element={<ForgotPasswordForm />} />
         <Route path="/login" element={<LoginPage />} />
-        {/* <Route path="/register" element={<RegisterPage />} /> */}
       </Route>
 
       <Route element={<PrivateRoutes />}>

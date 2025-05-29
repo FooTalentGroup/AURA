@@ -10,6 +10,7 @@ export interface AuthState {
 
 export type AuthAction =
   | { type: "INIT" }
+  | { type: "INIT_FINISHED" }
   | { type: "LOGIN_REQUEST" }
   | { type: "LOGIN_SUCCESS"; payload: CurrentUser }
   | { type: "LOGIN_FAILURE"; payload: string }
@@ -19,12 +20,15 @@ export type AuthAction =
 export function authReducer(state: AuthState, action: AuthAction): AuthState {
   switch (action.type) {
     case "INIT":
+      return { ...state, isLoading: true };
+    case "INIT_FINISHED":
+      return { ...state, isLoading: false };
     case "LOGIN_REQUEST":
       return { ...state, isLoading: true, error: null };
     case "LOGIN_SUCCESS":
-      return { user: action.payload, isAuthenticated: true, isLoading: false, error: null };
+      return { ...state, user: action.payload, isAuthenticated: true, isLoading: false };
     case "LOGIN_FAILURE":
-      return { user: null, isAuthenticated: false, isLoading: false, error: action.payload };
+      return { ...state, error: action.payload, isLoading: false };
     case "LOGOUT":
       return { user: null, isAuthenticated: false, isLoading: false, error: null };
     case "CLEAR_ERROR":
