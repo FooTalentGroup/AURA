@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/receptionist")
 @RequiredArgsConstructor
-@Tag(name = "Receptionist", description = "Controlador de recepcionistas")
+@Tag(name = "Receptionist", description = "Controlador de recepcionistas - Versión futura esta por fuera del MVP")
 @PreAuthorize("hasRole('ADMIN') or hasRole('RECEPTIONIST')")
 public class ReceptionistController {
 
