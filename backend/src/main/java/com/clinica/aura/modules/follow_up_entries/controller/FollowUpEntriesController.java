@@ -103,24 +103,5 @@ public class FollowUpEntriesController {
         return ResponseEntity.ok(followUpEntriesService.update(id, dto));
     }
 
-    /**
-     * Endpoint para eliminar un seguimiento.
-     * <p>
-     * Elimina un seguimiento médico del sistema a partir de su ID.
-     * </p>
-     *
-     * @param id el ID del seguimiento a eliminar
-     * @return una respuesta con código 200 (OK) y un mensaje indicando la eliminación exitosa
-     */
-
-    @Operation(
-            summary = "Eliminar un seguimiento",
-            description = "Elimina un seguimiento médico del sistema a partir de su ID."
-    )
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable Long id){
-        followUpEntriesService.delete(id);
-        return ResponseEntity.ok( "Ha eliminado exitosamente seguimiento con id: "+id);
-    }
 
 }
