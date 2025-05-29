@@ -166,4 +166,12 @@ public class PatientController {
         return ResponseEntity.ok("Escuela asignada al paciente correctamente");
     }
 
+
+    @Operation(summary = "Eliminar paciente", description = "Elimina un paciente de la base de datos. Se debe ingresar el ID del paciente en el path.")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deletePatient(@PathVariable("id") Long id) {
+        patientService.deletePatient(id);
+        return ResponseEntity.ok("Paciente eliminado correctamente");
+    }
+
 }

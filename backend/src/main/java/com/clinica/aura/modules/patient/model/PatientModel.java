@@ -75,4 +75,6 @@ public class PatientModel {
     @ManyToOne(targetEntity = SchoolModel.class, fetch = FetchType.LAZY)
     private SchoolModel  schoolModel;
 
+    private boolean deleted = false;
+
 }

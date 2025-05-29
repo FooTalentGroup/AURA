@@ -134,6 +134,7 @@ public class PatientService {
                 .relationToPatient(relationToPatient)
                 .genre(genre)
                 .memberShipNumber(memberShipNumber)
+                .deleted(false)
                 .build();
 
 
@@ -233,7 +234,7 @@ public class PatientService {
      */
     public PaginatedResponse<PatientResponseDto> getAllPatients(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<PatientModel> patientsPage = patientRepository.findAll(pageable);
+        Page<PatientModel> patientsPage = patientRepository.findAllActive(pageable);
 
         List<PatientResponseDto> patientResponseDtos = patientsPage.getContent().stream()
                 .map(patient -> {
@@ -294,24 +295,20 @@ public class PatientService {
      * @throws PatientNotFoundException Si no se encuentra un paciente con el ID proporcionado.
      */
     public PatientResponseDto getPatientById(Long id) {
-        var patient = patientRepository.findById(id)
+        var patient = patientRepository.findByIdAndDeletedFalse(id)
                 .orElseThrow(() -> new PatientNotFoundException("Paciente no encontrado con ID: " + id));
 
         var person = patient.getPerson();
-        Long idPatient = patient.getId();
-        LocalDate birthDate = personRepository.findBirthDateById(id);
-        int currentAge= calculatorAge(idPatient, birthDate);
         var user = userRepository.findByPerson(person).orElse(null);
 
-        List<Long> professionalIds = null;
-        if (patient.getProfessionals() != null) {
-            professionalIds = patient.getProfessionals().stream()
-                    .map(prof -> prof.getId())
-                    .toList();
-        }
+        int currentAge = calculatorAge(patient.getId(), person.getBirthDate());
+
+        List<Long> professionalIds = patient.getProfessionals() != null
+                ? patient.getProfessionals().stream().map(ProfessionalModel::getId).toList()
+                : null;
 
         PatientResponseDto.PatientResponseDtoBuilder dtoBuilder = PatientResponseDto.builder()
-                .id(person.getId())
+                .id(patient.getId())
                 .name(person.getName())
                 .lastName(person.getLastName())
                 .phoneNumber(person.getPhoneNumber())
@@ -329,13 +326,13 @@ public class PatientService {
                 .age(currentAge)
                 .genre(patient.getGenre());
 
-
         if (patient.getSchoolModel() != null) {
             dtoBuilder.schoolId(patient.getSchoolModel().getId());
         }
 
         return dtoBuilder.build();
     }
+
 
     /**
      * Actualiza la información de un paciente existente, incluyendo sus datos personales, información médica,
@@ -380,6 +377,7 @@ public class PatientService {
         patient.setTutorName(requestDto.getTutorName());
         patient.setRelationToPatient(requestDto.getRelationToPatient());
         patient.setGenre(requestDto.getGenre());
+        patient.setDeleted(false);
 
         if (requestDto.getSchoolId() != null) {
             SchoolModel school = schoolRepository.findById(requestDto.getSchoolId())
@@ -461,7 +459,7 @@ public class PatientService {
      * @throws PatientNotFoundException Si no se encuentra ningún paciente con el DNI especificado.
      */
     public PatientResponseDto getPatientByDni(String dni) {
-        var patient = patientRepository.findByPersonDni(dni)
+        var patient = patientRepository.findByPersonDniAndDeletedFalse(dni)
                 .orElseThrow(() -> new PatientNotFoundException("Paciente no encontrado con DNI: " + dni));
 
         var person = patient.getPerson();
@@ -589,6 +587,15 @@ public class PatientService {
         return Period.between(birthDate, LocalDate.now()).getYears();
     }
 
+    @Transactional
+    public void deletePatient(Long id) {
+        PatientModel patient = patientRepository.findById(id)
+                .orElseThrow(() -> new PatientNotFoundException("Paciente no encontrado con ID: " + id));
+
+        if (!patient.isDeleted()) {
+            patient.setDeleted(true);
+        }
+    }
 }
 
 
