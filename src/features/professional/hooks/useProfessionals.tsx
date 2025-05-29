@@ -17,12 +17,12 @@ export const useProfessionals = (
 
     try {
       if (searchTerm.trim()) {
-        // 1) Ejecutamos búsqueda por especialidad en el endpoint especializado
+        //  Ejecutamos búsqueda por especialidad en el endpoint especializado
         const bySpecialty = await professionalsService.search(
           searchTerm.trim()
         );
 
-        // 2) Para buscar por nombre/apellido, obtenemos la página completa (o un size alto)
+        //  Para buscar por nombre/apellido, obtenemos la página completa (o un size alto)
         const pageRes = await professionalsService.list(page, size);
         const byName = pageRes.content.filter((p) => {
           const q = searchTerm.trim().toLowerCase();
@@ -32,7 +32,7 @@ export const useProfessionals = (
           );
         });
 
-        // 3) Unimos ambos arrays, eliminando duplicados
+        //  Unimos ambos arrays, eliminando duplicados
         const map = new Map<number, Professional>();
         [...bySpecialty, ...byName].forEach((p) => map.set(p.id, p));
         setProfessionals(Array.from(map.values()));

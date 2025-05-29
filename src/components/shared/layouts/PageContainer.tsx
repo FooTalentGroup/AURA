@@ -42,7 +42,7 @@ React.FC<PageContainerProps> = ({
     || location.pathname.startsWith('/patients');
   return (
     <DashboardLayout>
-      <div className="container mx-auto px-4 py-8 bg-gray-50 rounded-lg">
+      <div className="container  px-4 py-8 bg-gray-50 rounded-lg">
         {/* Header */}
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-4 pb-4 border-b border-gray-200">
           <div className="flex items-center space-x-2 mb-4 md:mb-0">

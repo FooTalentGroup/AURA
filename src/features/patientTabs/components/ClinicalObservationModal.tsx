@@ -16,14 +16,14 @@ export default function RegisterClinicalRecordModal({
   onSuccess,
   patientId,
 }: Props) {
-  // 1) Datos del profesional
+  //  Datos del profesional
   const {
     professional,
     loading: loadingProf,
     error: errorProf,
   } = useProfessionalData();
 
-  // 2) Datos de la historia clínica
+  //  Datos de la historia clínica
   const [medicalRecordId, setMedicalRecordId] = useState<number | null>(null);
   const [loadingRecord, setLoadingRecord] = useState(false);
   const [errorRecord, setErrorRecord] = useState<string | null>(null);
@@ -46,7 +46,7 @@ export default function RegisterClinicalRecordModal({
       });
   }, [isOpen, patientId]);
 
-  // 3) Formulario y envío
+  //  Formulario y envío
   const [observations, setObservations] = useState("");
   const [interventions, setInterventions] = useState("");
   const [indications, setIndications] = useState("");
@@ -80,7 +80,7 @@ export default function RegisterClinicalRecordModal({
     }
   };
 
-  // 4) Render de loaders/errores
+  //  Render de loaders/errores
   if (loadingProf || loadingRecord) {
     return (
       <Modal isOpen={isOpen} onClose={onClose}>
@@ -99,7 +99,7 @@ export default function RegisterClinicalRecordModal({
     );
   }
 
-  // 5) Render principal
+  //  Render principal
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <h2 className="text-xl font-semibold mb-4">Nuevo registro clínico</h2>
