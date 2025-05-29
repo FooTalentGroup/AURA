@@ -34,10 +34,8 @@ function ProfilePage() {
       lastName: updatedData.lastName || userData?.lastName,
       birthDate: updatedData.birthDate || userData?.birthDate || "",
       dni: updatedData.dni || userData?.dni || "",
-
-      // TODO: Adrián hay que descomentar estás opciones si backend las agrega
-      // phoneNumber: updatedData.phoneNumber || userData?.phoneNumber || "",
-      // address: updatedData.address || userData?.address || "",
+      phoneNumber: updatedData.phoneNumber || userData?.phoneNumber || "",
+      address: updatedData.address || userData?.address || "",
     };
 
     if (!userData) return;
