@@ -5,15 +5,13 @@ import { Professional } from "../types/Professional.types";
 
 interface Props {
   professional: Professional;
-  onView: (id: number) => void;
-  onViewSchedule: (id: number) => void;
+  onView?: (id: number) => void;
+  onViewSchedule?: (id: number) => void;
   onDelete?: (id: number) => Promise<void>;
 }
 
 export const ProfessionalRow: React.FC<Props> = ({
   professional,
-  onView,
-  onViewSchedule,
   onDelete,
 }) => {
   const getInitial = (name: string) => name.charAt(0).toUpperCase();
@@ -69,18 +67,7 @@ export const ProfessionalRow: React.FC<Props> = ({
 
         {/* Acciones */}
         <div className="col-start-7 col-end-9 flex justify-end items-center space-x-2 relative">
-          <button
-            onClick={() => onViewSchedule(professional.id)}
-            className="text-[#0072C3] border border-[#0072C3] rounded-full px-3 py-1 text-sm font-medium hover:bg-[#0072C3] hover:text-white transition"
-          >
-            Ver Horario
-          </button>
-          <button
-            onClick={() => onView(professional.id)}
-            className="text-[#0072C3] border border-[#0072C3] rounded-full px-3 py-1 text-sm font-medium hover:bg-[#0072C3] hover:text-white transition"
-          >
-            Ver Usuario
-          </button>
+    
           {/* Menú ⋮ */}
           <button
             onClick={() => setMenuOpen((o) => !o)}

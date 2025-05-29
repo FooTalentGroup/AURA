@@ -35,10 +35,7 @@ const ProfessionalPage: React.FC = () => {
     }
   };
 
-  const handleView = (id: number) => {
-    console.log("Ver paciente", id);
-    //  un navigate(`/patients/${id}`)
-  };
+
 
   return (
     <>
@@ -73,8 +70,6 @@ const ProfessionalPage: React.FC = () => {
             <ProfessionalRow
               key={u.id}
               professional={u}
-              onView={handleView}
-              onViewSchedule={() => navigate(`/professionals/${u.id}/schedule`)}
               onDelete={async (id) => {
                 try {
                   await professionalsService.delete(id);
