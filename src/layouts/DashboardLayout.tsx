@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useContextAuth } from "../features/auth/hooks/useContextAuth";
 import { FiChevronDown } from "react-icons/fi";
 import { BsPersonBadgeFill } from "react-icons/bs";
+import { useLocation } from "react-router-dom";
 interface DashboardLayoutProps {
   children: ReactNode;
 }
@@ -12,7 +13,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
     const { isAdmin} = useContextAuth();
-  
+  const location = useLocation();
   const handleLogout = async () => {
     await logout();
     navigate("/login", { replace: true });
@@ -21,10 +22,11 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const handleModal = () => {
     setIsModalOpen(!isModalOpen);
   };
+  const isPerfilePage = location.pathname === "/profile";
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
-      <header className="bg-white shadow-sm">
+      <header className=" ">
         <div className="w-full px-20 py-4 flex justify-between items-center">
           <div className="flex items-center gap-8">
             <h1 className="font-bold text-xl text-[#0072C3]">AURA</h1>
@@ -79,7 +81,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       <div className="flex flex-grow">
         <aside className="flex-grow flex justify-center items-center max-w-24 mb-[29em]">
          <nav className="px-1">
-          {isAdmin && ( <ul className="text-gray-800 flex flex-col gap-4 h-full text-center [&>li>a]:flex-col [&>li>a]:hover:text-blue-700 [&>li>a]:hover:bg-sky-200/60">
+          {isAdmin && !isPerfilePage && ( <ul className="text-gray-800 flex flex-col gap-4 h-full text-center [&>li>a]:flex-col [&>li>a]:hover:text-blue-700 [&>li>a]:hover:bg-sky-200/60">
               
               
         
