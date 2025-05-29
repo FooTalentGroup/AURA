@@ -16,6 +16,8 @@ public class UserMeResponseDto {
     private String name;
     private String lastName;
     private LocalDate birthDate;
+    private String phoneNumber;
+    private String address;
     private String dni;
     private List<String> roles;
 }

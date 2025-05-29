@@ -139,6 +139,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 .name(user.getPerson().getName())
                 .lastName(user.getPerson().getLastName())
                 .birthDate(user.getPerson().getBirthDate())
+                .phoneNumber(user.getPerson().getPhoneNumber())
+                .address(user.getPerson().getAddress())
                 .dni(user.getPerson().getDni())
                 .roles(user.getRoles().stream()
                         .map(role -> role.getEnumRole().name())
@@ -168,6 +170,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         user.getPerson().setName(userMeRequest.getName());
         user.getPerson().setLastName(userMeRequest.getLastName());
         user.getPerson().setBirthDate(userMeRequest.getBirthDate());
+        user.getPerson().setPhoneNumber(userMeRequest.getPhoneNumber());
+        user.getPerson().setAddress(userMeRequest.getAddress());
 
         userRepository.save(user);
         return getCurrentUser(user.getEmail());

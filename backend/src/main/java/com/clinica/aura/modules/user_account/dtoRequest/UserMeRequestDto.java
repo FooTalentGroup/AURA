@@ -33,6 +33,16 @@ public class UserMeRequestDto {
     @Schema(description = "Apellido del paciente", example = "Perez", requiredMode = Schema.RequiredMode.REQUIRED)
     private String lastName;
 
+    @Schema(description = "El teléfono está pensado en formato argentino, se permite el mínimo de 8 números en caso de no agregar el 011 ", example = "02320484070", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Pattern(regexp = "^\\d{8,11}$", message = "El teléfono debe tener entre 8 y 11 dígitos numéricos")
+    @NotBlank(message = "El teléfono es obligatorio")
+    private String phoneNumber;
+
+    @Schema(description = "Dirección", example = "Av. Libertador 1925, CABA", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Size(min = 5, max = 30, message = "La dirección debe tener entre 5 y 30 caracteres.")
+    @NotBlank(message = "La dirección es obligatoria")
+    private String address;
+
     @Past
     private LocalDate birthDate;
 
