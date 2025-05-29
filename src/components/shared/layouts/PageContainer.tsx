@@ -1,5 +1,5 @@
 import React from "react";
-import { FiSearch,  FiUsers } from "react-icons/fi";
+import { FiSearch,  FiUsers, FiX } from "react-icons/fi";
 import DashboardLayout from "../../../layouts/DashboardLayout";
 import { useContextAuth } from "../../../features/auth/hooks/useContextAuth";
 import { useState } from "react";
@@ -35,7 +35,7 @@ React.FC<PageContainerProps> = ({
 }) => {
   const { isAdmin} = useContextAuth();
   const [isFocused, setIsFocused] = useState(false);
-  const bgClass = isFocused ? 'bg-white border border-gray-300 md:w-86 focus:ring-2 focus:ring-[#0F62FE14]' : 'bg-[#0F62FE14] md:w-86';
+  const bgClass = isFocused ? 'bg-white border text-gray-800 border-gray-300 md:w-86 focus:ring-2 focus:ring-[#0F62FE14]' : 'bg-[#0F62FE14] md:w-86 ';
   const iconColor = isFocused ? 'text-gray-600' : 'text-[#0072C3]';
     const location = useLocation();
   const isPatientPage = location.pathname === '/patients'
@@ -67,7 +67,7 @@ React.FC<PageContainerProps> = ({
                onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
         className={`
-          h-12 w-full rounded-full pl-12 pr-4 text-[#002D9C]
+          h-12 w-full rounded-full pl-12 pr-4 text-[#002D9C] 
           outline-none transition-colors duration-200
           ${bgClass}
         `}
@@ -75,6 +75,12 @@ React.FC<PageContainerProps> = ({
               <FiSearch
         className={`absolute left-4 top-1/2 -translate-y-1/2 text-lg ${iconColor}`}
       />
+              {isFocused && (
+                <FiX
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-lg text-gray-800 cursor-pointer hover:text-black"
+                  onMouseDown={e => { e.preventDefault(); onQueryChange({ target: { value: '' } } as React.ChangeEvent<HTMLInputElement>); }}
+                />
+              )}
             </div>
             {(isAdmin ) && (
               <button
