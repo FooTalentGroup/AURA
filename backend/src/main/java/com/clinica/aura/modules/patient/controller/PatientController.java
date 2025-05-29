@@ -41,6 +41,9 @@ public class PatientController {
     @Operation(summary = "Registrar nuevo paciente", description = """
             Registra un nuevo paciente. El campo professionalIds es opcional y puede dejarse en blanco, pero,
             si se completa, se debe asegurar que contenga IDs de profesionales existentes en la base de datos.
+            "Si el paciente tiene obra social, establecer 'hasInsurance' en true y completar 'insuranceName', 'insurancePlan' y 'memberShipNumber'. " +
+            "Si el paciente no tiene obra social (es particular), establecer 'hasInsurance' en false, 'insuranceName' como 'Particular', y dejar vacíos " +
+            "'insurancePlan' y 'memberShipNumber'.")
             """)
     @PostMapping(value = "/register")
     @Tag(name = "Patient")
@@ -167,7 +170,10 @@ public class PatientController {
     }
 
 
-    @Operation(summary = "Eliminar paciente", description = "Elimina un paciente de la base de datos. Se debe ingresar el ID del paciente en el path.")
+    @Operation(
+            summary = "Eliminar paciente",
+            description = "Marca un paciente como eliminado (soft delete). Se debe ingresar el ID del paciente en el path. El paciente no se elimina físicamente de la base de datos."
+    )
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deletePatient(@PathVariable("id") Long id) {
         patientService.deletePatient(id);
