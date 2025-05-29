@@ -1,5 +1,5 @@
 import React from "react";
-import { FiSearch, FiUserPlus, FiUsers } from "react-icons/fi";
+import { FiSearch,  FiUsers } from "react-icons/fi";
 import DashboardLayout from "../../../layouts/DashboardLayout";
 import { useContextAuth } from "../../../features/auth/hooks/useContextAuth";
 import { useState } from "react";
@@ -42,7 +42,7 @@ React.FC<PageContainerProps> = ({
     || location.pathname.startsWith('/patients');
   return (
     <DashboardLayout>
-      <div className="container  px-4 py-8 bg-gray-50 rounded-lg">
+      <div className="  px-4 py-8 bg-gray-50 rounded-[2rem]">
         {/* Header */}
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-4 pb-4 border-b border-gray-200">
           <div className="flex items-center space-x-2 mb-4 md:mb-0">
@@ -81,8 +81,7 @@ React.FC<PageContainerProps> = ({
                 onClick={onAdd}
                 className="cursor-pointer h-12 bg-[#0072C3] hover:bg-[#005A9E] text-white px-5 rounded-full flex items-center space-x-2 transition"
               >
-                <FiUserPlus className="text-xl" />
-                <span>{addLabel}</span>
+                <span className="whitespace-nowrap">{addLabel}</span>
               </button>
             )}
           </div>

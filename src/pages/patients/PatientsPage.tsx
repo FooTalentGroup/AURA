@@ -64,11 +64,12 @@ const PatientsPage: React.FC = () => {
       addLabel="Agregar paciente"
       count={filteredPatients.length}
     >
-      <div className="grid grid-cols-[2fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr] items-end text-sm text-gray-500 mb-4 px-4">
-        <span className="font-medium text-gray-700">Paciente</span>
-        <span className="font-medium text-gray-700">DNI</span>
-        <span className="font-medium text-gray-700">Contacto</span>
-        <span className="col-start-8 col-end-10 justify-end font-medium text-gray-700">
+      <div className="grid grid-cols-[auto_2fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr] items-end text-sm text-gray-500 mb-4 px-4">
+        <span />
+        <span className="col-start-2  font-medium text-[#4D5358]">Paciente</span>
+        <span className="font-medium text-[#4D5358]">DNI</span>
+        <span className="font-medium text-[#4D5358]">Contacto</span>
+        <span className="col-start-9 col-end-10 justify-end font-medium text-[#4D5358]">
           Historial clínico
         </span>
       </div>
