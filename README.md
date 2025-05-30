@@ -71,7 +71,7 @@ backend/
 
 ## 🌐 Enlace de Producción
 
-- Backend: [https://clinica-08df.onrender.com/](https://clinica-08df.onrender.com/m)
+- Backend: [https://clinica-shsg.onrender.com/swagger-ui/index.html](https://clinica-shsg.onrender.com/swagger-ui/index.html/)
 
 
 ---
@@ -99,7 +99,7 @@ backend/
 
 ## 📡 Verificación de Endpoints
 
-- Endpoint de prueba: `GET https://clinica-08df.onrender.com/swagger-ui/index.html`
+- Endpoint de prueba: `GET https://clinica-shsg.onrender.com/swagger-ui/index.html`
 - Estado: ✅ Funciona correctamente.
 
 ---
