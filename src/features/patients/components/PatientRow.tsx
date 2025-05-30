@@ -2,14 +2,19 @@ import { Patient } from "../../../features/patients/types/patient.types";
 import { RxDotsVertical } from "react-icons/rx";
 import { Modal } from "../../../layouts/Modal";
 import { useState } from "react";
+import { api } from "../../../core/services/api";
 
 interface Props {
   patient: Patient;
   onView: (id: number) => void;
   onDelete?: (id: number) => Promise<void>;
+  onReload?: () => void; // Nuevo prop para recargar la lista
 }
 
-export const PatientRow: React.FC<Props> = ({ patient, onView, onDelete }) => {
+const deletePatient = async (id: number) => await api.deletePatient(id);
+
+
+export const PatientRow: React.FC<Props> = ({ patient, onView, onDelete, onReload }) => {
   const initial =
     patient.name.charAt(0).toUpperCase() +
     patient.lastName.charAt(0).toUpperCase();
@@ -24,13 +29,19 @@ export const PatientRow: React.FC<Props> = ({ patient, onView, onDelete }) => {
   const handleDelete = async () => {
     setDeleting(true);
     try {
-      if (!onDelete) {
-        throw new Error("No se puede eliminar el paciente");
+      if (onDelete) {
+        await onDelete(patient.id);
+      } else {
+        await deletePatient(patient.id);
       }
-      await onDelete(patient.id);
+      if (typeof onReload === "function") {
+        onReload();
+      }
       setConfirmOpen(false);
       setMenuOpen(false);
     } catch (err: unknown) {
+      console.error("Ocurrió un error al eliminar el paciente:", err);
+
       if (err instanceof Error) {
         setError(err.message || "Error desconocido");
       } else {
@@ -108,7 +119,7 @@ export const PatientRow: React.FC<Props> = ({ patient, onView, onDelete }) => {
       <Modal isOpen={confirmOpen} onClose={() => setConfirmOpen(false)}>
         <h3 className="text-xl font-medium mb-4">¿Estás seguro?</h3>
         <p className="mb-6">
-          Esta acción eliminará al usuario definitivamente.
+          Esta acción eliminará al Paciente de la lista.
         </p>
 
         {error && <p className="text-sm text-red-600 mb-4">{error}</p>}
