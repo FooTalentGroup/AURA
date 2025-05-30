@@ -82,7 +82,12 @@ const PatientsPage: React.FC = () => {
         <p className="text-center text-gray-600">No se encontraron pacientes</p>
       ) : (
         filteredPatients.map((p) => (
-          <PatientRow key={p.id} patient={p} onView={handleView}  />
+          <PatientRow 
+            key={p.id} 
+            patient={p} 
+            onView={handleView} 
+            onReload={() => reload("")} 
+          />
         ))
       )}
     </PageContainer>

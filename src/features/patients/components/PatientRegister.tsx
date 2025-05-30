@@ -35,7 +35,7 @@ const stepFields: Record<number, Field[]> = {
     { name: "tutorName", label: "Nombre del tutor", type: "text" },
     {
       name: "relationToPatient",
-      label: "Relacion",
+      label: "Relación",
       type: "select",
       options: [
         { value: "padre", label: "Padre" },
@@ -94,7 +94,7 @@ export const PatientRegister: React.FC = () => {
     "Datos personales",
     "Obra Social",
     "Tutor",
-    "Datos de la institución (Opcional)",
+    "Datos de la institución",
   ];
 
   const handleSubmit = async () => {

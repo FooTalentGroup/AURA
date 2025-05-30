@@ -8,7 +8,7 @@ interface Props {
   patient: Patient;
   onView: (id: number) => void;
   onDelete?: (id: number) => Promise<void>;
-  onReload?: () => void; // Nuevo prop para recargar la lista
+  onReload?: () => void; 
 }
 
 const deletePatient = async (id: number) => await api.deletePatient(id);
@@ -25,20 +25,21 @@ export const PatientRow: React.FC<Props> = ({ patient, onView, onDelete, onReloa
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState<string>();
+  const [successMensaje, setSuccessMessage] = useState<string| null>(null);
 
   const handleDelete = async () => {
     setDeleting(true);
+    setSuccessMessage(null)
     try {
       if (onDelete) {
         await onDelete(patient.id);
       } else {
         await deletePatient(patient.id);
       }
-      if (typeof onReload === "function") {
-        onReload();
-      }
+      setSuccessMessage("Paciente eliminado correctamente");
       setConfirmOpen(false);
       setMenuOpen(false);
+      if (onReload) onReload();
     } catch (err: unknown) {
       console.error("Ocurrió un error al eliminar el paciente:", err);
 
@@ -50,6 +51,7 @@ export const PatientRow: React.FC<Props> = ({ patient, onView, onDelete, onReloa
     } finally {
       setDeleting(false);
     }
+ 
   };
 
   return (
@@ -121,7 +123,9 @@ export const PatientRow: React.FC<Props> = ({ patient, onView, onDelete, onReloa
         <p className="mb-6">
           Esta acción eliminará al Paciente de la lista.
         </p>
-
+        {successMensaje && (
+          <p className="text-sm text-green-600 mb-4">{successMensaje}</p>
+        )}
         {error && <p className="text-sm text-red-600 mb-4">{error}</p>}
 
         <div className="flex justify-end space-x-4">
