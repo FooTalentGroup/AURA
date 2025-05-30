@@ -71,7 +71,7 @@ backend/
 
 ## 🌐 Enlace de Producción
 
-- Backend: [https://clinica-shsg.onrender.com/](https://clinica-shsg.onrender.com/m)
+- Backend: [https://clinica-shsg.onrender.com/swagger-ui/index.html](https://clinica-shsg.onrender.com/swagger-ui/index.html/m)
 
 
 ---
