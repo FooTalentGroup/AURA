@@ -3,7 +3,7 @@ export interface School {
   id: number;
   schoolName: string;
   emailSchool: string;
-  phoneSchool: string; // cadenas separadas por comas
+  phoneSchool: string; 
 }
 
 /** Datos necesarios para crear o actualizar una escuela */

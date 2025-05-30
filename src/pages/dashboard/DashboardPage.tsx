@@ -1,5 +1,4 @@
-// TODO eliminar los componentes que elimine el equipo de UX/UI antes de componetizar
-// import { useContextAuth } from "../../features/auth/hooks/useContextAuth";
+
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import DashboardLayout from "../../layouts/DashboardLayout";
 import PatientItemList from "../../features/dashboard/components/PatientItemList";
@@ -8,13 +7,10 @@ import PatientNotes from "../../features/dashboard/components/PatientNotes";
 import MedicalHistoryTable from "../../features/dashboard/components/MedicalHistoryTable";
 
 const DashboardPage = () => {
-  // const { state } = useContextAuth();
 
   return (
     <DashboardLayout>
-      {/* <h1 className="text-2xl font-semibold pb-8 pt-2">
-        Bienvenido {state.user?.email}
-      </h1> */}
+   
       <div className="grid grid-cols-7 gap-4 rounded-lg">
         <article className="col-span-7 flex flex-col gap-4 bg-white rounded-2xl">
           <h2 className="text-2xl pt-6 pb-6 px-4 border-b-2 border-gray-300/90">

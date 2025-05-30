@@ -12,7 +12,7 @@ const PublicRoutes: React.FC = () => {
 
 
   if (state.isAuthenticated) {
-    return <Navigate to="/dashboard" state={{ from: location }} replace />;
+    return <Navigate to="/patients" state={{ from: location }} replace />;
   }
 
   return <Outlet />;

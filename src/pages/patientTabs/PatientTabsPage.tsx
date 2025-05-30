@@ -47,15 +47,15 @@ export default function PatientTabsPage() {
     if (!patientID) return;
     setIsLoading(true);
     try {
-      // 1) Paciente
+      //  Paciente
       const p = await api.getPatientById(patientID);
       setPatient(p);
 
-      // 2) Escuela
+      //  Escuela
       const schools = await api.listSchoolsPaginated();
       setSchool(schools.content.find((s) => s.id === p.schoolId) || null);
 
-      // 3) Medical Record → citas (appointments) y follow entries
+      //  Medical Record → citas (appointments) y follow entries
       let record;
       try {
         record = await api.getMedicalRecordByPatientId(patientID);
@@ -140,7 +140,7 @@ export default function PatientTabsPage() {
     fetchPatient();
   }, [fetchPatient]);
 
-  // Al crear un nuevo registro clínico en el modal
+  // Al crear un nuevo registro clínico, recarga los datos del paciente y cierra el modal
   const handleSuccess = () => {
     fetchPatient();
     setIsModalOpen(false);
@@ -223,7 +223,6 @@ export default function PatientTabsPage() {
               {activeTab === "diagnostico" && (
                 <DiagnosticTab
                   diagnoses={diagnoses!}
-                  // onUpdate={(updated) => setDiagnoses(updated)}
                   onUpdate={(updatedDiagnosis) => {
                     setDiagnoses((prev) =>
                       prev ? { ...prev, ...updatedDiagnosis } : null

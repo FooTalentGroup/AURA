@@ -20,25 +20,22 @@ const ProfessionalPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleAdd = () => {
-    setIsModalOpen(true);
-  };
-  const closeModal = () => {
+       setIsModalOpen(true);
+   };
+    const closeModal = () => {
     setIsModalOpen(false);
   };
 
-  const chooseType = (type: "administrativo" | "profesional") => {
+    const chooseType = (type: "administrativo" | "profesional") => {
     setIsModalOpen(false);
     if (type === "administrativo") {
-      navigate("/Rregister");
+         navigate("/Rregister");
     } else {
-      navigate("/Pregister");
+         navigate("/Pregister");
     }
   };
 
-  const handleView = (id: number) => {
-    console.log("Ver paciente", id);
-    //  un navigate(`/patients/${id}`)
-  };
+
 
   return (
     <>
@@ -50,38 +47,33 @@ const ProfessionalPage: React.FC = () => {
         onAdd={handleAdd}
         addLabel="Crear Usuario"
       >
-        {/* Aquí podrías insertar tabs (“Profesionales” / “Administrativo”) */}
 
-        {/* Column Headers para profesionales */}
-        <div className="grid grid-cols-[2fr_1fr_1fr_1fr_1fr_1fr] text-sm text-gray-500 mb-4 px-4">
-          <span>Nombre</span>
-          <span>DNI</span>
-          <span>Especialidad</span>
-          <span>Teléfono</span>
-          <span>Email</span>
-          <span>Acciones</span>
-        </div>
+      {/* Column Headers para profesionales */}
+      <div className="grid grid-cols-[2fr_1fr_1fr_1fr_1fr_1fr] text-sm text-gray-500 mb-4 px-4">
+        <span>Nombre</span>
+        <span>DNI</span>
+        <span>Especialidad</span>
+        <span>Teléfono</span>
+        <span>Email</span>
+        <span>Acciones</span>
+      </div>
 
-        {/* Filas */}
-        {loading ? (
-          <p className="text-center text-gray-600">Cargando profesionales...</p>
-        ) : error ? (
-          <p className="text-center text-red-500">Error: {error}</p>
-        ) : professionals.length === 0 ? (
-          <p className="text-center text-gray-600">
-            No se encontraron usuarios
-          </p>
-        ) : (
-          professionals.map((u) => (
+      {/* Filas */}
+      {loading ? (
+        <p className="text-center text-gray-600">Cargando profesionales...</p>
+      ) : error ? (
+        <p className="text-center text-red-500">Error: {error}</p>
+      ) : professionals.length === 0 ? (
+        <p className="text-center text-gray-600">No se encontraron usuarios</p>
+      ) : (
+        professionals.map((u) => (
             <ProfessionalRow
               key={u.id}
               professional={u}
-              onView={handleView}
-              onViewSchedule={() => navigate(`/professionals/${u.id}/schedule`)}
               onDelete={async (id) => {
                 try {
                   await professionalsService.delete(id);
-                  // una vez borrado, recargamos la lista
+                  // Recarga la lista de profesionales tras eliminar uno
                   await reload();
                 } catch (e: unknown) {
                   if (e instanceof Error) {
@@ -89,12 +81,11 @@ const ProfessionalPage: React.FC = () => {
                       "Error al eliminar el profesional:",
                       e.message
                     );
-                    // si quieres propagar el error al modal de la fila,
-                    // lanza de nuevo la excepción para que lo capture ProfessionalRow
+                    // Propaga el error para que el modal de la fila lo capture y muestre el mensaje
                     throw e;
                   } else {
                     console.error(
-                      "Error desconodico al eliminar el profesional"
+                      "Error desconocido al eliminar el profesional"
                     );
                     throw new Error("Error desconocido");
                   }
@@ -103,12 +94,10 @@ const ProfessionalPage: React.FC = () => {
             />
           ))
         )}
-      </PageContainer>
-      <Modal isOpen={isModalOpen} onClose={closeModal}>
+    </PageContainer>
+     <Modal isOpen={isModalOpen} onClose={closeModal}>
         <div className="text-center space-y-6">
-          <h2 className="text-lg font-medium">
-            ¿Qué usuario queres registrar?
-          </h2>
+          <h2 className="text-lg font-medium">¿Qué usuario queres registrar?</h2>
           <div className="flex justify-center gap-4">
             <button
               onClick={() => chooseType("administrativo")}
@@ -125,7 +114,7 @@ const ProfessionalPage: React.FC = () => {
           </div>
         </div>
       </Modal>
-    </>
+  </>
   );
 };
 
