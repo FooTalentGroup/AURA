@@ -13,7 +13,6 @@ import lombok.Setter;
 @AllArgsConstructor
 public class DiagnosesRequestUpdateDto {
 
-
     @NotBlank(message = "El titulo es requerido")
     @Schema(description = "El titulo del diagnostico", example = "Diagnostico", requiredMode = Schema.RequiredMode.REQUIRED)
     private String title;

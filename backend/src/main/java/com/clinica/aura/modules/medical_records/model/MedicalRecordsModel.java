@@ -20,7 +20,6 @@ import java.util.List;
 @Builder
 @Table(name = "medical_records")
 public class MedicalRecordsModel {
-    //historia clinicas
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

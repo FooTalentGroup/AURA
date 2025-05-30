@@ -46,6 +46,12 @@ public class JwtTokenValidator extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
+    /**
+     * Extrae el token JWT de las cookies de la solicitud HTTP.
+     *
+     * @param request la solicitud HTTP que contiene las cookies
+     * @return el valor del token JWT si se encuentra, o null si no existe
+     */
     private String extractTokenFromCookies(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
@@ -58,6 +64,12 @@ public class JwtTokenValidator extends OncePerRequestFilter {
         return null;
     }
 
+    /**
+     * Procesa el token JWT extraído de las cookies.
+     *
+     * @param jwtToken el token JWT extraído
+     */
+
     private void processJwtToken(String jwtToken) {
         DecodedJWT decodedJWT = jwtUtils.validateToken(jwtToken);
 
@@ -66,6 +78,13 @@ public class JwtTokenValidator extends OncePerRequestFilter {
 
         setSecurityContext(username, authorities);
     }
+
+    /**
+     * Establece el contexto de seguridad con la información del usuario autenticado.
+     *
+     * @param username el nombre de usuario autenticado
+     * @param authorities las autoridades del usuario autenticado
+     */
 
     private void setSecurityContext(String username, String authorities) {
         Collection<? extends GrantedAuthority> grantedAuthorities =
@@ -80,6 +99,12 @@ public class JwtTokenValidator extends OncePerRequestFilter {
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 
+    /**
+     * Maneja el error de autenticación.
+     *
+     * @param response la respuesta HTTP
+     * @param e la excepción de autenticación
+     */
     private void handleAuthenticationError(HttpServletResponse response, Exception e)
             throws IOException {
 

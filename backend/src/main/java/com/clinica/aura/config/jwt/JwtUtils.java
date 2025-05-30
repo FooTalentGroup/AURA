@@ -29,7 +29,21 @@ public class JwtUtils {
     @Value("${jwt.expiration.time}")
     private long EXPIRATION_TIME;
 
-    // Generar un token de acceso
+    /**
+     * Genera un token JWT con los detalles del usuario autenticado.
+     *
+     * @param authentication el objeto de autenticación que contiene los detalles del usuario
+     * @return un token JWT con los siguientes claims:
+     *         - issuer: clave secreta del usuario
+     *         - subject: nombre de usuario
+     *         - authorities: permisos del usuario (separados por comas)
+     *         - roles: roles del usuario (sin el prefijo ROLE_)
+     *         - issuedAt: fecha de emisión del token
+     *         - expiresAt: fecha de expiración del token (basada en EXPIRATION_TIME)
+     *         - jti: identificador único del token (UUID)
+     *         - notBefore: fecha mínima de uso del token
+     * @throws RuntimeException si ocurre un error durante la generación del token
+     */
     public String generateJwtToken(Authentication authentication) {
 
 
@@ -42,7 +56,6 @@ public class JwtUtils {
                 .stream().map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
 
-        // Extraer los roles (authorities que empiezan con ROLE_)
         List<String> roles = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .map(role -> role.replace("ROLE_", ""))
@@ -65,8 +78,13 @@ public class JwtUtils {
         }
     }
 
-
-    //Decodificar el token y validarlo
+    /**
+     * Valida y decodifica un token JWT.
+     *
+     * @param token el token JWT a validar
+     * @return un objeto DecodedJWT con los detalles del token validado
+     * @throws JWTVerificationException si el token no es valido o no cumple con las condiciones establecidas
+     */
     public DecodedJWT validateToken(String token) {
         try {
             Algorithm algorithm = Algorithm.HMAC256(this.SECRET_KEY);
@@ -79,26 +97,35 @@ public class JwtUtils {
         }
     }
 
-    // Obtener el username del token
+   /**
+    * Extrae el nombre de usuario del token JWT.
+    *
+    * @param token el token JWT
+    * @return el nombre de usuario
+    */
+
     public String extractUsername(DecodedJWT token) {
         return token.getSubject();
     }
 
-    // Obtener un solo Claim del token
+    /**
+    * Extrae un claim específico del token JWT.
+    *
+    * @param token el token JWT
+    * @param claimName el nombre del claim
+    * @return el claim
+    */
+
     public Claim getSpecificClaim(DecodedJWT token, String claimName) {
         return token.getClaim(claimName);
     }
 
-    // Obtener todos los claims del token
-    public Map<String, Claim> extractAllClaims(DecodedJWT token) {
-        return token.getClaims();
-    }
 
-    // Obtener el tiempo de expiración del token
-    public Date extractExpiration(DecodedJWT token) {
-        return token.getExpiresAt();
-    }
-
+    /**
+    * Obtiene el tiempo de expiración del token JWT en segundos.
+    *
+    * @return el tiempo de expiración en segundos
+    */
     public int getExpirationTime() {
         return (int) (EXPIRATION_TIME / 1000);
     }

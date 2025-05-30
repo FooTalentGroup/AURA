@@ -25,19 +25,15 @@ public class MedicalBackgroundModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Relación uno a uno con el paciente
     @OneToOne
     @JoinColumn(name = "patient_id", nullable = false)
     private PatientModel patient;
 
-
-    // Lista simple de alergias
     @ElementCollection
     @CollectionTable(name = "medical_background_allergies", joinColumns = @JoinColumn(name = "medical_background_id"))
     @Column(name = "allergy")
     private List<String> allergies;
 
-    // Lista simple de discapacidades
     @ElementCollection
     @CollectionTable(name = "medical_background_disabilities", joinColumns = @JoinColumn(name = "medical_background_id"))
     @Column(name = "disability")
@@ -49,8 +45,6 @@ public class MedicalBackgroundModel {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-
-    // Relaciones con ProfessionalModel (creado por / actualizado por)
     @ManyToOne
     @JoinColumn(name = "created_by")
     private ProfessionalModel createdBy;

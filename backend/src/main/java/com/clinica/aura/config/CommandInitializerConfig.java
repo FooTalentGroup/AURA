@@ -29,7 +29,6 @@ public class CommandInitializerConfig implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
 
-        // 1. Inicializar permisos
         if (permissionRepository.count() == 0) {
             for (EnumPermission permission : EnumPermission.values()) {
                 PermissionModel newPermission = new PermissionModel();
@@ -39,7 +38,6 @@ public class CommandInitializerConfig implements CommandLineRunner {
             System.out.println("✅ Permissions initialized.");
         }
 
-        // 2. Inicializar roles
         if (roleRepository.count() == 0) {
             Set<PermissionModel> allPermissions = new HashSet<>(permissionRepository.findAll());
 
@@ -59,7 +57,6 @@ public class CommandInitializerConfig implements CommandLineRunner {
             System.out.println("✅ Roles initialized.");
         }
 
-        // 3. Crear usuario admin inicial
         if (userRepository.count() == 0) {
             RoleModel adminRole = roleRepository.findByEnumRole(EnumRole.ADMIN)
                     .orElseThrow(() -> new RuntimeException("❌ El rol ADMIN no está en la base de datos."));

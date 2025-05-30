@@ -42,6 +42,12 @@ public class AuthController {
     private final UserDetailsServiceImpl userDetailsService;
     private final JwtUtils jwtUtils;
 
+    /**
+     * Inicia sesión y obtiene un token de autenticación.
+     *
+     * @param authDto credenciales de login
+     * @return un ResponseEntity que contiene el token de autenticación
+     */
     @Operation(summary = "Iniciar sesión", description = "Inicia sesión y obtiene un token de autenticación." +
             " Por defecto ya se encuentra registrado un ADMIN con credenciales de login: " +
             "email: admin@example.com, password: admin123")
@@ -69,6 +75,12 @@ public class AuthController {
                 .body(response);
     }
 
+    /**
+     * Registra un nuevo profesional y obtiene un token de autenticación.
+     *
+     * @param authCreateUserDto credenciales de registro
+     * @return un ResponseEntity que contiene el token de autenticación
+     */
     @Operation(summary = "Registrar nuevo profesional", description = """
             Registra un nuevo profesional y obtiene un token de autenticación.
             """)
@@ -79,22 +91,15 @@ public class AuthController {
 
         AuthResponseRegisterDto response = professionalService.createUser(authCreateUserDto);
 
-//       ResponseCookie cookie = ResponseCookie.from("jwt_token", response.getToken())
-//                .httpOnly(true)
-//                .secure(true)
-//                .path("/")
-//                .maxAge(jwtUtils.getExpirationTime())
-//                .sameSite("None")
-//                .build();
-//
-//        servletResponse.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
-
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
-//                .header(HttpHeaders.SET_COOKIE, cookie.toString())
-//                .header("user-id", response.getUserId().toString())
-//                .body(response);
     }
 
+    /**
+     * Registra un nuevo recepcionista y obtiene un token de autenticación.
+     *
+     * @param authCreateUserDto credenciales de registro
+     * @return un ResponseEntity que contiene el token de autenticación
+     */
     @Operation(summary = "Registrar nuevo recepcionista", description = """
             Registra un nuevo recepcionista y obtiene un token de autenticación.
             """)
@@ -105,22 +110,14 @@ public class AuthController {
 
         AuthResponseRegisterDto response = receptionistService.createUser(authCreateUserDto);
 
-//        ResponseCookie cookie = ResponseCookie.from("jwt_token", response.getToken())
-//                .httpOnly(true)
-//                .secure(true)
-//                .path("/")
-//                .maxAge(jwtUtils.getExpirationTime())
-//                .sameSite("None")
-//                .build();
-//
-//        servletResponse.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
-
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
-//                .header(HttpHeaders.SET_COOKIE, cookie.toString())
-//                .header("user-id", response.getUserId().toString())
-//                .body(response);
     }
 
+    /**
+     * Obtiene los datos del usuario autenticado.
+     *
+     * @return un ResponseEntity que contiene los datos del usuario autenticado
+     */
     @Operation(summary = "Obtener el usuario actual", description = """
             Retorna los datos del usuario autenticado.
             """)
@@ -132,6 +129,13 @@ public class AuthController {
         return ResponseEntity.ok(userDetailsService.getCurrentUser(email));
     }
 
+    /**
+     * Actualiza los datos del usuario autenticado.
+     *
+     * @param userId el ID del usuario a actualizar
+     * @param userMeRequestDto los nuevos datos del usuario
+     * @return un ResponseEntity que contiene los datos actualizados del usuario
+     */
     @Operation(summary = "Actualizar el usuario actual", description = """
             Actualiza los datos del usuario autenticado.
             """)
@@ -142,6 +146,12 @@ public class AuthController {
         return ResponseEntity.ok(userMeResponseDto);
     }
 
+    /**
+     * Cierra la sesión del usuario actual.
+     *
+     * @param servletResponse la respuesta HTTP
+     * @return un ResponseEntity que indica que la sesión se ha cerrado correctamente
+     */
     @Operation(summary = "Cerrar sesión", description = """
             Cierra la sesión del usuario actual.
             """)
@@ -185,6 +195,12 @@ public class AuthController {
                 suspensionEndTime + " (Tiempo restante: " + remainingTime + " segundos)");
     }
 
+    /**
+     * Reactiva a un usuario suspendido.
+     *
+     * @param userId el ID del usuario a reactivar
+     * @return un ResponseEntity que indica que el usuario ha sido reactivado
+     */
     @Operation(summary = "Reactivar un usuario", description = """
             Reactiva a un usuario suspendido.
             """)
@@ -195,6 +211,12 @@ public class AuthController {
         return ResponseEntity.ok().body("Usuario reactivado exitosamente");
     }
 
+    /**
+     * Mapea una unidad de tiempo a un ChronoUnit.
+     *
+     * @param unit la unidad de tiempo
+     * @return el ChronoUnit correspondiente
+     */
     private ChronoUnit mapToChronoUnit(SuspendRequestDto.TimeUnit unit) {
         return switch (unit) {
             case HOURS -> ChronoUnit.HOURS;

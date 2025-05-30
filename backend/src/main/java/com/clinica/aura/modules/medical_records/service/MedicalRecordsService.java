@@ -37,8 +37,32 @@ public class MedicalRecordsService {
     private final MedicalRecordsRepository medicalRecordsRepository;
     private final PatientRepository patientRepository;
     private final SecurityUtil securityUtil;
-    private final ModelMapper mapper;
 
+    /**
+     * Crea un nuevo registro médico para un paciente.
+     *
+     * @param dto los datos del registro médico a crear
+     * @return un MedicalRecordsResponseDto con los detalles del registro creado
+     * @throws PatientNotFoundException si el paciente no existe
+     * @throws ConflictWithExistingRecord si el paciente ya tiene un registro médico
+     *
+     * Proceso detallado:
+     * 1. Valida que el paciente exista
+     * 2. Verifica que no exista otro registro médico para el mismo paciente
+     * 3. Obtiene el profesional autenticado actual
+     * 4. Crea un nuevo registro médico con:
+     *    - Creador y actualizador: el profesional autenticado
+     *    - Paciente asociado
+     * 5. Convierte el modelo a DTO incluyendo:
+     *    - ID del registro
+     *    - Fechas de creación y actualización
+     *    - ID del paciente
+     *    - ID del profesional
+     *    - IDs de diagnósticos asociados (si existen)
+     *    - IDs de entradas de seguimiento asociadas (si existen)
+     *
+     * Nota: La transacción es manejada por @Transactional para garantizar la integridad de los datos
+     */
     @Transactional
     public MedicalRecordsResponseDto create(MedicalRecordsRequestDto dto) {
         PatientModel patient = patientRepository.findById(dto.getPatientId()).orElseThrow(() -> new PatientNotFoundException("Paciente con id " + dto.getPatientId() + " no encontrado"));
@@ -61,7 +85,6 @@ public class MedicalRecordsService {
         response.setPatientId(record.getPatients().getId());
         response.setProfessionalId(record.getCreatedBy().getId());
 
-        // Maneja el caso donde getDiagnoses() puede ser null
         List<Long> diagnosisIds = Optional.ofNullable(record.getDiagnoses())
                 .orElse(Collections.emptyList())
                 .stream()
@@ -69,7 +92,6 @@ public class MedicalRecordsService {
                 .toList();
         response.setDiagnosisIds(diagnosisIds);
 
-        // Maneja el caso donde getFollowUps() puede ser null
         List<Long> followUpIds = Optional.ofNullable(record.getFollowUps())
                 .orElse(Collections.emptyList())
                 .stream()
@@ -79,6 +101,22 @@ public class MedicalRecordsService {
 
         return response;
     }
+
+    /**
+     * Busca un registro médico por su ID.
+     *
+     * @param id el ID del registro médico a buscar
+     * @return un MedicalRecordsResponseDto con los detalles del registro encontrado
+     * @throws EntityNotFoundException si no se encuentra el registro
+     *
+     * El DTO incluye:
+     * - ID del registro
+     * - Fechas de creación y actualización
+     * - ID del paciente
+     * - ID del profesional
+     * - IDs de diagnósticos asociados
+     * - IDs de entradas de seguimiento
+     */
 
     public MedicalRecordsResponseDto findById(Long id) {
         MedicalRecordsModel record = medicalRecordsRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Registro no encontrado"));
@@ -93,6 +131,24 @@ public class MedicalRecordsService {
 
         return response;
     }
+
+    /**
+     * Busca la historia clínica de un paciente por su ID.
+     *
+     * @param patientId el ID del paciente a buscar
+     * @return un MedicalRecordsResponseDto con los detalles de la historia clínica
+     * @throws EntityNotFoundException si no se encuentra la historia clínica
+     *
+     * El DTO incluye:
+     * - ID del registro
+     * - Fechas de creación y actualización
+     * - ID del paciente
+     * - ID del profesional
+     * - IDs de diagnósticos asociados
+     * - IDs de entradas de seguimiento
+     *
+     * Nota: Este método asume que cada paciente tiene una única historia clínica
+     */
     public MedicalRecordsResponseDto findByPatientsId(Long patientId){
         MedicalRecordsModel record = medicalRecordsRepository.findByPatientsId(patientId)
                 .orElseThrow(() -> new EntityNotFoundException("Historia clínica no encontrada para el paciente con ID: " + patientId));
@@ -108,6 +164,20 @@ public class MedicalRecordsService {
 
         return response;
     }
+
+    /**
+     * Obtiene todos los registros médicos.
+     *
+     * @return una lista de MedicalRecordsResponseDto con los detalles de cada registro
+     *
+     * El DTO incluye:
+     * - ID del registro
+     * - Fechas de creación y actualización
+     * - ID del paciente
+     * - ID del profesional
+     * - IDs de diagnósticos asociados
+     * - IDs de entradas de seguimiento
+     */
 
     public List<MedicalRecordsResponseDto> getAllMedicalRecords() {
         List<MedicalRecordsModel> records = medicalRecordsRepository.findAll();
@@ -126,17 +196,34 @@ public class MedicalRecordsService {
         return response;
     }
 
-    @Transactional
-    public void delete(Long id) {
-        MedicalRecordsModel record = medicalRecordsRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Registro no encontrado"));
-        medicalRecordsRepository.delete(record);
-    }
+    /**
+     * Obtiene una página de registros médicos.
+     *
+     * @param page el número de la página a obtener
+     * @param size el tamaño de la página
+     * @return una página de MedicalRecordsResponseDto con los detalles de cada registro
+     *
+     * El DTO incluye:
+     * - ID del registro
+     * - Fechas de creación y actualización
+     * - ID del paciente
+     * - ID del profesional
+     * - IDs de diagnósticos asociados
+     * - IDs de entradas de seguimiento
+     */
 
-    //paginacion medical records
     public Page<MedicalRecordsResponseDto>  getMedicalRecordsPage(int page, int size) {
         Pageable pageable = PageRequest.of(page,size);
         return medicalRecordsRepository.findAll(pageable).map(this::mapToDto);
     }
+
+
+    /**
+     * Mapea un MedicalRecordsModel a un MedicalRecordsResponseDto.
+     *
+     * @param medicalRecordsModel el MedicalRecordsModel a mapear
+     * @return un MedicalRecordsResponseDto con los detalles del MedicalRecordsModel
+     */
 
     private MedicalRecordsResponseDto mapToDto(MedicalRecordsModel medicalRecordsModel) {
         return new MedicalRecordsResponseDto(
@@ -150,6 +237,21 @@ public class MedicalRecordsService {
         );
     }
 
+
+    /**
+     * Obtiene el historial clínico filtrado por especialidad, profesional y fecha.
+     *
+     * @param specialty la especialidad
+     * @param professionalName el nombre del profesional
+     * @param date la fecha
+     * @return una lista de MedicalRecordsSummaryDto con los detalles de cada registro
+     *
+     * El DTO incluye:
+     * - ID del registro
+     * - Especialidad del profesional
+     * - Nombre y apellido del profesional
+     * - Fecha de creación del registro
+     */
 
     public List<MedicalRecordsSummaryDto> getFilteredHistory(
             String specialty,

@@ -70,7 +70,6 @@ public class ProfessionalService {
             throw new EmailAlreadyExistsException("El correo " + email + " ya existe en la base de datos.");
         }
 
-        //valida que el dni no este en la base
         if (personRepository.findByDni(dni).isPresent()) {
             throw new DniAlreadyExistsException("El DNI " + dni + " ya está registrado en la base de datos.");
         }
@@ -80,7 +79,6 @@ public class ProfessionalService {
         Set<RoleModel> roleEntities = Set.of(professionalRole);
 
 
-        // Crea la persona con todos los campos nuevos
         PersonModel personEntity = PersonModel.builder()
                 .dni(authCreateUserDto.getDni())
                 .name(authCreateUserDto.getName())
@@ -92,8 +90,6 @@ public class ProfessionalService {
                 .cuil(authCreateUserDto.getCuil())
                 .build();
 
-
-        // Crea el profesional
         ProfessionalModel professionalEntity = ProfessionalModel.builder()
                 .person(personEntity)
                 .licenseNumber(authCreateUserDto.getLicenseNumber())
@@ -101,10 +97,8 @@ public class ProfessionalService {
                 .deleted(false)
                 .build();
 
-        // Guarda el profesional (y con cascade, también guarda la persona)
         professionalRepository.save(professionalEntity);
 
-        // Crea el usuario vinculado a la persona
         UserModel userEntity = UserModel.builder()
                 .email(email)
                 .password(passwordEncoder.encode(password))
@@ -114,7 +108,6 @@ public class ProfessionalService {
 
         UserModel userCreated = userRepository.save(userEntity);
 
-        // Autoridades para JWT
         List<SimpleGrantedAuthority> authoritiesList = new ArrayList<>();
         userCreated.getRoles().forEach(role -> {
             authoritiesList.add(new SimpleGrantedAuthority("ROLE_" + role.getEnumRole().name()));
@@ -148,11 +141,9 @@ public class ProfessionalService {
     public ProfessionalResponseDto getProfessionalById(Long id) {
         Optional<ProfessionalModel> professional = professionalRepository.findById(id);
         if (professional.isEmpty()) {
-            // Lanza la excepción ResourceNotFoundException si no se encuentra el profesional
             throw new ProfessionalNotFoundException("Profesional con ID " + id + " no encontrado.");
         }
 
-        // Llamamos a mapToDto para convertir la entidad en DTO
         return mapToDto(professional.get());
     }
 
@@ -243,7 +234,6 @@ public class ProfessionalService {
         existing.setLicenseNumber(dto.getLicenseNumber());
         existing.setSpecialty(dto.getSpecialty());
 
-        // Setear pacientes
         List<PatientModel> patients = dto.getPatientIds() != null
                 ? patientRepository.findAllById(dto.getPatientIds())
                 : Collections.emptyList();
@@ -280,7 +270,7 @@ public class ProfessionalService {
     public List<PatientResponseDto> getPatientsByProfessionalId(Long professionalId) {
         List<PatientModel> patients = professionalRepository.findPatientsByProfessionalId(professionalId);
             return patients.stream().map(patient -> {
-                PersonModel person = patient.getPerson(); // extraigo la persona
+                PersonModel person = patient.getPerson();
 
                 return PatientResponseDto.builder()
                         .id(patient.getId())
@@ -289,7 +279,7 @@ public class ProfessionalService {
                         .dni(person != null ? person.getDni() : null)
                         .phoneNumber(person != null ? person.getPhoneNumber() : null)
                         .birthDate(person != null ? person.getBirthDate() : null)
-                        .email(null) // lo dejás en null porque no tenés el usuario
+                        .email(null)
                         .hasInsurance(patient.isHasInsurance())
                         .insuranceName(patient.getInsuranceName())
                         .address(patient.getAddress())

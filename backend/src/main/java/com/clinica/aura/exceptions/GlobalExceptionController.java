@@ -179,7 +179,7 @@ public class GlobalExceptionController {
                             .orElse("Violación de restricción");
                     return String.format("%s: %s", path, message);
                 })
-                .sorted(Comparator.comparing(detail -> detail.split(":")[0])) // Ordenar por propiedad
+                .sorted(Comparator.comparing(detail -> detail.split(":")[0]))
                 .toList();
 
         ErrorResponse errorResponse = ErrorResponse.builder()
@@ -438,8 +438,6 @@ public class GlobalExceptionController {
                 .body(errorResponse);
     }
 
-
-    //Maneja Ids no proporcionados
 
     /**
      * Manejador de excepciones para solicitudes con parámetros faltantes.
@@ -976,28 +974,24 @@ public class GlobalExceptionController {
         }
 
         try {
-            // Caso MySQL/MariaDB
             if (errorMessage.contains("Duplicate entry") && errorMessage.contains("for key")) {
                 int start = errorMessage.indexOf("for key '") + 9;
                 int end = errorMessage.indexOf("'", start);
                 return end > start ? "El valor ya existe para: " + errorMessage.substring(start, end) : errorMessage;
             }
 
-            // Caso PostgreSQL
             if (errorMessage.contains("violates unique constraint")) {
                 int start = errorMessage.indexOf("\"") + 1;
                 int end = errorMessage.indexOf("\"", start);
                 return end > start ? "Restricción única violada: " + errorMessage.substring(start, end) : errorMessage;
             }
 
-            // Caso H2
             if (errorMessage.contains("unique constraint violated")) {
                 int start = errorMessage.indexOf(": ") + 2;
                 int end = errorMessage.indexOf(" ", start);
                 return end > start ? "Restricción única: " + errorMessage.substring(start, end) : errorMessage;
             }
 
-            // Caso genérico para otros motores
             return errorMessage.length() > 200 ? errorMessage.substring(0, 200) + "..." : errorMessage;
 
         } catch (Exception e) {
@@ -1014,7 +1008,6 @@ public class GlobalExceptionController {
      */
 
     private String sanitizeConstraintViolation(String detail) {
-        // Sanitizar detalles técnicos para el cliente
         return detail.replaceAll("(Duplicate entry ')(.*?)(' for key)", "$1[REDACTED]$3")
                 .replaceAll("(constraint \\[)(\\w+)(\\])", "$1[REDACTED]$3");
     }
@@ -1041,7 +1034,6 @@ public class GlobalExceptionController {
      * @return el nombre del campo sanitizado
      */
     private String sanitizeFieldName(String fieldName) {
-        // Ofusca campos sensibles en los mensajes de error
         return fieldName.toLowerCase().contains("password") ? "credential" : fieldName;
     }
 

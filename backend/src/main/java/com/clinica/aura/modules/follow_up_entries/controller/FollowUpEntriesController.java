@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-
 @RequestMapping("/follow-up-entries")
 @RequiredArgsConstructor
 @Tag(name = "Follow Up Entries", description = "Entradas de seguimiento")

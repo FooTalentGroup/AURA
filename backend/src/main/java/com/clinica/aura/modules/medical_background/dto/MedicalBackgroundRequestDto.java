@@ -18,13 +18,10 @@ public class MedicalBackgroundRequestDto {
     @NotNull(message = "El ID del paciente no puede ser nulo")
     private Long patientId;
 
-
     @Schema(description = "Lista de alergias del paciente", example = "[\"Polen\", \"Penicilina\"]")
-    //@NotEmpty(message = "Debe especificar al menos una alergia")
     private List<String> allergies;
 
     @Schema(description = "Lista de discapacidades del paciente", example = "[\"Dislexia\"]")
-   // @NotEmpty(message = "Debe especificar al menos una discapacidad")
     private List<String> disabilities;
 
 

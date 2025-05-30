@@ -170,14 +170,19 @@ public class PatientController {
     }
 
 
+    /**
+     * Elimina un paciente como soft delete, pero no lo elimina físicamente de la base de datos.
+     * @param id ID del paciente a eliminar
+     * @return mensaje de confirmación
+     */
     @Operation(
             summary = "Eliminar paciente",
             description = "Marca un paciente como eliminado (soft delete). Se debe ingresar el ID del paciente en el path. El paciente no se elimina físicamente de la base de datos."
     )
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deletePatient(@PathVariable("id") Long id) {
+    public ResponseEntity<Void> deletePatient(@PathVariable("id") Long id) {
         patientService.deletePatient(id);
-        return ResponseEntity.ok("Paciente eliminado correctamente");
+        return ResponseEntity.ok().build();
     }
 
 }

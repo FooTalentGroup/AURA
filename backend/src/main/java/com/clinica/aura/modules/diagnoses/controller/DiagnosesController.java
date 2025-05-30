@@ -93,21 +93,4 @@ public class DiagnosesController {
         return ResponseEntity.status(HttpStatus.OK).body(diagnosesResponseDto);
     }
 
-    /**
-     * Endpoint para eliminar un diagnóstico específico por su ID.
-     * <p>
-     * Elimina el diagnóstico correspondiente al identificador proporcionado.
-     * </p>
-     *
-     * @param id el identificador único del diagnóstico que se desea eliminar
-     * @return una respuesta con código 200 (OK) y un mensaje confirmando la eliminación
-     */
-    @Operation(summary = "Eliminar diagnostico por id", description = "Elimina un diagnostico por id")
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteDiagnosesById(@PathVariable Long id) {
-        diagnosesService.deleteDiagnoses(id);
-        return ResponseEntity.status(HttpStatus.OK).body("Diagnostico eliminado correctamente");
-    }
-
-
 }

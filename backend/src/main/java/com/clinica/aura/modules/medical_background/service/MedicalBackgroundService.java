@@ -70,18 +70,14 @@ public class MedicalBackgroundService {
         ProfessionalModel professional = professionalRepository.findByPerson(user.getPerson())
                 .orElseThrow(() -> new ProfessionalNotFoundException("Profesional no encontrado para el usuario con id: " + user.getPerson().getId()));
 
-        // Crear un nuevo objeto MedicalBackgroundModel y asignar las propiedades del DTO
         MedicalBackgroundModel background = new MedicalBackgroundModel();
         background.setPatient(patient);
         background.setCreatedBy(professional);
         background.setUpdatedBy(professional);
 
-        // Asignar alergias y discapacidades desde el DTO
         background.setAllergies(dto.getAllergies());
         background.setDisabilities(dto.getDisabilities());
 
-
-        // Guardar el modelo de antecedentes médicos
         medicalBackgroundRepository.save(background);
 
         return mapToDto(background);
@@ -149,7 +145,6 @@ public class MedicalBackgroundService {
         ProfessionalModel professional = professionalRepository.findByPerson(user.getPerson())
                 .orElseThrow(() -> new ProfessionalNotFoundException("Profesional no encontrado para el usuario con id: " + user.getPerson().getId()));
 
-        // Actualizamos las alergias y discapacidades
         background.setAllergies(dto.getAllergies());
         background.setDisabilities(dto.getDisabilities());
 
@@ -159,8 +154,6 @@ public class MedicalBackgroundService {
 
         return mapToDto(background);
     }
-
-
 
 
     /**
@@ -180,8 +173,6 @@ public class MedicalBackgroundService {
 
                 .createdAt(model.getCreatedAt())
                 .updatedAt(model.getUpdatedAt())
-
-
 
                 .build();
     }

@@ -69,11 +69,4 @@ public class DiagnosesService {
         return diagnosesMapper.toDiagnosesResponseDto(diagnosesModel);
     }
 
-    @Transactional
-    public void deleteDiagnoses(Long id) {
-        DiagnosesModel diagnosesModel = diagnosesRepository.findById(id)
-                .orElseThrow(() -> new DianosesNotFoundException("No se encontro el diagnostico con id: " + id));
-        diagnosesRepository.delete(diagnosesModel);
-    }
-
 }

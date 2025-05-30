@@ -27,7 +27,6 @@ public class ReceptionistRequestDto {
     @Schema(description = "Contraseña del recepcionista",requiredMode = Schema.RequiredMode.REQUIRED, example = "admin123")
     private String password;
 
-    // Datos de la persona
     @NotBlank(message = "El DNI es obligatorio")
     @Pattern(regexp = "^[1-9]\\d{7}$", message = "El DNI debe tener exactamente 8 dígitos numéricos")
     @Schema(description = "DNI del recepcionista", requiredMode = Schema.RequiredMode.REQUIRED, example = "12345678")
@@ -44,11 +43,6 @@ public class ReceptionistRequestDto {
     @Schema(description = "Número de teléfono del recepcionista", example = "+573001112233")
     private String phoneNumber;
 
-//    @Schema(description = "País de residencia del paciente", example = "Colombia")
-//    private String country; // campo que se pide eliminar 02/05/2025
-//
-//    @Schema(description = "URL de la foto del paciente", example = "https://example.com/foto.jpg")
-//    private String photoUrl; // campo que se pide eliminar 02/05/2025
 
     @NotBlank(message = "La localidad es obligatoria")
     @Schema(description = "Localidad del recepcionista", example = "Bogotá", requiredMode = Schema.RequiredMode.REQUIRED)
@@ -57,7 +51,7 @@ public class ReceptionistRequestDto {
     @NotBlank(message = "La dirección es obligatoria")
     @Schema(description = "Dirección del recepcionista", example = "Calle 1 # 1-1", requiredMode = Schema.RequiredMode.REQUIRED)
     private String address;
-//
+
     @Past(message = "La fecha de nacimiento debe ser anterior a la fecha actual")
     @NotNull(message = "La fecha de nacimiento es obligatoria")
     @Schema(description = "Fecha de nacimiento del recepcionista", example = "1990-05-20", requiredMode = Schema.RequiredMode.REQUIRED)

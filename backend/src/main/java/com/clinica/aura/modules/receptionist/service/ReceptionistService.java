@@ -71,7 +71,6 @@ public class ReceptionistService {
             throw new EmailAlreadyExistsException("El correo " + email + " ya existe en la base de datos.");
         }
 
-        //valida que el dni no este en la base
         if (personRepository.findByDni(dni).isPresent()) {
             throw new DniAlreadyExistsException("El DNI " + dni + " ya está registrado en la base de datos.");
         }
@@ -102,7 +101,6 @@ public class ReceptionistService {
 
         receptionistRepository.save(receptionistModel);
 
-        // Crea el usuario con la persona ya persistida
         UserModel userEntity = UserModel.builder()
                 .email(email)
                 .password(passwordEncoder.encode(password))

@@ -105,24 +105,6 @@ public class MedicalRecordsController {
         return ResponseEntity.ok(service.getMedicalRecordsPage(page, size));
     }
 
-    /**
-     * Endpoint para eliminar un historial clínico.
-     * <p>
-     * Elimina un historial clínico del sistema junto con su usuario, roles y datos personales.
-     * </p>
-     *
-     * @param id el ID del historial clínico que se desea eliminar
-     * @return una respuesta con código 200 (OK) y un mensaje indicando que el historial clínico fue eliminado exitosamente
-     */
-
-    @Operation(summary = "Eliminar un historial",
-            description = "Elimina un historial clinico del sistema junto con su usuario, roles y datos personales.")
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable Long id) {
-        service.delete(id);
-        return ResponseEntity.ok("Historial con el ID "+ id +" eliminado exitosamente.");
-    }
-
 
     /**
      * Endpoint para obtener un listado de historiales clínicos filtrados.

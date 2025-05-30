@@ -19,6 +19,23 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
 
     private final ObjectMapper objectMapper;
 
+
+    /**
+     * Maneja las excepciones de autenticación (HTTP 401).
+     *
+     * @param request la solicitud HTTP que generó el error
+     * @param response la respuesta HTTP para enviar al cliente
+     * @param authException la excepción de autenticación
+     *
+     * La respuesta incluye:
+     * 1. Código de error: "AUTH-401"
+     * 2. Mensaje: "No estás autenticado"
+     * 3. Detalles: "Debes iniciar sesión para acceder a este recurso"
+     * 4. Timestamp: Fecha y hora actual
+     * 5. Path: URL que generó el error
+     *
+     * La respuesta se envía en formato JSON con charset UTF-8 y código HTTP 401 (UNAUTHORIZED)
+     */
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response,
                          AuthenticationException authException) throws IOException {
