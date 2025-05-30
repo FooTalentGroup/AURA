@@ -18,7 +18,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 /**
  * Controlador REST que gestiona las operaciones relacionadas con los pacientes.
  * Proporciona endpoints para registrar, buscar, actualizar y asignar escuelas a pacientes.
@@ -180,9 +183,11 @@ public class PatientController {
             description = "Marca un paciente como eliminado (soft delete). Se debe ingresar el ID del paciente en el path. El paciente no se elimina físicamente de la base de datos."
     )
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePatient(@PathVariable("id") Long id) {
+    public ResponseEntity<Map<String, String>> deletePatient(@PathVariable("id") Long id) {
         patientService.deletePatient(id);
-        return ResponseEntity.ok().build();
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Paciente eliminado correctamente");
+        return ResponseEntity.ok(response);
     }
 
 }
