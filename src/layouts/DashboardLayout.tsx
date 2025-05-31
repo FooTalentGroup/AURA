@@ -29,16 +29,16 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       <header className=" ">
         <div className="w-full px-20 py-4 flex justify-between items-center">
           <div className="flex items-center gap-8">
-            <h1 className="font-bold text-xl text-[#0072C3]">AURA</h1>
+            <h1 className="font-bold text-xl text-[#0072C3] cursor-pointer" onClick={() => navigate("/")}>AURA</h1>
           </div>
 
           <div className="flex items-center relative">
             <ul className="flex items-center gap-4">
-  
               <li>
                 <a
                   href="#"
                   className="text-xl font-semibold w-11 h-11 flex justify-center items-center gap-2 p-3 rounded-full bg-sky-200 hover:bg-sky-300 text-gray-800"
+                  onClick={() => navigate("/profile")}
                 >
                   {state.user?.username?.charAt(0).toUpperCase() || "X"}
                 </a>
