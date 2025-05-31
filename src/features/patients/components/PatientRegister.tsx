@@ -72,6 +72,7 @@ export const PatientRegister: React.FC = () => {
           fields={stepFields[currentStep]}
           values={values}
           onChange={handleChange}
+          onClose={() => history.back()}
           onBack={currentStep > 1 ? handleBack : undefined}
           onNext={
             currentStep === 2
