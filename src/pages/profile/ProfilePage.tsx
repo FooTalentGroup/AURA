@@ -8,11 +8,14 @@ import {
   EditableField,
   UserUpdateData,
 } from "../../features/profile/types/profile.type";
+import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function ProfilePage() {
   const [userData, setUserData] = useState<CurrentUserProps | undefined>(
     undefined
   );
+  const navigate = useNavigate();
 
   const personalFields: EditableField[] = [
     { key: "name", label: "Nombre" },
@@ -92,9 +95,9 @@ function ProfilePage() {
       <section className="bg-white pt-5 pb-12 rounded-2xl">
         <header className="flex justify-between items-center px-6 gap-4 mb-5">
           <h1 className="text-3xl">Perfil</h1>
-          <button>
+          <Link to="#" onClick={() => navigate(-1)} title="Cerrar">
             <CloseIcon />
-          </button>
+          </Link>
         </header>
         <hr className="text-gray-400" />
         <article className="rounded-lg px-6">

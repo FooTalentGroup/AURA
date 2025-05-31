@@ -19,12 +19,72 @@ export const EditableForm = ({
   const [isEditMode, setIsEditMode] = useState(false);
   const [formData, setFormData] = useState<UserUpdateData>(data);
   const [originalData, setOriginalData] = useState<UserUpdateData>(data);
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+
+  const validators: { [key: string]: (value: string) => string | null } = {
+    name: (value) => {
+      if (!value.trim()) return "El nombre es obligatorio";
+      if (!/^[A-Za-zÁÉÍÓÚáéíóúÑñüÜ\s'-]+$/.test(value))
+        return "Solo caracteres válidos";
+      return null;
+    },
+
+    lastName: (value) => {
+      if (!value.trim()) return "El apellido es obligatorio";
+      if (!/^[A-Za-zÁÉÍÓÚáéíóúÑñüÜ\s'-]+$/.test(value))
+        return "Solo caracteres válidos";
+      return null;
+    },
+
+    birthDate: (value) =>
+      !value ? "La fecha de nacimiento es obligatoria" : null,
+
+    dni: (value) => {
+      if (!value) return "El DNI es obligatorio";
+      if (!/^[0-9]{7,8}$/.test(value)) return "El DNI debe tener 7 u 8 números";
+      return null;
+    },
+
+    email: (value) => {
+      if (!value) return "El correo es obligatorio";
+      if (!/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(value))
+        return "Correo inválido";
+      return null;
+    },
+
+    phoneNumber: (value) => {
+      if (!value) return "El teléfono es obligatorio";
+      if (!/^\+?\d{10,15}$/.test(value.replace(/\s/g, "")))
+        return "Teléfono inválido";
+      return null;
+    },
+
+    address: (value) => (!value.trim() ? "La dirección es obligatoria" : null),
+  };
 
   const handleChange = (key: keyof UserUpdateData, value: string) => {
     setFormData({ ...formData, [key]: value });
+    if (validators[key]) {
+      const error = validators[key](value);
+      setErrors((prev) => ({ ...prev, [key]: error || "" }));
+    }
   };
 
   const handleSave = () => {
+    const newErrors: { [key: string]: string } = {};
+
+    fields.forEach((field) => {
+      const value = formData[field.key] || "";
+      if (validators[field.key]) {
+        const error = validators[field.key](value);
+        if (error) newErrors[field.key] = error;
+      }
+    });
+
+    setErrors(newErrors);
+
+    if (Object.keys(newErrors).length > 0) return;
+
     onSave(formData);
     setOriginalData(formData);
     setIsEditMode(false);
@@ -33,6 +93,7 @@ export const EditableForm = ({
   const handleBack = () => {
     setFormData(originalData);
     setIsEditMode(false);
+    setErrors({});
   };
 
   return (
@@ -77,9 +138,26 @@ export const EditableForm = ({
                   <input
                     type={field.type || "text"}
                     value={formData[field.key] || ""}
-                    onChange={(e) => handleChange(field.key, e.target.value)}
-                    className="w-full p-3 border rounded focus:ring-blue-500 focus:border-blue-500 mt-3"
+                    onChange={(e) => {
+                      if (field.key === "dni") {
+                        const val = e.target.value.replace(/[^0-9]/g, "");
+                        handleChange(field.key, val);
+                      } else if (field.key === "phoneNumber") {
+                        const val = e.target.value.replace(/[^0-9+\s]/g, "");
+                        handleChange(field.key, val);
+                      } else {
+                        handleChange(field.key, e.target.value);
+                      }
+                    }}
+                    className={`w-full p-3 border rounded focus:ring-blue-500 focus:border-blue-500 mt-3 ${
+                      errors[field.key] ? "border-red-500" : ""
+                    }`}
                   />
+                  {errors[field.key] && (
+                    <span className="text-red-500 text-xs mt-1 block">
+                      {errors[field.key]}
+                    </span>
+                  )}
                 </div>
               ) : (
                 <div>
