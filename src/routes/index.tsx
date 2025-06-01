@@ -33,7 +33,6 @@ const AppRoutes = () => {
         <Route path="/Pregister" element={<ProfessionalRegister />} />
         <Route path="/Rregister" element={<ReceptionistRegister />} />
         <Route path="/Sregister" element={<PatientRegister />} />
-
       </Route>
 
       <Route element={<AdminRoute />}>

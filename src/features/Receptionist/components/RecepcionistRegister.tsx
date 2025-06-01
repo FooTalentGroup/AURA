@@ -1,33 +1,12 @@
 import React, { useState } from 'react';
 import DashboardLayout from '../../../layouts/DashboardLayout';
-import { RegisterForm, Field } from '../../../components/shared/layouts/RegisterForm';
+import { RegisterForm } from '../../../components/shared/layouts/RegisterForm';
 import { validatePassword, PasswordErrorList } from '../../../core/utils/passwordvalidator';
 import { Modal } from '../../../layouts/Modal';
 import { LoadingResultModal } from '../../../layouts/Modal';
 import { useRegisterReceptionist } from '../hooks/useRegisterReceptionist';
 import type { RegisterReceptionistPayload } from '../../auth/types/auth.types';
-
-// Definición de campos por paso para recepcionista
-const stepFields: Record<number, Field[]> = {
-  1: [
-    { name: 'name', label: 'Nombre', type: 'text' },
-    { name: 'lastName', label: 'Apellido', type: 'text' },
-    { name: 'birthDate', label: 'Fecha de nacimiento', type: 'date' },
-    { name: 'dni', label: 'DNI', type: 'text' },
-  ],
-  2: [
-    { name: 'email', label: 'Correo electrónico', type: 'email' },
-    { name: 'phoneNumber', label: 'Teléfono', type: 'tel' },
-    { name: 'address', label: 'Dirección', type: 'text' },
-    { name: 'locality', label: 'Localidad', type: 'text' },
-  ],
-  3: [
-    { name: 'cuil', label: 'CUIL/CUIT', type: 'text' },
-  ],
-  4: [
-    { name: 'password', label: 'Contraseña', type: 'password' },
-  ],
-};
+import { receptionistStepFields as stepFields } from '../config';
 
 export const ReceptionistRegister: React.FC = () => {
   const totalSteps = 4;

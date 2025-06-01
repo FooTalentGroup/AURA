@@ -1,9 +1,10 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import DashboardLayout from "../../layouts/DashboardLayout";
 import Loader from "../../components/shared/ui/Loader";
 import { ArrowLeftIcon, PlusIcon } from "../../components/shared/ui/Icons";
 import RegisterClinicalRecordModal from "../../features/patientTabs/components/ClinicalObservationModal";
+import RegisterBackgroundModal from "../../features/patientTabs/components/RegisterBackgroundModal";
 import ClinicalHistoryTab from "../../features/patientTabs/components/ClinicalHistoryTab";
 import PatientInfoTab from "../../features/patientTabs/components/PatientInfoTab";
 import ContactTab from "../../features/patientTabs/components/ContactTab";
@@ -11,8 +12,8 @@ import DiagnosticTab from "../../features/patientTabs/components/DiagnosticTab";
 import MedicalBackgroundTab from "../../features/patientTabs/components/MedicalBackgroundTab";
 import {
   AppointmentProps,
+  ExtendedPatientDiagnosesProps,
   FollowEntriesProps,
-  PatientDiagnosesProps,
   PatientNotesInfo,
   PatientProps,
   SchoolProps,
@@ -30,53 +31,90 @@ export default function PatientTabsPage() {
   const [activeTab, setActiveTab] = useState<TabId>("paciente");
   const [patient, setPatient] = useState<PatientProps | null>(null);
   const [school, setSchool] = useState<SchoolProps | null>(null);
-  const [diagnoses, setDiagnoses] = useState<PatientDiagnosesProps | null>(
-    null
-  );
+  const [diagnoses, setDiagnoses] =
+    useState<ExtendedPatientDiagnosesProps | null>(null);
   const [followEntries, setFollowEntries] = useState<FollowEntriesProps | null>(
     null
   );
   const [appointments, setAppointments] = useState<AppointmentProps[]>([]);
   const [backgrounds, setBackgrounds] = useState<PatientNotesInfo | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isBackgroundModalOpen, setIsBackgroundModalOpen] = useState(false);
+  const [appointmentId, setAppointmentId] = useState<number | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const appointmentsLoadedRef = useRef(false);
 
   // --- Fetch all patient-related data ---
   const fetchPatient = useCallback(async () => {
     if (!patientID) return;
+    setIsLoading(true);
     try {
-      // 1) Paciente
+      //  Paciente
       const p = await api.getPatientById(patientID);
       setPatient(p);
 
-      // 2) Escuela
+      //  Escuela
       const schools = await api.listSchoolsPaginated();
       setSchool(schools.content.find((s) => s.id === p.schoolId) || null);
 
-      // 3) Medical Record → citas (appointments) y follow entries
+      //  Medical Record → citas (appointments) y follow entries
       let record;
       try {
         record = await api.getMedicalRecordByPatientId(patientID);
       } catch {
         console.warn(`Sin historial médico para patient ${patientID}`);
       }
+
       if (record) {
         // Turnos asociados a la historia
-        const appts = await api.getMedicalRecordFilter(); // o bien api.getAppointmentsByMedicalRecordId(record.id) si lo tienes
-        setAppointments(appts);
-
-        // Follow-up entries
         try {
-          const fe = await api.getFollowEntriesById(record.id);
-          setFollowEntries(fe);
-        } catch {
-          console.warn(`Sin follow entries para record ${record.id}`);
+          const appts = await api.getMedicalRecordFilter(); // o bien api.getAppointmentsByMedicalRecordId(record.id) si lo tienes
+          setAppointments(appts);
+          if (!appointmentsLoadedRef.current) {
+            setAppointmentId(appts[0].id);
+            appointmentsLoadedRef.current = true;
+          }
+        } catch (err) {
+          console.error("Error al obtener turnos asociados:", err);
+        }
+
+        // Follow-up-entries por paginación
+        try {
+          const followEntriesContent = (await api.listFollowEntriesPaginated())
+            .content;
+          const followEntryByAppointmentId = followEntriesContent.find(
+            (entry) => entry.medicalRecordId === appointmentId
+          );
+          setFollowEntries(followEntryByAppointmentId || null);
+        } catch (error) {
+          console.warn(
+            `No se encontraron observaciones para este medical Record`,
+            error
+          );
         }
 
         // Diagnósticos del paciente (tomando el primer diagnosisId)
         if (record.diagnosisIds?.length) {
           try {
             const diag = await api.getDiagnosesById(record.diagnosisIds[0]);
-            setDiagnoses(diag);
+
+            try {
+              const professional = await api.getProfessionalById(
+                diag.idProfessional
+              );
+
+              const extendedDiag: ExtendedPatientDiagnosesProps = {
+                ...diag,
+                professionalName: professional.name,
+                professionalLastName: professional.lastName,
+              };
+
+              setDiagnoses(extendedDiag);
+            } catch {
+              console.warn(
+                `No se encontró el profesional con id: ${diag.idProfessional}`
+              );
+            }
           } catch {
             console.warn(
               `Sin diagnósticos para diagnosisId ${record.diagnosisIds[0]}`
@@ -94,24 +132,29 @@ export default function PatientTabsPage() {
       }
     } catch (err) {
       console.error("Error al cargar datos del paciente:", err);
+    } finally {
+      setIsLoading(false);
     }
-  }, [patientID]);
+  }, [patientID, appointmentId]);
 
   // Carga inicial y recarga cuando cambie patientID
   useEffect(() => {
     fetchPatient();
   }, [fetchPatient]);
 
-  // Al crear un nuevo registro clínico en el modal
+  // Al crear un nuevo registro clínico, recarga los datos del paciente y cierra el modal
   const handleSuccess = () => {
     fetchPatient();
     setIsModalOpen(false);
   };
 
+  const handleSetAppointmentId = (id: number) => {
+    setAppointmentId(id);
+  };
+
   return (
     <DashboardLayout>
       <section className="bg-white rounded-2xl shadow-sm">
-        {/* Header */}
         <div className="p-4 border-b-2 border-gray-300/90 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Link to="#" onClick={() => navigate(-1)} title="Atrás">
@@ -132,7 +175,6 @@ export default function PatientTabsPage() {
             )}
           </div>
 
-          {/* Botón + Agregar registro */}
           <button
             onClick={() => setIsModalOpen(true)}
             className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700"
@@ -141,14 +183,12 @@ export default function PatientTabsPage() {
           </button>
         </div>
 
-        {/* Contenido */}
         {!patient ? (
           <div className="flex justify-center items-center h-96">
             <Loader />
           </div>
         ) : (
           <>
-            {/* Pestañas */}
             <header className="mt-4 px-6">
               <nav className="flex">
                 {tabs.map((tab) => (
@@ -167,7 +207,6 @@ export default function PatientTabsPage() {
               </nav>
             </header>
 
-            {/* Tab content */}
             <main className="px-6 pb-6">
               {activeTab === "paciente" && (
                 <PatientInfoTab
@@ -186,21 +225,62 @@ export default function PatientTabsPage() {
               {activeTab === "diagnostico" && (
                 <DiagnosticTab
                   diagnoses={diagnoses!}
-                  onUpdate={(updated) => setDiagnoses(updated)}
+                  onUpdate={(updatedDiagnosis) => {
+                    setDiagnoses((prev) =>
+                      prev ? { ...prev, ...updatedDiagnosis } : null
+                    );
+                  }}
                 />
               )}
-              {activeTab === "historial" && (
-                <ClinicalHistoryTab
-                  medicalFilters={appointments}
-                  followEntries={followEntries!}
-                />
-              )}
-              {activeTab === "antecedentes" &&
-                (backgrounds ? (
-                  <MedicalBackgroundTab medicalBackgrounds={backgrounds} />
+              {activeTab === "historial" &&
+                (appointments && followEntries ? (
+                  <ClinicalHistoryTab
+                    medicalFilters={appointments}
+                    followEntries={followEntries!}
+                    onSetAppointmentId={handleSetAppointmentId}
+                    isLoading={isLoading}
+                  />
                 ) : (
-                  <div>No se encontraron antecedentes</div>
+                  <div className="bg-gray-200/60 p-4 rounded-2xl">
+                    <p className="text-lg bg-white p-4 rounded-xl w-xl">
+                      No se encontró historial clínico para este paciente.
+                    </p>
+                  </div>
                 ))}
+              {activeTab === "antecedentes" && (
+                <div className="relative">
+                  {/* Contenido de antecedentes */}
+                  {backgrounds ? (
+                    <MedicalBackgroundTab medicalBackgrounds={backgrounds} />
+                  ) : (
+                    <div className="bg-gray-200/60 p-4 rounded-2xl">
+                      <p className="text-lg bg-white p-4 rounded-xl w-xl">
+                        No se encontraron antecedentes para este paciente.
+                      </p>
+                    </div>
+                  )}
+                  {/* Botón + en la esquina inferior derecha, pero dentro del área de antecedentes */}
+                  <div className="absolute bottom-6 right-6">
+                    <button
+                      onClick={() => setIsBackgroundModalOpen(true)}
+                      className="rounded-[14px] w-14 h-14 flex items-center justify-center shadow-lg bg-[#D0E2FF] hover:bg-[#b3d0f7] transition-colors border border-[#B6C6E6]"
+                      title="Agregar antecedente"
+                      style={{ boxShadow: '0 4px 16px 0 rgba(0, 67, 206, 0.10)' }}
+                    >
+                      <PlusIcon className="w-7 h-7" stroke="#0043CE" />
+                    </button>
+                  </div>
+                  <RegisterBackgroundModal
+                    isOpen={isBackgroundModalOpen}
+                    onClose={() => setIsBackgroundModalOpen(false)}
+                    onSuccess={() => {
+                      setIsBackgroundModalOpen(false);
+                      fetchPatient();
+                    }}
+                    patientId={patientID}
+                  />
+                </div>
+              )}
             </main>
           </>
         )}

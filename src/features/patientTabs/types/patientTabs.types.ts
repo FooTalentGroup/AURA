@@ -109,6 +109,7 @@ export interface PatientDiagnosesProps {
 }
 
 export interface AppointmentProps {
+  id: number;
   specialty: string;
   professionalName: string;
   createdAt: string;
@@ -116,12 +117,12 @@ export interface AppointmentProps {
 
 export interface AppointmentTableProps {
   appointments?: AppointmentProps[];
+  onSetAppointmentId: (id: number) => void;
 }
 
 export interface PatientNotesInfo {
   id: number;
   patientId: number;
-  schoolReports: string;
   allergies: string[];
   disabilities: string[];
   createdAt: string;
@@ -158,6 +159,8 @@ export interface MedicalBackgroundTabProps {
 export interface ClinicalHistoryTabProps {
   medicalFilters?: AppointmentProps[];
   followEntries?: FollowEntriesProps;
+  onSetAppointmentId: (id: number) => void;
+  isLoading: boolean;
 }
 
 export const tabs: TabItem[] = [
@@ -167,3 +170,47 @@ export const tabs: TabItem[] = [
   { id: "historial", label: "Historial clínico" },
   { id: "antecedentes", label: "Antecedentes" },
 ];
+
+export interface ExtendedPatientDiagnosesProps extends PatientDiagnosesProps {
+  professionalName: string;
+  professionalLastName: string;
+}
+
+export type EditableDiagnosis = updatedDiagnosis & {
+  date: string;
+  details: string;
+};
+
+export interface DiagnosticTabEditableProps extends DiagnosticTabProps {
+  diagnoses: ExtendedPatientDiagnosesProps;
+  onUpdate: (updated: PatientDiagnosesProps) => void;
+}
+
+interface Sort {
+  empty: boolean;
+  unsorted: boolean;
+  sorted: boolean;
+}
+
+interface Pageable {
+  pageNumber: number;
+  pageSize: number;
+  sort: Sort;
+  offset: number;
+  unpaged: boolean;
+  paged: boolean;
+}
+
+export interface PaginatedFollowUpEntries {
+  content: FollowEntriesProps[];
+  pageable: Pageable;
+  totalPages: number;
+  totalElements: number;
+  last: boolean;
+  size: number;
+  number: number;
+  sort: Sort;
+  numberOfElements: number;
+  first: boolean;
+  empty: boolean;
+}

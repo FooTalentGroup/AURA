@@ -1,17 +1,25 @@
 import { useState, FC } from "react";
 import { AppointmentTableProps } from "../types/patientTabs.types";
-import { formatDate, getSpecialtyBackgroundColor } from "../utils/utils";
+import { formatDate, getSpecialtyColors } from "../utils/utils";
 
-const AppointmentTable: FC<AppointmentTableProps> = ({ appointments }) => {
+const AppointmentTable: FC<AppointmentTableProps> = ({
+  appointments,
+  onSetAppointmentId,
+}) => {
   const [filters, setFilters] = useState({
     date: "",
     specialty: "",
     professional: "",
   });
+  const [selectedOption, setSelectedOption] = useState(0);
+
+  const handleClick = (index: number, id: number) => {
+    onSetAppointmentId(id);
+    setSelectedOption(index);
+  };
 
   return (
     <div className="bg-white mx-auto py-4 rounded-xl">
-      {/* Filtros */}
       <div className="flex flex-nowrap gap-2 mb-6 px-4">
         <div className="relative">
           <select
@@ -20,7 +28,6 @@ const AppointmentTable: FC<AppointmentTableProps> = ({ appointments }) => {
             onChange={(e) => setFilters({ ...filters, date: e.target.value })}
           >
             <option value="">Fecha</option>
-            {/* Opciones de fechas únicas desde los datos */}
             {[...new Set(appointments?.map((app) => app.createdAt))].map(
               (date) => (
                 <option key={date} value={date}>
@@ -49,7 +56,6 @@ const AppointmentTable: FC<AppointmentTableProps> = ({ appointments }) => {
             }
           >
             <option value="">Especialidad</option>
-            {/* Opciones de especialidades únicas desde los datos */}
             {[...new Set(appointments?.map((app) => app.specialty))].map(
               (specialty) => (
                 <option key={specialty} value={specialty}>
@@ -78,7 +84,6 @@ const AppointmentTable: FC<AppointmentTableProps> = ({ appointments }) => {
             }
           >
             <option value="">Profesional</option>
-            {/* Opciones de profesionales únicos desde los datos */}
             {[...new Set(appointments?.map((app) => app.professionalName))].map(
               (professional) => (
                 <option key={professional} value={professional}>
@@ -101,9 +106,9 @@ const AppointmentTable: FC<AppointmentTableProps> = ({ appointments }) => {
 
       <hr className="w-full mb-6 text-gray-400" />
 
-      {/* Lista de citas */}
       <div className="text-sm rounded-lg overflow-hidden px-4">
-        {appointments?.filter((app) => {
+        {appointments
+          ?.filter((app) => {
             return (
               (filters.date === "" || app.createdAt === filters.date) &&
               (filters.specialty === "" ||
@@ -115,12 +120,15 @@ const AppointmentTable: FC<AppointmentTableProps> = ({ appointments }) => {
           .map((appointment, index) => (
             <div
               key={index}
-              className={`flex items-center p-4 ${
-                index === 0 ? "border rounded-2xl" : ""
+              onClick={() => handleClick(index, appointment.id)}
+              className={`flex items-center p-4 cursor-pointer border-2  hover:bg-gray-50 rounded-xl my-2 ${
+                index === selectedOption
+                  ? "border-2 border-[#0072c3] hover:bg-white"
+                  : "border-transparent"
               }`}
             >
               <div className="flex-shrink-0 w-6 h-6 flex items-center justify-center">
-                {index === 0 ? (
+                {index === selectedOption ? (
                   <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
                 ) : (
                   <div className="w-3 h-3 bg-gray-300 rounded-full"></div>
@@ -130,7 +138,7 @@ const AppointmentTable: FC<AppointmentTableProps> = ({ appointments }) => {
                 {formatDate(appointment.createdAt)}
               </div>
               <div
-                className={`w-40 px-4 py-1 rounded-md ${getSpecialtyBackgroundColor(
+                className={`font-semibold w-44 px-4 py-2 rounded-sm ${getSpecialtyColors(
                   appointment.specialty
                 )}`}
               >

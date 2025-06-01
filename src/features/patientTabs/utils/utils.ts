@@ -20,12 +20,19 @@ export const formatDate = (dateString: string) => {
   return `${day} ${month} ${year}`;
 };
 
-export const getSpecialtyBackgroundColor = (specialty: string) => {
+export const getSpecialtyColors = (specialty: string) => {
   const lowerCaseSpecialty = specialty.toLowerCase();
-  if (lowerCaseSpecialty === "medicina") {
-    return "bg-orange-100";
-  } else if (lowerCaseSpecialty === "psicóloga") {
-    return "bg-purple-100";
+
+  switch (lowerCaseSpecialty) {
+    case "fonoaudiología":
+      return "bg-[#fff2e8] text-[#8a3800]";
+    case "psicología":
+      return "bg-[#edf5ff] text-[#0043ce]";
+    case "psicopedagogía":
+      return "bg-[#f6f2ff] text-[#6929c4]";
+    case "terapia ocupacional":
+      return "bg-[#d9fbfb] text-[#005d5d]";
+    default:
+      return "bg-gray-100";
   }
-  return "bg-gray-100";
 };

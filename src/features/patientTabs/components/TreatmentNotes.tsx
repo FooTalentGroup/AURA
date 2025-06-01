@@ -3,16 +3,10 @@ import { TreatmentNotesProps } from "../types/patientTabs.types";
 import TabButton from "./TabButton";
 
 const TreatmentNotes: FC<TreatmentNotesProps> = ({ patientNotesInfo }) => {
-  const [activeTab, setActiveTab] = useState<string>("schoolReports");
+  const [activeTab, setActiveTab] = useState<string>("allergies");
 
   const renderContent = () => {
     switch (activeTab) {
-      case "schoolReports":
-        return (
-          <div className="p-6">
-            <p className="text-gray-700">{patientNotesInfo.schoolReports}</p>
-          </div>
-        );
       case "allergies":
         return (
           <div className="p-6">
@@ -54,13 +48,7 @@ const TreatmentNotes: FC<TreatmentNotesProps> = ({ patientNotesInfo }) => {
 
   return (
     <div className="w-full mx-auto my-4 flex">
-      {/* Panel izquierdo de pestañas */}
       <div className="flex flex-col gap-2 w-2/5 bg-white rounded-lg overflow-hidden p-4">
-        <TabButton
-          label="Informes escolares"
-          isActive={activeTab === "schoolReports"}
-          onClick={() => setActiveTab("schoolReports")}
-        />
         <TabButton
           label="Alergias"
           isActive={activeTab === "allergies"}
@@ -73,7 +61,6 @@ const TreatmentNotes: FC<TreatmentNotesProps> = ({ patientNotesInfo }) => {
         />
       </div>
 
-      {/* Panel derecho */}
       <div className="w-2/3 bg-white rounded-lg ml-4">{renderContent()}</div>
     </div>
   );

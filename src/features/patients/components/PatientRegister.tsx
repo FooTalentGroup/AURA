@@ -2,57 +2,11 @@ import React, { useState } from "react";
 import DashboardLayout from "../../../layouts/DashboardLayout";
 import {
   RegisterForm,
-  Field,
 } from "../../../components/shared/layouts/RegisterForm";
 import { Modal, LoadingResultModal } from "../../../layouts/Modal";
 import { useRegisterPatient } from "../hooks/useRegisterPatient";
 import type { PatientPayload } from "../types/patient.types";
-
-// Campos por paso
-const stepFields: Record<number, Field[]> = {
-  1: [
-    { name: "name", label: "Nombre", type: "text" },
-    { name: "lastName", label: "Apellido", type: "text" },
-    { name: "birthDate", label: "Fecha de nacimiento", type: "date" },
-    { name: "dni", label: "DNI", type: "text" },
-    {
-      name: "genre",
-      label: "Sexo",
-      type: "select",
-      options: [
-        { value: "masculino", label: "Masculino" },
-        { value: "femenino", label: "Femenino" },
-        { value: "otro", label: "Otro" },
-      ],
-    },
-  ],
-  2: [
-    { name: "insuranceName", label: "Nombre", type: "text" },
-    { name: "insurancePlan", label: "Plan", type: "text" },
-    { name: "memberShipNumber", label: "Nro afiliado", type: "text" },
-  ],
-  3: [
-    { name: "tutorName", label: "Nombre del tutor", type: "text" },
-    {
-      name: "relationToPatient",
-      label: "Relacion",
-      type: "select",
-      options: [
-        { value: "padre", label: "Padre" },
-        { value: "Madre", label: "Madre" },
-        { value: "tutor", label: "Tutor" },
-      ],
-    },
-    { name: "phoneNumber", label: "Teléfono", type: "tel" },
-    { name: "email", label: "Correo Electrónico", type: "email" },
-    { name: "address", label: "Dirección", type: "text" },
-  ],
-  4: [
-    { name: "schoolName", label: "Nombre institución", type: "text" },
-    { name: "emailSchool", label: "Email institución", type: "email" },
-    { name: "phoneSchool", label: "Teléfono institución", type: "text" },
-  ],
-};
+import { patientStepFields as stepFields } from "../config";
 
 export const PatientRegister: React.FC = () => {
   const totalSteps = 4;
@@ -79,7 +33,6 @@ export const PatientRegister: React.FC = () => {
   const handleNext = () => setCurrentStep((s) => Math.min(s + 1, totalSteps));
   const handleBack = () => setCurrentStep((s) => Math.max(s - 1, 1));
 
-  // Skip insurance
   const skipInsurance = () => {
     setValues((prev) => ({
       ...prev,
@@ -95,7 +48,7 @@ export const PatientRegister: React.FC = () => {
     "Datos personales",
     "Obra Social",
     "Tutor",
-    "Datos de la institución (Opcional)",
+    "Datos de la institución",
   ];
 
   const handleSubmit = async () => {
@@ -119,6 +72,7 @@ export const PatientRegister: React.FC = () => {
           fields={stepFields[currentStep]}
           values={values}
           onChange={handleChange}
+          onClose={() => history.back()}
           onBack={currentStep > 1 ? handleBack : undefined}
           onNext={
             currentStep === 2

@@ -17,8 +17,8 @@ const config: Config = {
         },
       },
       fontFamily: {
-    sans: ['Urbanist', 'sans-serif'],
-  },
+        sans: ["Urbanist", "sans-serif"],
+      },
       borderRadius: {
         card: "12px",
         sm: "4px",

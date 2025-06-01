@@ -1,4 +1,4 @@
-import { request } from "../../../core/services/api"; // asegurate de tener el helper
+import { request } from "../../../core/services/api";
 import { Admin } from "../../auth/types/auth.types";
 
 export const getAdmin = () =>

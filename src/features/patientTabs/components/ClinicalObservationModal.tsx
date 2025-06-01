@@ -6,7 +6,7 @@ import { api } from "../../../core/services/api";
 interface Props {
   isOpen: boolean;
   onClose: () => void;
-    onSuccess: () => void;
+  onSuccess: () => void;
   patientId: number;
 }
 
@@ -16,11 +16,14 @@ export default function RegisterClinicalRecordModal({
   onSuccess,
   patientId,
 }: Props) {
-  // 1) Datos del profesional
-  const { professional, loading: loadingProf, error: errorProf } =
-    useProfessionalData();
+  //  Datos del profesional
+  const {
+    professional,
+    loading: loadingProf,
+    error: errorProf,
+  } = useProfessionalData();
 
-  // 2) Datos de la historia clínica
+  //  Datos de la historia clínica
   const [medicalRecordId, setMedicalRecordId] = useState<number | null>(null);
   const [loadingRecord, setLoadingRecord] = useState(false);
   const [errorRecord, setErrorRecord] = useState<string | null>(null);
@@ -35,15 +38,32 @@ export default function RegisterClinicalRecordModal({
       .then((record) => {
         setMedicalRecordId(record.id);
       })
-      .catch((err) => {
-        setErrorRecord(err.message || "No se pudo cargar la historia clínica");
+      .catch(async (err) => {
+        // Si el error es 404, crear la historia clínica
+        if (err.message && err.message.includes("404")) {
+          try {
+            const newRecord = await api.createMedicalRecord({
+              patientId,
+              notes: "",
+              allergies: "",
+              previousConditions: "",
+            });
+            setMedicalRecordId(newRecord.id);
+          } catch (createErr) {
+            let msg = "No se pudo crear la historia clínica";
+            if (createErr instanceof Error) msg = createErr.message;
+            setErrorRecord(msg);
+          }
+        } else {
+          setErrorRecord(err.message || "No se pudo cargar la historia clínica");
+        }
       })
       .finally(() => {
         setLoadingRecord(false);
       });
   }, [isOpen, patientId]);
 
-  // 3) Formulario y envío
+  //  Formulario y envío
   const [observations, setObservations] = useState("");
   const [interventions, setInterventions] = useState("");
   const [indications, setIndications] = useState("");
@@ -65,15 +85,19 @@ export default function RegisterClinicalRecordModal({
         interventions,
         nextSessionInstructions: indications,
       });
-     onSuccess();
-    } catch (err: any) {
-      setSubmitError(err.message || "Error al guardar el registro clínico");
+      onSuccess();
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setSubmitError(err.message || "Error al guardar el registro clínico");
+      } else {
+        setSubmitError("Error desconocido");
+      }
     } finally {
       setSubmitting(false);
     }
   };
 
-  // 4) Render de loaders/errores
+  //  Render de loaders/errores
   if (loadingProf || loadingRecord) {
     return (
       <Modal isOpen={isOpen} onClose={onClose}>
@@ -92,7 +116,7 @@ export default function RegisterClinicalRecordModal({
     );
   }
 
-  // 5) Render principal
+  //  Render principal
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <h2 className="text-xl font-semibold mb-4">Nuevo registro clínico</h2>
@@ -101,8 +125,7 @@ export default function RegisterClinicalRecordModal({
         <strong>
           {professional.name} {professional.lastName}
         </strong>{" "}
-        | Especialidad:{" "}
-        <strong>{professional.specialty}</strong>
+        | Especialidad: <strong>{professional.specialty}</strong>
       </p>
 
       <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
@@ -139,9 +162,7 @@ export default function RegisterClinicalRecordModal({
           />
         </label>
 
-        {submitError && (
-          <p className="text-red-600 text-sm">{submitError}</p>
-        )}
+        {submitError && <p className="text-red-600 text-sm">{submitError}</p>}
 
         <div className="flex justify-end gap-3 mt-2">
           <button
