@@ -68,9 +68,6 @@ export interface MedicalRecord {
 
 export interface MedicalRecordPayload {
   patientId: number;
-  notes: string;
-  allergies: string;
-  previousConditions: string;
 }
 
 export interface Paginated<T> {
@@ -101,10 +98,13 @@ export async function request<T>(
     headers,
   });
 
+  // Si no es status 2xx, extraigo el status y el mensaje
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
     const message = errorData.message || response.statusText;
-    throw new Error(message);
+    const err = new Error(message) as Error & { status?: number };
+    err.status = response.status; // agrego la propiedad status
+    throw err;
   }
 
   if (response.status === 204) {
