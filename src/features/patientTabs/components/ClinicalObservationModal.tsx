@@ -29,7 +29,7 @@ export default function RegisterClinicalRecordModal({
   const [errorRecord, setErrorRecord] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen || !professional) return;
     setLoadingRecord(true);
     setErrorRecord(null);
 
@@ -39,29 +39,35 @@ export default function RegisterClinicalRecordModal({
         setMedicalRecordId(record.id);
       })
       .catch(async (err) => {
-        // Si el error es 404, crear la historia clínica
-        if (err.message && err.message.includes("404")) {
+        // Mejor manejo del error para detectar 404
+        const is404 =
+          err?.response?.status === 404 ||
+          err?.status === 404 ||
+          (err.message && err.message.toLowerCase().includes("404"));
+
+        if (is404) {
           try {
             const newRecord = await api.createMedicalRecord({
               patientId,
-              notes: "",
-              allergies: "",
-              previousConditions: "",
             });
             setMedicalRecordId(newRecord.id);
           } catch (createErr) {
+            console.error("Error al crear historia clínica:", createErr);
             let msg = "No se pudo crear la historia clínica";
             if (createErr instanceof Error) msg = createErr.message;
             setErrorRecord(msg);
           }
         } else {
-          setErrorRecord(err.message || "No se pudo cargar la historia clínica");
+          console.error("Error al cargar historia clínica:", err);
+          let msg = "No se pudo cargar la historia clínica";
+          if (err instanceof Error && err.message) msg = err.message;
+          setErrorRecord(msg);
         }
       })
       .finally(() => {
         setLoadingRecord(false);
       });
-  }, [isOpen, patientId]);
+  }, [isOpen, patientId, professional]);
 
   //  Formulario y envío
   const [observations, setObservations] = useState("");
