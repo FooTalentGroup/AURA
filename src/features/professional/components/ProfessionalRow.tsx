@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { RxDotsVertical } from "react-icons/rx";
 import { Modal } from "../../../layouts/Modal";
 import { Professional } from "../types/Professional.types";
+import { getSpecialtyColors } from "../../patientTabs/utils/utils";
 
 interface Props {
   professional: Professional;
@@ -43,19 +44,22 @@ export const ProfessionalRow: React.FC<Props> = ({
 
   return (
     <>
-      <div className=" grid grid-cols-[2fr_1fr_1fr_1fr_1fr_auto] items-center bg-white rounded-xl shadow-sm px-4 py-3 mb-3">
+      <div className=" grid grid-cols-[2fr_1fr_1fr_1fr_1fr_1fr] items-center bg-white rounded-xl shadow-sm px-4 py-3 mb-3">
         {/* Avatar e info básica */}
         <div className="flex items-center space-x-4">
-          <div className="w-10 h-10 rounded-full bg-green-100 text-green-700 flex items-center justify-center font-bold">
-            {getInitial(professional.name)}
+          <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold ${getSpecialtyColors(professional.specialty)}`}>
+            {getInitial(professional.name) + getInitial(professional.lastName)}
           </div>
           <div>
             <div className="font-medium text-gray-800">
               {professional.name} {professional.lastName}
             </div>
-            <div className="text-xs text-gray-400">
+            <button
+              className={`text-xs px-2 py-1 rounded-lg font-semibold cursor-pointer border-0 ${getSpecialtyColors(professional.specialty)}`}
+              type="button"
+            >
               {professional.specialty}
-            </div>
+            </button>
           </div>
         </div>
 

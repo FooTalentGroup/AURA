@@ -326,4 +326,18 @@ export const api = {
       method: "POST",
       body: JSON.stringify(data),
     }),
+  createMedicalBackground: (data: {
+    patientId: number;
+    allergies: string[];
+    disabilities: string[];
+  }) =>
+    request<PatientNotesInfo>(`/medical-backgrounds`, {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+  updateMedicalBackgroundById: (id: number, data: { patientId: number; allergies: string[]; disabilities: string[] }) =>
+    request<PatientNotesInfo>(`/medical-backgrounds/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(data),
+    }),
 };

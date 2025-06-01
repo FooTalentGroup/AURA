@@ -38,8 +38,25 @@ export default function RegisterClinicalRecordModal({
       .then((record) => {
         setMedicalRecordId(record.id);
       })
-      .catch((err) => {
-        setErrorRecord(err.message || "No se pudo cargar la historia clínica");
+      .catch(async (err) => {
+        // Si el error es 404, crear la historia clínica
+        if (err.message && err.message.includes("404")) {
+          try {
+            const newRecord = await api.createMedicalRecord({
+              patientId,
+              notes: "",
+              allergies: "",
+              previousConditions: "",
+            });
+            setMedicalRecordId(newRecord.id);
+          } catch (createErr) {
+            let msg = "No se pudo crear la historia clínica";
+            if (createErr instanceof Error) msg = createErr.message;
+            setErrorRecord(msg);
+          }
+        } else {
+          setErrorRecord(err.message || "No se pudo cargar la historia clínica");
+        }
       })
       .finally(() => {
         setLoadingRecord(false);

@@ -4,6 +4,7 @@ import DashboardLayout from "../../layouts/DashboardLayout";
 import Loader from "../../components/shared/ui/Loader";
 import { ArrowLeftIcon, PlusIcon } from "../../components/shared/ui/Icons";
 import RegisterClinicalRecordModal from "../../features/patientTabs/components/ClinicalObservationModal";
+import RegisterBackgroundModal from "../../features/patientTabs/components/RegisterBackgroundModal";
 import ClinicalHistoryTab from "../../features/patientTabs/components/ClinicalHistoryTab";
 import PatientInfoTab from "../../features/patientTabs/components/PatientInfoTab";
 import ContactTab from "../../features/patientTabs/components/ContactTab";
@@ -38,6 +39,7 @@ export default function PatientTabsPage() {
   const [appointments, setAppointments] = useState<AppointmentProps[]>([]);
   const [backgrounds, setBackgrounds] = useState<PatientNotesInfo | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isBackgroundModalOpen, setIsBackgroundModalOpen] = useState(false);
   const [appointmentId, setAppointmentId] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const appointmentsLoadedRef = useRef(false);
@@ -245,16 +247,40 @@ export default function PatientTabsPage() {
                     </p>
                   </div>
                 ))}
-              {activeTab === "antecedentes" &&
-                (backgrounds ? (
-                  <MedicalBackgroundTab medicalBackgrounds={backgrounds} />
-                ) : (
-                  <div className="bg-gray-200/60 p-4 rounded-2xl">
-                    <p className="text-lg bg-white p-4 rounded-xl w-xl">
-                      No se encontraron antecedentes para este paciente.
-                    </p>
+              {activeTab === "antecedentes" && (
+                <div className="relative">
+                  {/* Contenido de antecedentes */}
+                  {backgrounds ? (
+                    <MedicalBackgroundTab medicalBackgrounds={backgrounds} />
+                  ) : (
+                    <div className="bg-gray-200/60 p-4 rounded-2xl">
+                      <p className="text-lg bg-white p-4 rounded-xl w-xl">
+                        No se encontraron antecedentes para este paciente.
+                      </p>
+                    </div>
+                  )}
+                  {/* Botón + en la esquina inferior derecha, pero dentro del área de antecedentes */}
+                  <div className="absolute bottom-6 right-6">
+                    <button
+                      onClick={() => setIsBackgroundModalOpen(true)}
+                      className="rounded-[14px] w-14 h-14 flex items-center justify-center shadow-lg bg-[#D0E2FF] hover:bg-[#b3d0f7] transition-colors border border-[#B6C6E6]"
+                      title="Agregar antecedente"
+                      style={{ boxShadow: '0 4px 16px 0 rgba(0, 67, 206, 0.10)' }}
+                    >
+                      <PlusIcon className="w-7 h-7" stroke="#0043CE" />
+                    </button>
                   </div>
-                ))}
+                  <RegisterBackgroundModal
+                    isOpen={isBackgroundModalOpen}
+                    onClose={() => setIsBackgroundModalOpen(false)}
+                    onSuccess={() => {
+                      setIsBackgroundModalOpen(false);
+                      fetchPatient();
+                    }}
+                    patientId={patientID}
+                  />
+                </div>
+              )}
             </main>
           </>
         )}

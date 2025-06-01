@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { useProfessionals } from "../../features/professional/hooks/useProfessionals";
 import { ProfessionalRow } from "../../features/professional/components/ProfessionalRow";
 import { PageContainer } from "../../components/shared/layouts/PageContainer";
@@ -20,22 +20,31 @@ const ProfessionalPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleAdd = () => {
-       setIsModalOpen(true);
-   };
-    const closeModal = () => {
+    setIsModalOpen(true);
+  };
+  const closeModal = () => {
     setIsModalOpen(false);
   };
 
-    const chooseType = (type: "administrativo" | "profesional") => {
+  const chooseType = (type: "administrativo" | "profesional") => {
     setIsModalOpen(false);
     if (type === "administrativo") {
-         navigate("/Rregister");
+      navigate("/Rregister");
     } else {
-         navigate("/Pregister");
+      navigate("/Pregister");
     }
   };
 
-
+  // Filtro de especialidad
+  const [activeSpecialty, setActiveSpecialty] = useState<string>("");
+  const specialties = useMemo(() => {
+    const set = new Set(professionals.map((p) => p.specialty));
+    return Array.from(set);
+  }, [professionals]);
+  const filteredProfessionals = useMemo(() => {
+    if (!activeSpecialty) return professionals;
+    return professionals.filter((p) => p.specialty === activeSpecialty);
+  }, [professionals, activeSpecialty]);
 
   return (
     <>
@@ -47,26 +56,37 @@ const ProfessionalPage: React.FC = () => {
         onAdd={handleAdd}
         addLabel="Crear Usuario"
       >
+        {/* Column Headers para profesionales */}
+        <div className="grid grid-cols-[2fr_1fr_1fr_1fr_1fr_1fr] text-sm text-gray-500 mb-4 px-4 items-center">
+          <span>Nombre</span>
+          <span>DNI</span>
+          <span>
+            <select
+              className="bg-white border border-gray-300 rounded  px-2 py-1 text-sm"
+              value={activeSpecialty}
+              onChange={(e) => setActiveSpecialty(e.target.value)}
+            >
+              <option value="">Especialidad</option>
+              {specialties.map((spec) => (
+                <option key={spec} value={spec}>
+                  {spec}
+                </option>
+              ))}
+            </select>
+          </span>
+          <span>Teléfono</span>
+          <span>Email</span>
+        </div>
 
-      {/* Column Headers para profesionales */}
-      <div className="grid grid-cols-[2fr_1fr_1fr_1fr_1fr_1fr] text-sm text-gray-500 mb-4 px-4">
-        <span>Nombre</span>
-        <span>DNI</span>
-        <span>Especialidad</span>
-        <span>Teléfono</span>
-        <span>Email</span>
-        <span>Acciones</span>
-      </div>
-
-      {/* Filas */}
-      {loading ? (
-        <p className="text-center text-gray-600">Cargando profesionales...</p>
-      ) : error ? (
-        <p className="text-center text-red-500">Error: {error}</p>
-      ) : professionals.length === 0 ? (
-        <p className="text-center text-gray-600">No se encontraron usuarios</p>
-      ) : (
-        professionals.map((u) => (
+        {/* Filas */}
+        {loading ? (
+          <p className="text-center text-gray-600">Cargando profesionales...</p>
+        ) : error ? (
+          <p className="text-center text-red-500">Error: {error}</p>
+        ) : filteredProfessionals.length === 0 ? (
+          <p className="text-center text-gray-600">No se encontraron usuarios</p>
+        ) : (
+          filteredProfessionals.map((u) => (
             <ProfessionalRow
               key={u.id}
               professional={u}
@@ -94,8 +114,8 @@ const ProfessionalPage: React.FC = () => {
             />
           ))
         )}
-    </PageContainer>
-     <Modal isOpen={isModalOpen} onClose={closeModal}>
+      </PageContainer>
+      <Modal isOpen={isModalOpen} onClose={closeModal}>
         <div className="text-center space-y-6">
           <h2 className="text-lg font-medium">¿Qué usuario queres registrar?</h2>
           <div className="flex justify-center gap-4">
@@ -114,7 +134,7 @@ const ProfessionalPage: React.FC = () => {
           </div>
         </div>
       </Modal>
-  </>
+    </>
   );
 };
 
