@@ -8,8 +8,8 @@ AURA es una plataforma clínica integral que permite gestionar citas, pacientes,
 
 ```bash
 aura/
+├── aura-frontend/    # Interfaz web desarrollada con React + Vite
 ├── backend/     # API REST construida con Spring Boot
-├── frontend/    # Interfaz web desarrollada con React + Vite
 └── README.md    # Este archivo, con visión general del sistema
 ```
 🚀 **Tecnologías Utilizadas**
