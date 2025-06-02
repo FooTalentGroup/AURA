@@ -190,4 +190,7 @@ Si deseas saber más del proyecto o del equipo, no dudes en escribirnos o visita
 
 - [Contacto](https://linktr.ee/aura.footalent)
 
+---
+## 📄 Licencia
 
+Este proyecto está bajo la licencia **[Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0)**.
