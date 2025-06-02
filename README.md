@@ -1,146 +1,193 @@
+<h1 align="center"><b>Hola, Somos 🌀 AURA - Sistema de Gestión Clínica </b><img src="https://media.giphy.com/media/hvRJCLFzcasrR4ia7z/giphy.gif" width="35"></h1>
 
-# 🩺 Backend - Sistema de Gestión Clínica AURA
-Este proyecto representa el backend del sistema de gestión de citas, pacientes y servicios de una clínica de terapias.
+<p align="center">
+  <a href="https://github.com/DenverCoder1/readme-typing-svg">
+    <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&size=24&pause=1000&color=00BFFF&center=true&vCenter=true&width=800&height=60&lines=Bienvenido+a+AURA+🌀;Gestión+clínica+eficiente+y+moderna;Frontend+con+React+%2B+Vite;Backend+con+Spring+Boot+%2B+PostgreSQL">
+  </a>
+</p>
+
+
+
+<br>
+
+# 🩺AURA – Administración Unificada de Registros y Atenciones
+
+**AURA** es una solución web integral pensada para centros terapéuticos que buscan digitalizar y optimizar la gestión de pacientes, turnos y documentación clínica. El objetivo es brindar una herramienta centralizada, segura y eficiente que facilite el trabajo tanto del personal administrativo como del equipo profesional.
 
 ---
 
-## 🚀 Tecnologías 
+## 🚀 Nuestra solución
 
-| Componente        | Tecnología    | Justificación                          |
-|-------------------|--------------|----------------------------------------|
-| Lenguaje          | Java 17      | Familiaridad del equipo, robustez      |
-| Framework         | Spring Boot  | Desarrollo rápido de APIs REST         |
-| Base de Datos     | MySQL 8      | Relacional, conocimiento del equipo    |
-| Autenticación     | JWT          | Seguridad para APIs                    |
-| Control de Versiones | Git/GitHub | Colaboración eficiente                |
-| Documentar API    | Swagger      | permite documentar y probar de forma interactiva la API|
+**AURA** permite cargar, actualizar y consultar información clínica y administrativa desde una plataforma accesible, simple e intuitiva. Las funcionalidades están diseñadas para optimizar la operatividad diaria y mejorar la experiencia de gestión de turnos y pacientes.
+
+### Funcionalidades principales
+
+- 📅 **Agenda y gestión de turnos**: Permite organizar, registrar y reprogramar citas fácilmente.
+- 📋 **Historia clínica digital compartida**: Información centralizada accesible por profesionales autorizados.
+- 🧾 **Carga de antecedentes y estudios**: Adjuntos e historial accesible en cada perfil de paciente.
+- 🔒 **Seguridad y accesibilidad**: Acceso controlado por roles y manejo eficiente de datos sensibles.
 
 ---
 
-## 📁 Estructura del Proyecto
+## 🎯 Objetivos y metas
+
+- **Centralización de la información clínica** para evitar pérdidas y duplicaciones.
+- **Organización y seguimiento** eficiente de turnos, pacientes y documentación.
+- **Digitalización del historial médico**, facilitando el trabajo interdisciplinario.
+- **Accesibilidad web multiplataforma** para todos los perfiles del centro.
+
+---
+
+## 🖼️ Screenshots
+- ![Login](./assets/Screenshot_35.png)
+- ![Lista Pacientes](./assets/Screenshot_36.png)
+- ![Historial Clínico](./assets/Screenshot_37.png)
+- ![Lista de Usuarios](./assets/Screenshot_38.png)
+
+---
+
+
+## 👥 Nuestro equipo: **BugBusters**
+### Gestión y Análisis
+![](./assets/Screenshot_39.png)
+
+**Tareas:**
+
+- Exploración y Planificacion del proyecto
+- Elaboración de documentos PRD, HUS, CUS
+- Elaborar estrategia de contenido y difusión 
+---
+
+### UX/UI
+![](./assets/Screenshot_40.png)
+
+**Tareas:**
+
+- Investigación UX: entrevistas, encuestas, benchmark.
+- Arquitectura de información, User Flow, Taskflow.
+- Wireframes de alta fidelidad y prototipado.
+- Diseño UI, mockups e interacción.
+
+ 
+**Prototipo:** 
+- [Prototipo UX/UI](https://www.figma.com/files/team/1500183653133028701/project/377960672/AURA?fuid=1210675397930087460)
+---
+
+### Backend
+
+- ![](./assets/Screenshot_41.png)
+
+
+**Tareas:**
+
+- Estructura del proyecto y convenciones
+- Endpoints API y documentación Swagger
+- Configuración de despliegue en Render
+- Variables de entorno requeridas
+- Pipeline de CI/CD
+
+---
+
+### Frontend
+
+- ![](./assets/Screenshot_42.png)
+
+**Tareas:**
+
+- Configuración inicial con Vite
+- Hot Module Replacement (HMR)
+- Configuración de ESLint/Prettier
+- Optimizaciones para producción
+- Variables de entorno
+
+---
+
+### QA & Testing
+
+- ![](./assets/Screenshot_43.png)
+
+**Tareas:**
+
+- Testing funcional y exploratorio.
+- Ejecución y documentación de pruebas (test plan, incidencias).
+- Testing del proyecto
+
+---
+
+## 📄 Documentación
+
+- [Documento de Requerimientos del Producto (PRD)](https://docs.google.com/document/d/1Ey0Gy7bsxTlZEBgh4PBdq9XzG588JxGGq30Uuc0pCY4/edit?usp=sharing)
+- [Prototipo UX/UI](https://www.figma.com/files/team/1500183653133028701/project/377960672/AURA?fuid=1210675397930087460)
+
+---
+
+## 🗂️ Estructura del Proyecto
 
 ```bash
-backend/
-├── src/
-│   ├── main/
-│   │   ├── java/
-│   │   │   ├── config/         # Configuraciones
-│   │   │   ├── controllers/    # Controladores REST
-│   │   │   ├── models/         # Entidades
-│   │   │   ├── repositories/   # Acceso a datos
-│   │   │   ├── services/       # Lógica de negocio
-│   │   │   └── exceptions/     # Manejo de errores
-│   │   └── resources/
-│   │       ├── application.properties # Configuración
-├── docs/
-└── pom.xml             # Dependencias Maven
+aura/
+├── aura-frontend/    # Interfaz web desarrollada con React + Vite
+├── backend/     # API REST construida con Spring Boot
+└── README.md    # Este archivo, con visión general del sistema
 ```
+🚀 **Tecnologías Utilizadas**
+
+| Componente         | Tecnología           | Descripción                                      |
+|--------------------|----------------------|--------------------------------------------------|
+| 🖥️ Frontend        | React + Vite         | SPA moderna y rápida con HMR                     |
+| ⚙️ Backend         | Java 17 + Spring Boot| API REST robusta y segura                        |
+| 🗃️ Base de Datos   | MySQL 8              | Almacenamiento relacional                        |
+| 🔐 Autenticación   | JWT                  | Seguridad basada en tokens                       |
+| 📚 Documentación   | Swagger              | Interfaz interactiva para explorar la API        |
+| 🔄 Control de vers.| Git + GitHub        | Flujo de trabajo colaborativo con Gitflow        |
+| 🏗️ CI/CD           | Render               | Despliegue continuo del backend                  |
 
 ---
 
-## 🔷 Gitflow y Commits
+# 🔧 Instalación Rápida (Modo Local)
 
-
-
-🌿 Estrategia de Ramas (Gitflow)
-
-| Rama          | Propósito                                 |
-|---------------|-------------------------------------------|
-| `main`        | Código en producción (estable)            |
-| `develop`     | Integración de features                   |
-| `feature/*`   | Desarrollo de nuevas funcionalidades      |
-| `hotfix/*`    | Correcciones urgentes en producción       |
-| `release/*`   | Preparación para nuevas versiones         |
-
-
-## 💡 Convención de Commits
-
-
-| Emoji | Tipo       | Descripción                           |
-|-------|------------|---------------------------------------|
-| ✨    | `feat`     | Nueva funcionalidad                   |
-| 🐛    | `fix`      | Corrección de errores                 |
-| 📚    | `docs`     | Cambios en documentación              |
-| ♻️    | `refactor` | Reestructuración de código            |
-| 🧪    | `test`     | Pruebas unitarias/integración         |
-| 🎨    | `style`    | Formato de código                     |
-| 🔧    | `chore`    | Tareas de mantenimiento               |
-
-
----
-
-## 🌐 Enlace de Producción
-
-- Backend: [https://clinica-shsg.onrender.com/swagger-ui/index.html](https://clinica-shsg.onrender.com/swagger-ui/index.html/)
-
-
----
-
-## ⚙️ Variables de Entorno en Producción
-
-- `SPRING_DATASOURCE_URL`: URL de conexión a la base de datos en producción.
-- `SPRING_DATASOURCE_USERNAME`: Usuario de la base de datos.
-- `SPRING_DATASOURCE_PASSWORD`: Contraseña de la base de datos.
-- `JWT_SECRET`: Clave secreta para generar tokens JWT.
-
----
-
-## 🔧 Detalles Técnicos de Despliegue
-
-- **Plataforma**: Render
-- **Puerto abierto**: 8080
-- **Comando de build**: `mvn clean package`
-- **Comando de ejecución**: `java -jar target/backend-0.0.1-SNAPSHOT.jar`
-- **HTTPS**: Configuración automática proporcionada por Render
-- **CI/CD**: El despliegue se realiza automáticamente mediante integración continua (CI/CD) conectando el repositorio de GitHub a Render.
-- **DockerHub**: La imagen del backend se construye y publica en DockerHub como parte del proceso de CI/CD.
-
----
-
-## 📡 Verificación de Endpoints
-
-- Endpoint de prueba: `GET https://clinica-shsg.onrender.com/swagger-ui/index.html`
-- Estado: ✅ Funciona correctamente.
-
----
-## 🔷 Requisitos e Instalación
-
-
-🛠️ Requisitos
-
+## 📋 Requisitos
+- Node.js 18+
 - Java JDK 17+
-- MySQL 8+
 - Maven 3.6+
+- MySQL 8+
 
----
-
-## 🔧 Instalación
-
-1. **Clonar repositorio**:
+## 📥 Clonación del Repositorio
 ```bash
-git clone https://github.com/AuraFTG/backend.git
-```
-2. 🔧 **Configuración de la Base de Datos**
-
-Configura el archivo `src/main/resources/application.properties` con:
-
-```properties
-spring.datasource.url=jdbc:mysql://localhost:3306/aura_db
-spring.datasource.username=usuario
-spring.datasource.password=contraseña
+git clone https://github.com/AuraFTG/Aura_team-11_tarde.git
+cd Aura_team-11_tarde/
 ```
 
-3. **Ejecutar aplicación**:
+## 📦 Backend
 ```bash
+cd backend
+mvn clean install
 mvn spring-boot:run
 ```
+
+## 💻 Frontend
+```bash
+cd aura-frontend
+npm install    # Instalar dependencias
+npm run dev    # Iniciar servidor de desarrollo
+```
+
+ 🔍 *Se recomienda leer los archivos README de backend y aura-frontend antes de comenzar el desarrollo, para comprender la estructura, tecnologías y flujos de trabajo del proyecto.*
+
+---
+## 🌐 Demo en Producción
+
+**Backend (Swagger UI)**:  
+🔗 [https://clinica-shsg.onrender.com/swagger-ui/index.html](https://clinica-shsg.onrender.com/swagger-ui/index.html)
+
+**Frontend**:
+
+🔗 [https://aura-web.netlify.app](https://aura-web.netlify.app)
+
 ---
 
-[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/AuraFTG/backend)
+## 📬 Contacto
+Si deseas saber más del proyecto o del equipo, no dudes en escribirnos o visitar nuestros perfiles de LinkedIn y GitHub.
 
+- [Contacto](https://linktr.ee/aura.footalent)
 
-## 📄 Licencia
-
-Este proyecto está bajo la licencia [Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0).  
-Ver [LICENSE](LICENSE) para el texto completo de la licencia.
 
