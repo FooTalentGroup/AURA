@@ -39,10 +39,10 @@
 ---
 
 ## 🖼️ Screenshots
-- ![Login](./assets/Screenshot_35.png)
-- ![Lista Pacientes](./assets/Screenshot_36.png)
-- ![Historial Clínico](./assets/Screenshot_37.png)
-- ![Lista de Usuarios](./assets/Screenshot_38.png)
+![Login](./assets/Screenshot_35.png)
+![Lista Pacientes](./assets/Screenshot_36.png)
+![Historial Clínico](./assets/Screenshot_37.png)
+![Lista de Usuarios](./assets/Screenshot_38.png)
 
 ---
 
@@ -75,7 +75,7 @@
 
 ### Backend
 
-- ![](./assets/Screenshot_41.png)
+![](./assets/Screenshot_41.png)
 
 
 **Tareas:**
@@ -90,7 +90,7 @@
 
 ### Frontend
 
-- ![](./assets/Screenshot_42.png)
+![](./assets/Screenshot_42.png)
 
 **Tareas:**
 
@@ -104,7 +104,7 @@
 
 ### QA & Testing
 
-- ![](./assets/Screenshot_43.png)
+![](./assets/Screenshot_43.png)
 
 **Tareas:**
 
