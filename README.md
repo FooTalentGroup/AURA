@@ -36,8 +36,8 @@ aura/
 
 ## 📥 Clonación del Repositorio
 ```bash
-git clone https://github.com/AuraFTG/aura.git
-cd aura
+git clone https://github.com/AuraFTG/Aura_team-11_tarde.git
+cd Aura_team-11_tarde/
 ```
 
 ## 📦 Backend
@@ -49,7 +49,7 @@ mvn spring-boot:run
 
 ## 💻 Frontend
 ```bash
-cd frontend
+cd aura-frontend
 npm install    # Instalar dependencias
 npm run dev    # Iniciar servidor de desarrollo
 ```
@@ -63,7 +63,7 @@ npm run dev    # Iniciar servidor de desarrollo
 - Variables de entorno requeridas
 - Pipeline de CI/CD
 
-### 🖥 Frontend (`frontend/README.md`)
+### 🖥 Frontend (`aura-frontend/README.md`)
 - Configuración inicial con Vite
 - Hot Module Replacement (HMR)
 - Configuración de ESLint/Prettier
