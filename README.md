@@ -47,7 +47,7 @@ mvn clean install
 mvn spring-boot:run
 ```
 
-## 📥 Clonación del Repositorio
+## 📥 Frontend
 ```bash
 cd frontend
 npm install    # Instalar dependencias
