@@ -1,55 +1,84 @@
-# AURA
+# 🌟 AURA Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Frontend SPA para el sistema **AURA** (Administración Unificada de Registros y Atenciones), construido con **React**, **TypeScript**, **Vite** y **Tailwind CSS**.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Instalación Rápida
 
-## Expanding the ESLint configuration
+1. **Pre-requisitos:**  
+   - Node.js >= 18  
+   - npm >= 9 o yarn >= 1.22
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+2. **Clona el repositorio:**
+   ```bash
+   git clone https://github.com/AuraFTG/aura-frontend.git
+   cd aura-frontend
+   ```
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+3. **Instala dependencias:**
+   ```bash
+   npm install
+   # o
+   yarn install
+   ```
+
+4. **Configura el entorno:**  
+   Crea un archivo `.env` en la raíz:
+   ```env
+   VITE_API_BASE_URL=https://api.tu-dominio.com
+   ```
+
+5. **Inicia el servidor de desarrollo:**
+   ```bash
+   npm run dev
+   # o
+   yarn dev
+   ```
+
+---
+
+## 📁 Estructura Esencial
+
+```
+src/
+  components/   # Componentes reutilizables
+  pages/        # Vistas principales
+  services/     # Lógica de API
+  hooks/        # Custom hooks
+  styles/       # CSS/Tailwind
+  main.tsx      # Entrada principal
+  App.tsx       # Componente raíz
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## 🛠️ Scripts Útiles
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
-[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/AuraFTG/aura-frontend) for more information.
+- `npm run dev` / `yarn dev` — Modo desarrollo (hot reload)
+- `npm run build` / `yarn build` — Build de producción
+- `npm run preview` / `yarn preview` — Previsualizar build
+- `npm run lint` / `yarn lint` — Linting y corrección
+- `npm run type-check` / `yarn type-check` — Chequeo de tipos
+
+---
+
+## 🧩 Stack Tecnológico
+
+- **React** + **TypeScript**
+- **Vite**
+- **Tailwind CSS**
+- **ESLint**
+
+---
+
+## 🤝 Contribuir
+
+1. Crea una rama:  
+   `git checkout -b feature/nueva-funcionalidad`
+2. Haz tus cambios y commitea.
+3. Abre un Pull Request.
+
+---
+
+¿Dudas? Consulta la [Wiki del proyecto](https://deepwiki.com/AuraFTG/aura-frontend).
